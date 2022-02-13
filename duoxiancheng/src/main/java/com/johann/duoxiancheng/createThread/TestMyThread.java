@@ -1,8 +1,8 @@
-package com.johann.duoxiancheng;
+package com.johann.duoxiancheng.createThread;
 
 /**
  * @ClassName: TestMyThread
- * @Description: TODO
+ * @Description: 测试继承 Thread 的线程
  * @Author: Johann
  * @Version: 1.0
  **/

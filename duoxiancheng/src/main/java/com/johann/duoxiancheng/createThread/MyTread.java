@@ -1,4 +1,4 @@
-package com.johann.duoxiancheng;
+package com.johann.duoxiancheng.createThread;
 
 /**
  * @ClassName: MyTread

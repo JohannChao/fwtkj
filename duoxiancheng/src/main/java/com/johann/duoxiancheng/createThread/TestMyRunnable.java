@@ -1,8 +1,8 @@
-package com.johann.duoxiancheng;
+package com.johann.duoxiancheng.createThread;
 
 /**
  * @ClassName: TestMyRunnable
- * @Description: TODO
+ * @Description: 测试继承Runnable接口的线程
  * @Author: Johann
  * @Version: 1.0
  **/

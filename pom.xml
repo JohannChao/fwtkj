@@ -8,6 +8,7 @@
     <modules>
         <module>duoxiancheng</module>
         <module>algorithm</module>
+        <module>designPattern</module>
     </modules>
 
     <parent>
