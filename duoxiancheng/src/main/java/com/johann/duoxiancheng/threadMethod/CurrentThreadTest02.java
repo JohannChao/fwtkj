@@ -23,7 +23,7 @@ public class CurrentThreadTest02 {
     /*
      * 结果显示：
      *  1）构造器中的，Thread.currentThread().getName() : main
-        2）构造器中的，his.getName() : Thread-0
+        2）构造器中的，this.getName() : Thread-0
         3）run()方法中的，Thread.currentThread().getName() : subCurrentThread02
         4）run()方法中的，this.getName() : subCurrentThread02
         5）run()方法中的，Thread.currentThread().getName() : t3
