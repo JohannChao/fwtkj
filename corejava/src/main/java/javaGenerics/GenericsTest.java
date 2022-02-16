@@ -25,7 +25,7 @@ public class GenericsTest {
         }
 
         // 使用泛型
-        List<String> list1 = new ArrayList<String>();
+        List<String> list1 = new ArrayList<>();
         list1.add("abc");
         //list1.add(new Integer(5));  //compiler error
 

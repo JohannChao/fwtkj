@@ -18,7 +18,7 @@ public class GenericsTypeTest<T> {
         this.t = t;
     }
 
-    public static void main(String args[]){
+    public static void main(String[] args){
         GenericsTypeTest type = new GenericsTypeTest();
         type.set("Johann");
         type.set(10);
