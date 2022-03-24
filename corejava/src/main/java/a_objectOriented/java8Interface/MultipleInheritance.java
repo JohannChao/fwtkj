@@ -1,4 +1,4 @@
-package objectOriented.java8Interface;
+package a_objectOriented.java8Interface;
 
 /**
  * @ClassName: MultipleInheritance

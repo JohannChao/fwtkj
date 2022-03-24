@@ -1,4 +1,4 @@
-package objectOriented.javaConstructor;
+package a_objectOriented.javaConstructor;
 
 /**
  * @ClassName: GrandFatherConstractor

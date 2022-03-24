@@ -1,4 +1,4 @@
-package objectOriented.javaConstructor;
+package a_objectOriented.javaConstructor;
 
 /**
  * @ClassName: SonConstractor
@@ -38,6 +38,7 @@ public class SonConstractor extends FatherConstractor{
     }
 
     public static void main(String[] args) {
-        SonConstractor sonConstractor = new SonConstractor("grand","father","son");
+        //SonConstractor sonConstractor = new SonConstractor("grand","father","son");
+        SonConstractor sonConstractor = new SonConstractor("son");
     }
 }

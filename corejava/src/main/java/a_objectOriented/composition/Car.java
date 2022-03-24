@@ -1,4 +1,4 @@
-package objectOriented.composition;
+package a_objectOriented.composition;
 
 class Engine {
     public void start() {}
@@ -24,7 +24,7 @@ class Door {
 
 /**
  * @ClassName: Car
- * @Description: TODO
+ * @Description: 组合
  * @Author: Johann
  * @Version: 1.0
  **/

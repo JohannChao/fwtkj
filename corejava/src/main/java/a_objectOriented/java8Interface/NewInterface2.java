@@ -1,4 +1,4 @@
-package objectOriented.java8Interface;
+package a_objectOriented.java8Interface;
 
 public interface NewInterface2 {
     String NAME2 = "NewInterface2";

@@ -1,4 +1,4 @@
-package objectOriented.composition;
+package a_objectOriented.composition;
 
 /**
  * @ClassName: VariableInitializationMethod
