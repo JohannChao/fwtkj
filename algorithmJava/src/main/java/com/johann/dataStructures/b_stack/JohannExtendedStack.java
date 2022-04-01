@@ -6,14 +6,14 @@ import java.util.EmptyStackException;
 /**
  * 可以自动扩容的栈
  * @ClassName: JohannExtendedStack
- * @Description:
+ * @Description:　模仿的JDK中栈的实现
  * @see     java.util.Stack
  * @Author: Johann
  * @Version: 1.0
  **/
 public class JohannExtendedStack {
     private Object[] elementData;
-    //数组中有效的元素数（elementCount-1，其实指向的是最大索引，即栈顶指针）
+    //数组中有效的元素数（栈顶指针 top = elementCount-1）
     private int elementCount;
     //数组需要扩容时，每次自动扩充的量；如果为 0 ，则每次扩充为原来的两倍
     private int capacityIncrement;

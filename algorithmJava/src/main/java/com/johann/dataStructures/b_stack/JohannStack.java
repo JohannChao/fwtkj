@@ -22,15 +22,15 @@ public class JohannStack {
     private Integer top;
 
     public JohannStack(){
-        array = new Integer[8];
-        maxSize = 8;
-        top = -1;
+        this.array = new Integer[8];
+        this.maxSize = 8;
+        this.top = -1;
     }
 
     public JohannStack(Integer size){
-        array = new Integer[size];
+        this.array = new Integer[size];
         this.maxSize = size;
-        top = -1;
+        this.top = -1;
     }
 
     /**
