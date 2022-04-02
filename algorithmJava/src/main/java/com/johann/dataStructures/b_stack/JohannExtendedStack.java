@@ -62,6 +62,17 @@ public class JohannExtendedStack {
     }
 
     /**
+     * 访问其他索引元素
+     * @return
+     */
+    public Object peakAt(int index){
+        if (elementCount == 0){
+            throw new EmptyStackException();
+        }
+        return elementData[index];
+    }
+
+    /**
      * 弹出栈顶元素
      * @return
      */
@@ -131,6 +142,14 @@ public class JohannExtendedStack {
      */
     public boolean isEmpty(){
         return elementCount == 0;
+    }
+
+    /**
+     * 获取有效元素数目
+     * @return
+     */
+    public int getElementCount(){
+        return elementCount;
     }
 
     public static void main(String[] args) {
