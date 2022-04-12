@@ -88,6 +88,10 @@ public class JohannBinaryTree {
                 }
             }
         }
+
+        if (current == null){
+            this.root = new Node(value);
+        }
     }
 
 
