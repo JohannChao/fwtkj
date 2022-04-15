@@ -185,9 +185,12 @@ public class JohannRBTree<T extends Comparable<T>> {
                 }else{
                     current = current.leftChild;
                 }
+            }else {
+                System.out.println("该树已存在此值，禁止插入");
+                break;
             }
         }
-        if (current == null){
+        if (root == null){
             this.root = newNode;
         }
 
