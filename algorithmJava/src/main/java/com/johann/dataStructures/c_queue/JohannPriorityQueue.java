@@ -10,6 +10,7 @@ package com.johann.dataStructures.c_queue;
  *     2，插入数据的时候，根据优先级大小，选定合适的位置插入位置index，index后面的其他元素依次向后移动，完成后队列中的 elementCount++；
  *     3，移除的时候，先移除优先级大的数据，即先移除数组后面的元素。
  *     由于数组元素连续，所以队列中的有效元素数目 elementCount，某种程度可以充当尾指针（elementCount-1）。移除元素后，尾指针向前移动（elementCount--）。
+ * @see com.johann.dataStructures.g_heap.JohannHeap   与优先级队列相比较，堆插入和删除的时间复杂度为 O(logN).而优先级队列的插入时间复杂度为 O(N),删除时间复杂度为 O(1)
  * @Author: Johann
  * @Version: 1.0
  **/
