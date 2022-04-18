@@ -12,6 +12,7 @@
         <module>corejava</module>
         <module>mysql</module>
         <module>algorithmJava</module>
+        <module>javaTool</module>
     </modules>
 
     <parent>
