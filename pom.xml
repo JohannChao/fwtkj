@@ -7,12 +7,12 @@
 
     <modules>
         <module>duoxiancheng</module>
-        <module>algorithm</module>
         <module>designPattern</module>
         <module>corejava</module>
         <module>mysql</module>
-        <module>algorithmJava</module>
+        <module>algorithmJava</module> 
         <module>javaTool</module>
+        <module>network</module>
     </modules>
 
     <parent>
