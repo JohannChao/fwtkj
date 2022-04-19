@@ -30,6 +30,34 @@ public class SinglyLinkedList {
     }
 
     /**
+     * 获取头节点
+     * @return
+     */
+    public Object getHead(){
+        if(this.head==null){
+            return null;
+        }
+        return this.head.data;
+    }
+
+    /**
+     * 获取指定位置元素值
+     * @see java.util.LinkedList#get(int)
+     * @param index
+     * @return
+     */
+    public Object get(int index){
+        if (!(index >= 0 && index < size)){
+            throw new IndexOutOfBoundsException("Index: "+index+", Size: "+size);
+        }
+        Node x = head;
+        for (int i = 0; i < index; i++){
+            x = x.next;
+        }
+        return x.data;
+    }
+
+    /**
      * 在链表头新增元素
     */
     public Object addHead(Object obj){
@@ -38,10 +66,11 @@ public class SinglyLinkedList {
         //将新的元素设为头节点
         head = new Node(obj);
 
-        if(originalHead != null){
-            // 如果原有的头节点不为空，则将新的头节点next指向它
-            head.next = originalHead;
-        }
+//        if(originalHead != null){
+//            // 如果原有的头节点不为空，则将新的头节点next指向它
+//            head.next = originalHead;
+//        }
+        head.next = originalHead;
         size++;
         return obj;
     }

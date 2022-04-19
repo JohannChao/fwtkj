@@ -2,7 +2,7 @@ package com.johann.dataStructures.d_linkedList;
 
 /**
  * @ClassName: DoublelyLinkedList
- * @Description: 双向链表
+ * @Description: 双向双端链表
  * @Author: Johann
  * @Version: 1.0
  **/
@@ -28,6 +28,55 @@ public class DoublelyLinkedList {
         }
     }
 
+    /**
+     * 获取头元素
+     * @return
+     */
+    public Object getHead(){
+        if(this.head==null){
+            return null;
+        }
+        return this.head.data;
+    }
+
+    /**
+     * 获取尾部元素
+     * @return
+     */
+    public Object getTail(){
+        if(this.tail==null){
+            return null;
+        }
+        return this.tail.data;
+    }
+
+    /**
+     * 获取指定位置元素值
+     * @see java.util.LinkedList#get(int)
+     * @param index
+     * @return
+     */
+    public Object get(int index){
+        if (!(index >= 0 && index < size)){
+            throw new IndexOutOfBoundsException("Index: "+index+", Size: "+size);
+        }
+        // 判断当前index在前半部分还是后半部分，再决定从前往后，还是从后往前查找元素
+        if (index < (size >> 1)) {
+            Node x = head;
+            for (int i = 0; i < index; i++)
+                x = x.next;
+            return x.data;
+        } else {
+            Node x = tail;
+            for (int i = size - 1; i > index; i--)
+                x = x.prev;
+            return x.data;
+        }
+    }
+
+    public int size(){
+        return size;
+    }
 
     /**
      * 在双向链表头部插入新节点
