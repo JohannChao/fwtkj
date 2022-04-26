@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<students> 
+  <student> 
+    <name>Johann</name>  
+    <age>18</age>  
+    <schoolName>曙光</schoolName> 
+  </student>  
+  <student> 
+    <name alias="新杰西">Jessie</name>  
+    <age>18</age> 
+  </student>  
+  <student> 
+    <name alias="马克">Mark</name>  
+    <age>17</age> 
+  </student> 
+</students>

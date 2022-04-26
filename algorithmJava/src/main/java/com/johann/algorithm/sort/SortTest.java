@@ -124,8 +124,8 @@ public class SortTest {
         for(int i=1;i<ints.length;i++){
             //待插入的数据
             int temp = ints[i];
-            //与左侧已经插入的有序数组进行比较
             int j = i-1;
+            //将待插入的元素，从后往前依次与左侧的有序元素进行比较。如果待插入的元素小于当前元素，则将当前元素依次向后移动一个索引位置
             while(j>=0 && temp < ints[j]){
                 ints[j+1] = ints[j];
                 j--;
@@ -136,6 +136,15 @@ public class SortTest {
             System.out.println("第"+(i)+"轮，比较完成后，排序如下：");
             print(ints);
         }
+    }
+
+    /**
+     * 希尔排序
+     *
+     * @param ints
+     */
+    public void shellSort(int[] ints){
+
     }
 
 
@@ -155,17 +164,33 @@ public class SortTest {
         }
         System.out.println();
     }
-    
+
+    public static void fission(int n){
+        if(n <= 0){
+            return;
+        }
+        int i = 1;
+        int count = 0;
+        while(n > 1){
+            count += n*i;
+            n = n>>1;
+            i = i<<1;
+        }
+        System.out.println("count = "+count);
+    }
+
     public static void main(String[] args) {
-        int[] ints = {5,4,1,2,3,6,8,7};
-        System.out.println("初始数组：");
-        print(ints);
+//        int[] ints = {5,4,1,2,3,6,8,7};
+//        System.out.println("初始数组：");
+//        print(ints);
 
         //bubblingSort(ints);
 
         //selectSort(ints);
 
-        insertSort(ints);
+        //insertSort(ints);
+
+        //fission(16);
     }
 
 }
