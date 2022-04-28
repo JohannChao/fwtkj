@@ -1,4 +1,4 @@
-package a_objectOriented.composition;
+package com.johann.a_objectOriented.composition;
 
 /**
  * @ClassName: VariableInitializationMethod

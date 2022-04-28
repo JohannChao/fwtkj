@@ -1,4 +1,4 @@
-package a_objectOriented.java8Interface;
+package com.johann.a_objectOriented.java8Interface;
 
 public interface NewInterface {
 

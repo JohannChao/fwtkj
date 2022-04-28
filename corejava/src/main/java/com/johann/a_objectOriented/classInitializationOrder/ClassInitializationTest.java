@@ -1,4 +1,4 @@
-package a_objectOriented.classInitializationOrder;
+package com.johann.a_objectOriented.classInitializationOrder;
 
 /**
  * @ClassName: ClassInitializationTest

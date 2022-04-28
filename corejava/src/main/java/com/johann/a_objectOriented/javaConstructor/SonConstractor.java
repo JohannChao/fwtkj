@@ -1,4 +1,4 @@
-package a_objectOriented.javaConstructor;
+package com.johann.a_objectOriented.javaConstructor;
 
 /**
  * @ClassName: SonConstractor
