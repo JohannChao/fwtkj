@@ -8,14 +8,18 @@ package com.johann.javaReflect;
  **/
 public class ReflectUserSuper {
 
-    private int id;
+    private int superPrivate;
 
-    public String superAlias;
+    protected String superProtectedString;
+
+    String superDefaultString;
+
+    public String superPublic;
 
     public void superPublicMethod(){
         System.out.println("这是一个父类的公开方法");
     }
-    public void superPrivateMethod(){
+    private void superPrivateMethod(){
         System.out.println("这是一个父类的公开方法");
     }
 }
