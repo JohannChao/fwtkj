@@ -1,8 +1,5 @@
 package com.johann.javaReflect.jdkProxy;
 
-import com.johann.javaReflect.staticProxy.AnimalBehavior;
-import com.johann.javaReflect.staticProxy.DogBehavior;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
@@ -29,7 +26,7 @@ public class JdkProxyTest {
         //4，创建一个用户自定义的调用处理器，这个调用处理器实现了 InvocationHandler 接口，并将作为参数被传入最终生成的代理类，用于处理代理类上的方法调用
         InvocationHandler ivHandler = new LogHandler(userService);
 
-        // 返回一个具有代理类指定调用处理器的代理实例，代理类由指定的类装入器定义并实现指定的接口
+            // 返回一个具有代理类指定调用处理器的代理实例，代理类由指定的类装入器定义并实现指定的接口
         //5，根据上面的信息，创建代理对象
         //在这个过程中：
         //    1.JDK会通过根据传入的参数信息动态地在内存中创建和.class 文件等同的字节码
@@ -45,6 +42,11 @@ public class JdkProxyTest {
 
         //返回 clazz 是否为一个代理类
         //boolean flag = Proxy.isProxyClass(proxy.getClass());
+
+
+
+        //LogHandler logHandler = new LogHandler(userService);
+        //UserService proxy =  (UserService)logHandler.newProxyInstance();
 
         proxy.learn();
         proxy.work();

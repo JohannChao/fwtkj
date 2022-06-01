@@ -1,7 +1,5 @@
 package com.johann.javaReflect.cglibProxy;
 
-import net.sf.cglib.proxy.Enhancer;
-
 /**
  * @ClassName: CglibProxyTest
  * @Description: TODO
@@ -11,13 +9,10 @@ import net.sf.cglib.proxy.Enhancer;
 public class CglibProxyTest {
 
     public static void main(String[] args) {
-        Enhancer enhancer = new Enhancer();
-        UserDao userDao = new UserDao();
-        enhancer.setSuperclass(Dao.class);
-        enhancer.setCallback(userDao);
 
-        Dao dao = (Dao)enhancer.create();
-        dao.select();
-        dao.update();
+        LogInterceptor logInterceptor = new LogInterceptor();
+        CglibUserService userService = (CglibUserService)logInterceptor.newProxyInstance(CglibUserService.class);
+        userService.learn();
+        userService.work();
     }
 }
