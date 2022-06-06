@@ -1,8 +1,6 @@
 package com.johann.javaReflect.cglibProxy;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+import net.sf.cglib.proxy.*;
 
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -48,10 +46,27 @@ public class LogInterceptor implements MethodInterceptor {
          * 设置产生的代理对象的父类,增强类型
          */
         enhancer.setSuperclass(c);
+
+        CglibCallbackFilter cglibCallbackFilter = new CglibCallbackFilter();
+
+        //这个NoOp表示no operator，即什么操作也不做，代理类直接调用被代理的方法不进行拦截。
+        Callback noOp = NoOp.INSTANCE;
+        //回调方法使用的是当前拦截类
+        Callback callback1 = this;
+        //表示锁定方法返回值，无论被代理类的方法返回什么值，回调方法都返回固定值。
+        //无论被代理类的方法是什么样，都不会被执行。
+        Callback fixedValue = new ResultFixed();
+        Callback[] callbacks = new Callback[]{noOp,callback1,fixedValue};
+
+        enhancer.setCallbacks(callbacks);
+        enhancer.setCallbackFilter(cglibCallbackFilter);
+
         /**
          * 定义代理逻辑对象为当前对象，要求当前对象实现 MethodInterceptor 接口
          */
-        enhancer.setCallback(this);
+        //enhancer.setCallback(this);
+
+
         /**
          * 使用默认无参数的构造函数创建目标对象,这是一个前提,被代理的类要提供无参构造方法
          */

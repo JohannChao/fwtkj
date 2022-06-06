@@ -12,7 +12,12 @@ public class CglibProxyTest {
 
         LogInterceptor logInterceptor = new LogInterceptor();
         CglibUserService userService = (CglibUserService)logInterceptor.newProxyInstance(CglibUserService.class);
-        userService.learn();
-        userService.work();
+        System.out.println("--------------------");
+        System.out.println(userService.learn());
+        System.out.println("--------------------");
+        System.out.println(userService.work());
+        System.out.println("--------------------");
+        System.out.println(userService.play());
+        System.out.println("--------------------");
     }
 }
