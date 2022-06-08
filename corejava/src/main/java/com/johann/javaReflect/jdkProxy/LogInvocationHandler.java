@@ -6,21 +6,28 @@ import java.lang.reflect.Proxy;
 import java.util.Date;
 
 /** JDK动态代理，用户自定义的调用处理器
- * @ClassName: LogHandler
+ * @ClassName: LogInvocationHandler
  * @Description: TODO
  * @Author: Johann
  * @Version: 1.0
  **/
-public class LogHandler implements InvocationHandler {
+public class LogInvocationHandler implements InvocationHandler {
 
+    /**
+     * 中间类持有委托类对象的引用,这里会构成一种静态代理关系
+     */
     private Object target;
 
-    public LogHandler(Object target){
+    /**
+     * 有参构造器,传入委托类的对象
+     * @param target
+     */
+    public LogInvocationHandler(Object target){
         this.target = target;
     }
 
     /**
-     *
+     * 我们对处理类中的所有方法的调用都会变成对 invoke 方法的调用
      * @param proxy 代理对象
      * @param method 代理方法
      * @param args 方法的参数

@@ -24,7 +24,7 @@ public class JdkProxyTest {
         //3，获取真实角色实现的所有的接口
         Class[] interfaces = userService.getClass().getInterfaces();
         //4，创建一个用户自定义的调用处理器，这个调用处理器实现了 InvocationHandler 接口，并将作为参数被传入最终生成的代理类，用于处理代理类上的方法调用
-        InvocationHandler ivHandler = new LogHandler(userService);
+        InvocationHandler ivHandler = new LogInvocationHandler(userService);
 
             // 返回一个具有代理类指定调用处理器的代理实例，代理类由指定的类装入器定义并实现指定的接口
         //5，根据上面的信息，创建代理对象
