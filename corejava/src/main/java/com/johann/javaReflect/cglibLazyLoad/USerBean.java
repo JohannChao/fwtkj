@@ -1,6 +1,8 @@
-package com.johann.javaReflect.cglibProxy.lazyLoaded;
+package com.johann.javaReflect.cglibLazyLoad;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /** 需要延迟加载的bean
  * @ClassName: USerBean
@@ -8,7 +10,8 @@ import lombok.Data;
  * @Author: Johann
  * @Version: 1.0
  **/
-@Data
+@Getter
+@Setter
 public class USerBean {
 
     private Integer id;

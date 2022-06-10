@@ -47,6 +47,7 @@ public class LogInterceptor implements MethodInterceptor {
          */
         enhancer.setSuperclass(c);
 
+        //额外设置 CallbackFilter 来指定每个方法使用的是哪个 Callback
         CglibCallbackFilter cglibCallbackFilter = new CglibCallbackFilter();
 
         //这个NoOp表示no operator，即什么操作也不做，代理类直接调用被代理的方法不进行拦截。

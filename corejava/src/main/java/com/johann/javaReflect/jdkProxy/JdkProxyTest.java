@@ -14,7 +14,7 @@ public class JdkProxyTest {
     public static void main(String[] args) {
 
         //JDK动态代理生成 代理类Class文件
-        //方法一：设置变量，可以保存动态代理类，默认名称为 $Proxy0 格式命名。此时会在 com.sun.proxy包下生成一个 $Proxy0.class文件
+        //方法一：设置变量，可以保存动态代理类，默认名称为 $Proxy0 格式命名。此时会在项目下的 com.sun.proxy包下生成一个 $Proxy0.class文件
         //System.getProperties().setProperty("sun.misc.ProxyGenerator.saveGeneratedFiles", "true");
 
         //1，创建被代理的对象，即真实角色
@@ -54,6 +54,6 @@ public class JdkProxyTest {
         //JDK动态代理生成 代理类Class文件
         //方法二：根据类信息和提供的代理类名称，生成字节码，然后通过流的方式写到磁盘文件中
         // 保存JDK动态代理生成的代理类，类名保存为 UserServiceImplProxy
-        ProxyUtils.generateProxyClass(userService.getClass(),"UserServiceImplProxy");
+        ProxyUtils.generateProxyClass(userService.getClass(),"UserServiceImpl$Proxy0");
     }
 }
