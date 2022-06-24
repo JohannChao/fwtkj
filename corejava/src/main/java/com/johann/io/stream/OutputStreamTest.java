@@ -2,7 +2,12 @@ package com.johann.io.stream;
 
 import java.io.*;
 
-/**
+/** 文件输出流是一个输出流，用于向 file 或FileDescriptor写入数据。文件是否可用或是否可以创建取决于底层平台。
+    特别是，一些平台允许一次只有一个FileOutputStream(或其他文件写入对象)打开文件进行写入。
+    在这种情况下，如果涉及的文件已经打开，该类中的构造函数将失败。
+
+    FileOutputStream用于写入原始字节流，如图像数据。对于写入字符流，考虑使用FileWriter。
+
  * @ClassName: OutputStreamTest
  * @Description: TODO
  * @Author: Johann
@@ -11,10 +16,12 @@ import java.io.*;
 @SuppressWarnings("all")
 public class OutputStreamTest {
 
+    /**
+     * 构造函数
+     * @throws IOException
+     */
     public static void testConstructor() throws IOException {
         File target = new File("D:\\ioTest\\outputStreamTest\\OutputStreamTest.txt");
-        //创建新的文件
-        //target.createNewFile();
 
         /**
          * FileOutputStream(File file)
@@ -75,15 +82,40 @@ public class OutputStreamTest {
         outputStream4.close();
     }
 
+    /**
+     * 写入方法
+     * @throws IOException
+     */
+    public static void testWrite() throws IOException{
+        File target = new File("D:\\ioTest\\outputStreamTest\\OutputStreamTest.txt");
+//        //创建新的文件
+//        System.out.println("target.createNewFile() : "+target.createNewFile());
+//        //创建文件的字节流输出对象
+//        OutputStream outputStream = new FileOutputStream(target,true);
+//
+//        //IO操作，将字节写入文件
+//        outputStream.write(65);
+//        outputStream.write("CDEFG".getBytes());
+//        outputStream.write("---GGGGG".getBytes(),1,5);
+//        //执行完上述步骤，文件中被写入了 “ACDEFG--GGG”
+//
+//        outputStream.flush();
+//        outputStream.close();
 
-    public static void testWrite(){
-
-
+        /**
+         * 覆盖之前写入的数据  FileOutputStream(target) = FileOutputStream(target,false) “append”形参默认值是false
+         */
+        OutputStream outputStream1 = new FileOutputStream(target);
+        outputStream1.write("YYYYY".getBytes());
+        outputStream1.write("ZZZZZ".getBytes());
+        outputStream1.flush();
+        outputStream1.close();
 
     }
 
     public static void main(String[] args) throws IOException {
-        testConstructor();
+        //testConstructor();
+        testWrite();
     }
 
 }

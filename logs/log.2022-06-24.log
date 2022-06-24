@@ -1,0 +1,12 @@
+[2022-06-24 18:24:09.608] [main] INFO  com.johann.log.logback.LogbackTest : logback  info
+[2022-06-24 18:24:09.609] [main] WARN  com.johann.log.logback.LogbackTest : logback  info
+[2022-06-24 18:24:09.609] [main] ERROR com.johann.log.logback.LogbackTest : logback  info
+[2022-06-24 18:25:11.653] [main] INFO  com.johann.log.logback.LogbackTest : logback info
+[2022-06-24 18:25:11.653] [main] WARN  com.johann.log.logback.LogbackTest : logback warn
+[2022-06-24 18:25:11.653] [main] ERROR com.johann.log.logback.LogbackTest : logback error
+[2022-06-24 18:26:09.153] [main] INFO  com.johann.log.logback.LogbackTest : logback info
+[2022-06-24 18:26:09.154] [main] WARN  com.johann.log.logback.LogbackTest : logback warn
+[2022-06-24 18:26:09.154] [main] ERROR com.johann.log.logback.LogbackTest : logback error
+[2022-06-24 18:27:11.533] [main] INFO  com.johann.log.logback.LogbackTest : logback info
+[2022-06-24 18:27:11.533] [main] WARN  com.johann.log.logback.LogbackTest : logback warn
+[2022-06-24 18:27:11.533] [main] ERROR com.johann.log.logback.LogbackTest : logback error
