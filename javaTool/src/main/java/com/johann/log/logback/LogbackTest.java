@@ -13,11 +13,11 @@ public class LogbackTest {
     private final static Logger logger = LoggerFactory.getLogger(LogbackTest.class);
 
     public static void main(String[] args) {
-        logger.trace("logback trace");
-        logger.debug("logback debug");
-        logger.info("logback info");
-        logger.warn("logback warn");
-        logger.error("logback error");
+        logger.trace("LogbackTest trace");
+        logger.debug("LogbackTest debug");
+        logger.info("LogbackTest info");
+        logger.warn("LogbackTest warn");
+        logger.error("LogbackTest error");
     }
 
 }

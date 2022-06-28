@@ -1,0 +1,50 @@
+[2022-06-28 17:54:48.607] [INFO ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:54:48.610] [WARN ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:54:48.611] [ERROR]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:54:48.611] [INFO ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:54:48.611] [WARN ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:54:48.611] [ERROR]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:54:48.611] [INFO ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:54:48.612] [WARN ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:54:48.612] [ERROR]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:54:48.612] [INFO ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:54:48.612] [WARN ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:54:48.612] [ERROR]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:54:48.612] [INFO ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:54:48.612] [WARN ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:54:48.612] [ERROR]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:56:01.662] [DEBUG] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:23) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest debug level
+[2022-06-28 17:56:01.666] [INFO ] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:24) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:56:01.666] [WARN ] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:25) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:56:01.667] [ERROR] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:26) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:56:01.667] [DEBUG] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:23) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest debug level
+[2022-06-28 17:56:01.667] [INFO ] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:24) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:56:01.667] [WARN ] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:25) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:56:01.668] [ERROR] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:26) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:56:01.668] [DEBUG] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:23) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest debug level
+[2022-06-28 17:56:01.668] [INFO ] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:24) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:56:01.668] [WARN ] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:25) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:56:01.668] [ERROR] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:26) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:56:01.668] [DEBUG] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:23) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest debug level
+[2022-06-28 17:56:01.669] [INFO ] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:24) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:56:01.669] [WARN ] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:25) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:56:01.669] [ERROR] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:26) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:56:01.669] [DEBUG] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:23) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest debug level
+[2022-06-28 17:56:01.669] [INFO ] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:24) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:56:01.669] [WARN ] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:25) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:56:01.669] [ERROR] com.johann.log.log4j.asyncLogger.AsyncLoggerTest.test(AsyncLoggerTest.java:26) com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:56:39.129] [INFO ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:56:39.131] [WARN ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:56:39.131] [ERROR]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:56:39.131] [INFO ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:56:39.131] [WARN ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:56:39.131] [ERROR]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:56:39.131] [INFO ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:56:39.131] [WARN ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:56:39.131] [ERROR]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:56:39.131] [INFO ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:56:39.131] [WARN ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:56:39.132] [ERROR]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level
+[2022-06-28 17:56:39.132] [INFO ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest info level
+[2022-06-28 17:56:39.132] [WARN ]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest warn level
+[2022-06-28 17:56:39.132] [ERROR]  com.johann.log.log4j.asyncLogger.AsyncLoggerTest --- AsyncLoggerTest error level

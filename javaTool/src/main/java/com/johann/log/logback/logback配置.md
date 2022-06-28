@@ -1,3 +1,61 @@
+### Java常用几种日志的区别
+
+* commons-logging
+
+　　apache最早提供的日志的门面接口。避免和具体的日志方案直接耦合。类似于JDBC 的api 接口，具体的的JDBC driver 实现由各数据库提供商实现。通过统一接口解耦，不过其内部也实现了一些简单日志方案。
+
+* Log4j
+
+　　Logging for Java，经典的一种日志解决方案。内部把日志系统抽象封装成Logger 、appender 、pattern 等实现。我们可以通过配置文件轻松的实现日志系统的管理和多样化配置。
+
+* slf4j
+
+　　全称为Simple Logging Facade for Java。 是对不同日志框架提供的一个门面封装。可以在部署的时候不修改任何配置即可接入一种日志实现方案。
+和commons-loging 类似。个人感觉设从计上更好一些，没有commons 那么多潜规则。
+同时有两个额外特点：①能支持多个参数，并通过{}占位符进行替换，避免老写logger.isXXXEnabled这种无奈的判断，带来性能提升见；②OSGI机制更好兼容支持。
+
+* logback
+
+　　作为一个通用可靠、快速灵活的日志框架，将作为Log4j 的替代和slf4j 组成新的日志系统的完整实现。具有极佳的性能，在关键路径上执行速度是log4j 的10 倍，且内存消耗更少。
+
+* Log4j2
+
+　　Log4j2是Log4j的升级版，与之前的版本Log4j 1.x相比、有重大的改进，在修正了Logback固有的架构问题的同时，改进了许多Logback所具有的功能。
+
+> slf4j和commons-logging是一种抽象接口，Log4j、Log4j2和logback是它们的实现，在实际使用中，一般选择slf4j+Log4j2或者slf4j+logback。
+
+
+### slf4j+logback
+
+#### 引入依赖
+```xml
+<!--请注意，除了logback-classic.jar之外，该声明将根据 Maven 的传递性规则自动将slf4j-api.jar和 logback-core.jar拉入您的项目中。-->
+<dependency>
+    <groupId>ch.qos.logback</groupId>
+    <artifactId>logback-classic</artifactId>
+    <version>${logback.version}</version>
+</dependency>
+```
+
+#### 配置logback
+
+logback在启动时，根据以下步骤寻找配置文件：
+
+1. Logback 尝试在类路径中查找名为 logback-test.xml 的文件；
+2. 如果没有找到这样的文件，它会在类路径中检查文件 logback.xml；
+3. 如果上述的文件都找不到，则logback会使用JDK的SPI机制查找 META-INF/services/ch.qos.logback.classic.spi.Configurator中的 logback 配置实现类，
+这个实现类必须实现Configuration接口，使用它的实现来进行配置；
+4. 如果上述操作都不成功，logback 就会使用它自带的 BasicConfigurator 来配置，并将日志输出到console。
+
+最后一步是在没有配置文件的情况下提供默认（但非常基本的）日志记录功能的最后努力。
+
+鉴于 Groovy 是一门成熟的语言，我们已放弃对 logback.groovy 的支持以保护无辜者。
+
+如果您使用 Maven，并且将 logback-test.xml 放在 src/test/resources 文件夹下，Maven 将确保它不会包含在生成的工件中。 
+因此，您可以在测试期间使用不同的配置文件，即 logback-test.xml，而在生产中使用另一个文件，即 logback.xml。
+
+#### logback.xml
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!--scan:
             当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。
@@ -199,3 +257,12 @@ configuration 子节点为 appender、logger、root
     private static Logger logger = LoggerFactory.getLogger(Class1.class);
     -->
 </configuration>
+```
+
+### 参考
+
+[slf4j+logback的配置及使用](https://www.jianshu.com/p/696444e1a352)
+
+[Logback 快速入门 / 使用详解](https://www.cnblogs.com/simpleito/p/15133654.html)
+
+[logback手册](https://logback.qos.ch/manual/index.html)
