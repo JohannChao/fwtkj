@@ -12,7 +12,7 @@ configuration 子节点为 appender、logger、root
 -->
 
 
-<configuration scan="true" scanPeriod="60 seconds" debug="false" packagingData="true">
+<configuration scan="true" scanPeriod="60 seconds" debug="false" packagingData="false">
     <!--<contextName>：设置上下文名称，可作为区分不同多个应用程序到同一target的区分，默认为"default"-->
     <contextName>javaTool</contextName>
     <!--日志文件所在目录，如果是tomcat，如下写法日志文件会在则为${TOMCAT_HOME}/bin/logs/目录下-->
@@ -40,7 +40,7 @@ configuration 子节点为 appender、logger、root
             -->
             <!--%-20.30logger 表示：左对齐true，最小宽度20，最大宽度30-->
             <!--logger{length}  length表示推荐最大长度，logback会根据该长度适当缩写Logger名，但始终会保证最右段不会缩写-->
-            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%contextName] [%-4relative] [%t] %highlight(%-5level) %-20.30logger{36} : %msg%n</pattern>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%contextName] [%-4relative] [%t] %highlight(%-5level) %-20.30logger{36} %L : %msg%n</pattern>
             <!--解决乱码问题-->
             <charset>UTF-8</charset>
         </encoder>

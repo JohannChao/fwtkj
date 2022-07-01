@@ -59,6 +59,12 @@
             <version>4.12</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!--请注意，除了logback-classic.jar之外，该声明将根据 Maven 的传递性规则自动将slf4j-api.jar和 logback-core.jar拉入您的项目中。-->
         <!--<dependency>
             <groupId>ch.qos.logback</groupId>

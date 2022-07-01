@@ -1,4 +1,4 @@
-package com.johann.log.log4j.asyncLogger;
+package com.johann.log.log4j_asyncLogger;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -14,11 +14,10 @@ public class AsyncLoggerTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AsyncLoggerTest.class);
 
-    @Test
-    public void test() {
+    public static void main(String[] args) {
         System.out.println("----------- START -----------");
         System.out.println("----------- START -----------");
-        for (int i = 0;i < 5;i++){
+        for (int i = 0;i < 2;i++){
             logger.trace("AsyncLoggerTest trace level");
             logger.debug("AsyncLoggerTest debug level");
             logger.info("AsyncLoggerTest info level");
