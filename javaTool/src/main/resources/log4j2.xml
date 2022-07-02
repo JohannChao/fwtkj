@@ -122,7 +122,7 @@ verbose：加载插件时是否显示诊断信息
                 <!-- 表示每天的0时0分调度 -->
                 <CronTriggeringPolicy schedule="0 0 0 * * ?" evaluateOnStartup = "false"/>
             </Policies>
-
+            <DefaultRolloverStrategy fileIndex = "min" max="30"/>
         </RollingRandomAccessFile>
     </appenders>
 

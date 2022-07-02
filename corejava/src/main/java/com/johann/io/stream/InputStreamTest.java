@@ -4,7 +4,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-/**
+/**FileInputStream从文件系统中的文件中获取输入字节。哪些文件可用取决于主机环境。
+  FileInputStream用于读取原始字节流，如图像数据。对于读取字符流，考虑使用FileReader。
  * @ClassName: InputStreamTest
  * @Description: TODO
  * @Author: Johann

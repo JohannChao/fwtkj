@@ -244,6 +244,7 @@ public class OutputStreamTest {
 ```
 
 ### 字节输入流
+#### InputStream
 InputStream抽象类是表示输入字节流的所有类的超类。程序需要定义一个InputStream子类，且必须始终提供“返回输入的下一个字节”的方法。
 ```java
 public abstract class InputStream implements Closeable {
@@ -459,7 +460,7 @@ public abstract class InputStream implements Closeable {
 }
 ```
 
-##### FileInputStream的方法
+#### FileInputStream
 >FileInputStream从文件系统中的文件中获取输入字节。哪些文件可用取决于主机环境。
 >
 >FileInputStream用于读取原始字节流，如图像数据。对于读取字符流，考虑使用FileReader。
@@ -523,6 +524,7 @@ public class InputStreamTest {
 
         //创建一个容量为 10 的字节数组，用于存储已经读取的数据
         byte[] buffer = new byte[10];
+
         int len = -1;
         while((len=inputStream.read(buffer))!= -1){
             System.out.println("读取的数据： "+new String(buffer,0,len));
@@ -538,9 +540,31 @@ public class InputStreamTest {
     }
 
 
-    public static void main(String[] args) throws IOException{
+    /**
+     * GBK   采用双字节表示，ASCII字母使用1 字节储存，其他字符包括希腊字母均使用2 字节储存。
+     * UTF-8 使用可变长度字节来储存 Unicode字符，例如ASCII字母继续使用1 字节储存，重音文字、希腊字母或西里尔字母等使用2 字节来储存，而常用的汉字就要使用3 字节。辅助平面字符则使用4 字节。
+     */
+    public static void testEncode() throws Exception{
+        String s = "ABC中华人民共和国万岁,世界大团结万岁。α";
+        byte[] bs = s.getBytes("GBK");
+        //byte[] bs = s.getBytes(StandardCharsets.UTF_8);
+        //byte[] bs = s.getBytes(StandardCharsets.US_ASCII);
+        System.out.println(bs.length);
+
+        String s1 = new String(bs, Charset.forName("GBK"));
+        //String s1 = new String(bs,StandardCharsets.UTF_8);
+        //String s1 = new String(bs,StandardCharsets.US_ASCII);
+        System.out.println(s1);
+
+        char c = 210;
+        System.out.println(c);
+        System.out.println(System.getProperties().getProperty("file.encoding"));
+    }
+
+    public static void main(String[] args) throws Exception{
         //testMethod();
-        copyFile();
+        //copyFile();
+        testEncode();
     }
 
 }

@@ -83,65 +83,147 @@ public class log4jTest {
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-status=“warn” 日志框架本身的输出日志级别
-monitorInterval="5" 自动加载配置文件的间隔时间，不低于5秒
+advertiser：可选，用来通知个别 FileAppender 或 SocketAppender 的配置
+目前唯一可用 Advertiser 名为 multicastdns
+
+dest：err (将输出到 stderr 上)或一个文件路径或一个URL
+
+monitorInterval：检查配置文件是否有更新的间隔秒数
+
+name：配置的名称
+
+packages：逗号分隔，用于搜索插件的包名列表
+插件只会被每个类加载器加载一次，所以仅重新配置该项不会生效
+
+schema：为类加载器定位 XML Schema 位置以验证配置。
+仅当 strict 属性设置为 true 时该属性才有效，如果不设置该属性，则不会验证 Schema
+
+shutdownHook：设置当 JVM 关闭时 log4j 是否也自动关闭，默认启用，也可设置为 disable 来禁用关闭钩子
+
+shutdownTimeout：设置当 JVM 关闭后 Appender 和后台任务超时多少毫秒才关闭，默认为 0 ，表示每个 Appender 使用其默认的超时，不等待后台任务
+
+status：打印到控制台的 Log4j 日志级别，可设置的值有 trace、debug、info、warn、error 和 fatal。status=“warn” 日志框架本身的输出日志级别
+
+strict：使用严格的 XML 格式， JSON 格式的配置文件不支持该属性
+
+verbose：加载插件时是否显示诊断信息
 -->
-<configuration status="warn" monitorInterval="5">
+<configuration status="warn" monitorInterval="720" strict = "true" verbose = "true">
+
+    <Properties>
+        <!-- 配置日志文件输出目录 -->
+        <Property name="LOG_HOME">./log4j_logs</Property>
+    </Properties>
+
     <!-- 日志处理 -->
     <appenders>
         <!-- 控制台输出 appender对象 -->
         <Console name="Console" target="SYSTEM_OUT">
+            <!-- 控制台只输出 level 及以上级别的信息(onMatch),其他的直接拒绝(onMismatch) -->
+            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             <!-- 日志消息格式 -->
-            <PatternLayout pattern="[%d{HH:mm:ss.SSS}] [%t] [%-5level] %c{36}:%L --- %m%n"/>
+            <!--
+                %d{yyyy-MM-dd HH:mm:ss, SSS} : 日志生产时间
+                %p : 日志输出格式
+                %c/%logger : logger的名称
+                %m/%msg/%message : 日志内容，即 logger.info("message")
+                %n : 换行符
+                %r/%relative : 输出从 JVM 启动到创建日志记录事件所经过的毫秒数。
+                %F/%file ：日志输出所在的文件
+                %C/%class : 日志输出所在的全限定类名
+                %l/%location ：日志触发的位置信息
+                %L/%line : 日志输出所在行数
+                %M/%method : 日志输出所在方法名
+                ${hostName} : 本地机器名
+                hostAddress : 本地ip地址
+             -->
+            <!--配合代码，获取本地IP，并在日志中显示
+            String localIp = InetAddress.getLocalHost().getHostAddress();
+            System.setProperty("hostAddress", localIp );-->
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS z}] [${hostName} ${sys:hostAddress}] [%t] %-5level %c{36}:%L %l %M --- %msg%xEx%n"/>
         </Console>
 
         <!-- 日志文件输出 appender对象 -->
-        <File name="file" fileName="./log4j_logs/log4j2.log">
+        <!--FileAppender内部使用BufferedOutputStream，默认bufferSize为8Kb。-->
+        <File name="file" fileName="${LOG_HOME}/log4j2.log">
             <!-- 日志消息格式 -->
-            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %c{36} --- %m%n"/>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] [%-5level] %c{36} %M : %m%n"/>
         </File>
 
         <!-- 使用随机读写流的日志文件输出，appender对象，性能提高 -->
-        <RandomAccessFile name="accessFile" fileName="./log4j_logs/log4j-access.log">
+        <!--RandomAccessFileAppender内部使用ByteBuffer + RandomAccessFile，默认bufferSize为256Kb-->
+        <RandomAccessFile name="accessFile" fileName="${LOG_HOME}/log4j-access.log">
             <!-- 日志消息格式 -->
-            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] [%-5level] %l %c{36} --- %m%n"/>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] [%-5level] %c{36} %M : %m%n"/>
         </RandomAccessFile>
 
         <!-- 按照一定规则拆分的日志文件，appender对象 -->
-        <RollingFile name="rollingFile" fileName="./log4j_logs/rollingFile.log"
-                     filePattern="./log4j_logs/$${date:yyyy-MM-dd}/rolling-%d{yyyy-MM-dd-HH}.%i.log">
-            <!--日志级别过滤，只接受程序中DEBUG级别的日志进行处理-->
-            <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+        <!--RollingFileAppender依赖TriggeringPolicy和RolloverStrategy这两个机制来实现日志文件拆分归档。
+        TriggeringPolicy作为触发器，决定日志拆分的触发条件；RolloverStrategy决定日志文件的归档策略。
+        -->
+        <RollingFile name="rollingFile" immediateFlush = "false"
+                     fileName="${LOG_HOME}/rollingFile.log" filePattern="${LOG_HOME}/$${date:yyyy-MM-dd}/rolling-%d{yyyy-MM-dd-HH}.%i.log">
+            <!--日志级别过滤，只接受程序中INFO级别的日志进行处理-->
+            <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <!-- 日志消息格式 -->
-            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] [%-5level] %l %c{36} --- %m%n"/>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%t] [%-5level] %c{36} %M : %m%n"/>
             <policies>
                 <!-- 在系统启动时，触发拆分规则，生成一个新的日志文件 -->
-                <OnStartupTriggeringPolicy/>
-                <!-- 按照文件大小拆分，10MB -->
+                <!-- 最小日志文件大小为 1KB，大于等于 1 KB 才会在新启动时生成新的日志文件 -->
+                <OnStartupTriggeringPolicy minSize="1024"/>
+                <!-- 按照日志文件的大小来触发，当日志文件达到预设的大小时，自动触发归档(rollover)。 -->
                 <SizeBasedTriggeringPolicy size="10MB"/>
-                <!-- 按照时间节点拆分，规则根据 filePattern 定义的-->
-                <TemiBaseTriggeringPolicy/>
+                <!-- 按照时间间隔周期性触发归档，上一次归档后，间隔时间达到设定的时间后自动触发归档。 -->
+                <!--interval : 默认值 1 ，触发归档的时间间隔，单位由filePattern的 %d 日期格式指定。当前%d{yyyy-MM-dd-HH}，意思为每各小时触发一次归档
+                modulate ： 默认值 false，是否对interval取模，决定了下一次触发的时间点
+                maxRandomDelay ：默认值 0，单位：秒，下一次触发时间会在interval基础上，增加一个随机的毫秒数Random.nextLong(0, 1+maxRandomDelay*1000)
+                -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
             </policies>
             <!-- 防止日志文件太大，造成服务器内存溢出的问题，
                 在同一个目录下（也就是每天），文件的个数限定为 30 个，超过就进行覆盖 -->
-            <DefaultRolloverStrategy max="30"/>
+            <!--归档策略
+              fileIndex ：默认值 "nomax" ，指定归档文件的起始编号，取值范围："min"，"max"，"nomax"。
+                            min——归档文件从小到大编号，最大不超过max；max——归档文件从大到小编号，最小不超过min。nomax——编号从小到大编号，没有上限。
+              min ：默认值 1 ，归档文件的最小编号。
+              max ：默认值 7 ，归档文件的最大编号。当归档数量达到max时，执行下一个归档时，会删除最先的日志归档。
+              compressionLevel ：默认值 -1 ，只有zip压缩模式有效。取值范围0-9，0 不压缩，1 压缩速度最快，9 压缩率最高。
+            -->
+            <DefaultRolloverStrategy fileIndex = "min" max="30"/>
         </RollingFile>
+
+        <!-- 设置日志格式并配置日志压缩格式(sinfo.log.日期.gz) -->
+        <RollingRandomAccessFile name="rollingAccessFile" immediateFlush = "false"
+                                 fileName="${LOG_HOME}/rollingAccessFile.log" filePattern="${LOG_HOME}/$${date:yyyy-MM}/rollingAccessFile.%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout>
+                <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [${hostName} ${sys:hostAddress}] [%t] [%-5level] [%c{36} %M] : %msg%xEx%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!--基于cron 表达式实现多样化的定时调度 -->
+                <!--schedule : 默认值 "0 0 0 * * ?" ，CronExpression，语法非常灵活，默认值表示：每天0时0分0秒触发归档。
+                evaluateOnStartup : 默认值 false。若为true，在TriggeringPolicy初始时评估是否需要补充一次归档；若为false，不检测。-->
+                <!-- 表示每天的0时0分调度 -->
+                <CronTriggeringPolicy schedule="0 0 0 * * ?" evaluateOnStartup = "false"/>
+            </Policies>
+        <DefaultRolloverStrategy fileIndex = "min" max="30"/>
+        </RollingRandomAccessFile>
     </appenders>
 
     <!-- 定义logger，只有定义了logger并引入的appender，appender才会生效 -->
     <loggers>
         <!--默认的root的logger，使用root配置日志级别-->
-        <root level="trace">
+        <root level="TRACE">
             <!--指定日志处理器-->
             <appender-ref ref="Console"/>
-            <appender-ref ref="file"/>
         </root>
 
         <!-- 自定义logger对象 -->
-        <logger name="com.johann.log.log4j" level = "debug" additivity="false">
+        <!-- 该logger 继承root,但是root将日志输出控制台,而当前 logger 将日志输出到文件,通过属性'additivity="false"' 确保 "com.johann.log.log4j"包下的日志不再输出到控制台 -->
+        <logger name="com.johann.log.log4j" level = "debug" includeLocation="true" additivity="false">
             <appender-ref ref="Console"/>
-            <!--<appender-ref ref="file"/>-->
+            <appender-ref ref="file"/>
             <appender-ref ref="accessFile"/>
+            <appender-ref ref="rollingAccessFile"/>
             <appender-ref ref="rollingFile"/>
         </logger>
 
