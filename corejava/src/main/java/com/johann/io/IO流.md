@@ -32,7 +32,7 @@ I/O流根据传输单位，分为字节流和字符流。
 根据功能分为节点流和处理流。
 
 * 节点流：可以从或向一个特定的地方(节点)读写数据。如FileReader.
-* 处理流：是对一个已存在的流的连接和封装，通过所封装的流的功能调用实现数据读写。如BufferedReader.处理流的构造方法总是要带一个其他的流对象做参数。一个流对象经过其他流的多次包装，称为流的链接。
+* 处理流：是对一个已存在的流的连接和封装，通过所封装的流的功能调用实现数据读写。如BufferedReader，处理流的构造方法总是要带一个其他的流对象做参数。一个流对象经过其他流的多次包装，称为流的链接。
 
 #### 操作I/O流的流程
 * 1，创建源或目标对象
@@ -571,10 +571,365 @@ public class InputStreamTest {
 ```
 
 ### 字符输出流
+```java
+@Slf4j
+@SuppressWarnings("all")
+public class FileWriterReaderTest {
 
+    static String directory = "D:"+File.separator+"ioTest"+File.separator+"writerTest";
+    static String fileName = "fileWriterTest.txt";
+    static String fileName2 = "fileWriterTestCopy.txt";
+
+    /**
+     * FileWriter 写出
+     * @throws Exception
+     */
+    public static void testWrite() throws Exception{
+        //File dir = new File(directory);
+        //dir.mkdirs();
+        File target = new File(directory,fileName2);
+        //target.createNewFile();
+
+        /**
+         * FileWriter(file,append)
+         * 如果不添加 append参数，默认为false。即会覆盖掉之前的内容，写入新的内容（报异常的话，新内容不会写入，且旧内容也被擦除）；
+         * 如果append置为true，则会在文件内容末尾新增写入的新内容
+         */
+        //Writer writer = new FileWriter(target,true);
+        Writer writer = new FileWriter(target);
+        // append()方法内部实现，就是 write()
+        writer.append((char) 65);
+        writer.append('C');
+        writer.append("EFG");
+        //写出数字
+        writer.write(66);
+        //写出String
+        writer.write("中华人民共和国万岁！");
+        //写出 char[]
+        writer.write("人民万岁！".toCharArray());
+        //写出String（指定起始位置，指定长度），指定长度可能越界
+        writer.write("世界和平123稳定",1,3);
+        //写出 char[]（指定起始位置，指定长度），指定长度可能越界
+        writer.write("国际共产主义".toCharArray(),1,3);
+
+        //不刷新缓冲区，不会写出到文件中。close()方法本身在关闭流之前会先刷新缓存区
+        //writer.flush();
+        writer.close();
+    }
+
+    public static void main(String[] args) throws Exception {
+        testWrite();
+    }
+}
+```
 
 
 ### 字符输入流
+```java
+@Slf4j
+@SuppressWarnings("all")
+public class FileWriterReaderTest {
+
+    static String directory = "D:"+File.separator+"ioTest"+File.separator+"writerTest";
+    static String fileName = "fileWriterTest.txt";
+    static String fileName2 = "fileWriterTestCopy.txt";
+
+    /**
+     * FileReader 读入
+     */
+    public static void testRead() throws Exception{
+        File source = new File(directory,fileName);
+
+        Reader reader = new FileReader(source);
+
+        int len = -1;
+        /**
+         * 读取单个字符。 此方法将阻塞，直到字符可用、发生 I/O 错误或到达流的末尾。
+         *
+         * 打算支持有效的单字符输入的子类应覆盖此方法。
+         *
+         * 返回：读取的字符，作为 0 到 65535 范围内的整数
+         */
+//        while((len = reader.read())!=-1){
+//            log.info(((char)len)+"");
+//        }
+
+        /**
+         * 将字符读入数组。 此方法将阻塞，直到某些输入可用、发生 I/O 错误或到达流的末尾。
+         *
+         * 返回：读取的字符数，如果已到达流的末尾，则为 -1
+         */
+        char[] chars = new char[16];
+        while((len = reader.read(chars))!=-1){
+            //如果不使用 len，则本次读取的字符个数如果少于 16 个，则剩余部分的字符会显示上次读取的字符
+            log.info(String.copyValueOf(chars,0,len));
+            //log.info(String.copyValueOf(chars));
+        }
+        reader.close();
+    }
+
+    /**
+     * 复制文件
+     * @throws Exception
+     */
+    public static void copyFile() throws Exception{
+        File source = new File(directory,fileName);
+        File target = new File(directory,fileName2);
+
+        Reader reader = new FileReader(source);
+        Writer writer = new FileWriter(target);
+        char[] chars = new char[16];
+
+        int len = -1;
+        while ((len = reader.read(chars))!=-1){
+            log.info(String.copyValueOf(chars,0,len));
+            writer.write(chars,0,len);
+        }
+
+        //不刷新缓冲区，不会写出到文件中。close()方法本身在关闭流之前会先刷新缓存区
+        //writer.flush();
+        writer.close();
+        reader.close();
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        //testRead();
+        copyFile();
+    }
+}
+```
+
+### 包装流（处理流）
+处理流，是对一个已存在的流的连接和封装，通过所封装的流的功能调用实现数据读写。如BufferedReader.处理流的构造方法总是要带一个其他的流对象做参数。一个流对象经过其他流的多次包装，称为流的链接。
+
+上面讲述的字节/字符的输入、输出流，都属于节点流，什么是包装流呢？
+
+* 包装流隐藏了底层节点流的差异，并对外提供了更方便的输入、输出功能，让我们只关心这个高级流的操作
+* 使用包装流包装了节点流，程序直接操作包装流，而底层还是节点流和IO设备操作
+* 关闭包装流的时候，只需要关闭包装流即可
+
+#### 缓冲流
+缓冲流：是一个包装流，目的是缓存作用，加快读取和写入数据的速度。
+
+字节缓冲流：BufferedInputStream、BufferedOutputStream
+
+字符缓冲流：BufferedReader、BufferedWriter
+
+BufferedInputStream继承于FilterInputStream，提供缓冲输入流功能。缓冲输入流相对于普通输入流的优势是，它提供了一个缓冲数组。
+每次调用read方法的时候，它首先尝试从缓冲区里读取数据，若读取失败（缓冲区无可读数据），则选择从物理数据源（譬如文件）读取新数据（这里会尝试尽可能读取多的字节）放入到缓冲区中，
+最后再将缓冲区中的内容部分或全部返回给用户。由于从缓冲区里读取数据远比直接从物理数据源（譬如文件）读取速度快。
+
+BufferedInputStream 的 write()方法，并不会直接调用底层的写出操作，而是会去校验，当前待写出的字节数量，是否超出BufferedInputStream的内置缓冲数组buf[]上限。
+只有待写出的字节数超出了内置的缓存数组上限，才会调用 flushBuffer()方法来执行底层的写出操作。
+```java
+/** 缓冲流（包装流）
+ * BufferedInputStream
+ * BufferedOutputStream
+ * BufferedReader
+ * BufferedWriter
+ *
+ * @ClassName: BufferedTest
+ * @Description: TODO
+ * @Author: Johann
+ * @Version: 1.0
+ **/
+@Slf4j
+@SuppressWarnings("all")
+public class BufferedTest {
+
+    static String directory = "D:"+File.separator+"ioTest"+ File.separator+"bufferTest";
+    static String fileName = "bufferStream.txt";
+    static String fileName2 = "bufferStreamCopy.txt";
+
+    /**
+     * @see        InputStreamTest#testRead()
+     * @see        FileWriterReaderTest#testRead()
+     */
+    public static void testRead() throws Exception{
+        File source = new File(directory,fileName);
+        //source.createNewFile();
+
+        /**
+         * <code>BufferedInputStream</code>为另一个输入流添加了功能，即缓冲输入并支持<code>mark</code> 和 <code>reset</code>方法的能力。创建BufferedInputStream时，会创建一个内部缓冲区数组。
+         * (默认字节缓冲大小：private static int DEFAULT_BUFFER_SIZE = 8192;)
+         * 当读取或跳过流中的字节时，根据需要从包含的输入流中重新填充内部缓冲区，每次填充许多字节。
+         * <code>mark</code>操作记住输入流中的一个点，<code>reset</code>操作导致在从包含的输入流中提取新字节之前，重新读取自最近的<code>mark</code>操作以来读取的所有字节。
+         */
+        InputStream inputStream = new BufferedInputStream(new FileInputStream(source),1024);
+        //InputStream inputStream = new FileInputStream(source);
+
+        byte[] buffer = new byte[256];
+        int len;
+        /**
+         * FileInputStream 与 BufferedInputStream 结果对比
+         * DEBUG执行，断点在循环上
+         * 在循环操作执行的第一遍，即第一次read完成，删除 source 文件中的内容。然后继续执行，此时
+         *
+         * BufferedInputStream 作为输入流时，读取了 1024 个字节，即总共执行了 4 遍 read()；
+         * FileInputStream 作为输入流时，只读取了 256 个字节，即只执行了 1 遍 read()；
+         *
+         */
+        while((len = inputStream.read(buffer,0,buffer.length)) != -1){
+            log.debug(len+"");
+            log.info(new String(buffer,0,len));
+        }
+        inputStream.close();
+    }
+
+    /**
+     * @see        FileWriterReaderTest#testRead()
+     */
+    public static void testRead2() throws Exception{
+        fileName = "bufferReader.txt";
+        File source = new File(directory,fileName);
+
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(source),512);
+
+//        log.info((char)bufferedReader.read()+""); ;
+//
+//        char[] chars = new char[256];
+//        int len;
+//        while((len = bufferedReader.read(chars)) != -1){
+//            log.debug(len+"");
+//            log.debug(String.valueOf(chars,0,len));
+//        }
+
+        /**
+         * 读取一行文本。 一行被认为是由换行符 ('\n')、回车符 ('\r') 或紧跟回车符的换行符('\r\n')中的任何一个终止的。
+         *
+         * @param      ignoreLF  如果为true，将跳过下一个 '\n'
+         *
+         * @return   包含行内容的字符串，不包括任何行终止字符，如果已到达流的末尾，则为 null
+         */
+        //bufferedReader.readLine(false);
+        String readLine;
+        while((readLine = bufferedReader.readLine())!=null){
+            log.debug(readLine.length()+"");
+            log.info(readLine);
+        }
+        bufferedReader.close();
+    }
+
+
+    /**
+     * @see        OutputStreamTest#testWrite()
+     * @see        FileWriterReaderTest#testWrite()
+     */
+    public static void testWrite() throws Exception{
+        File source = new File(directory,fileName);
+        File target = new File(directory,fileName2);
+        //target.createNewFile();
+
+        InputStream inputStream = new BufferedInputStream(new FileInputStream(source),1024);
+        /**
+         * public BufferedOutputStream(OutputStream out) {
+         *         this(out, 8192);
+         *     }
+         */
+        OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target),2048);
+
+        byte[] buffer = new byte[256];
+        int len;
+        /**
+         * BufferedInputStream 的 write()方法，并不会直接调用底层的写出操作，而是会去校验，当前待写出的字节数量，是否超出BufferedInputStream的内置缓冲数组buf[]上限
+         * 只有待写出的字节数超出了内置的缓存数组上限，才会调用 flushBuffer()来执行底层的写出操作
+         */
+        while((len = inputStream.read(buffer,0,buffer.length)) != -1){
+            log.debug(len+"");
+            log.info(new String(buffer,0,len));
+            outputStream.write(buffer,0,len);
+        }
+
+        outputStream.close();
+        inputStream.close();
+    }
+
+    /**
+     * @see        FileWriterReaderTest#testWrite()
+     */
+    public static void testWrite2() throws Exception{
+        fileName = "bufferReader.txt";
+        fileName2 = "bufferReaderCopy.txt";
+        File source = new File(directory,fileName);
+        File target = new File(directory,fileName2);
+
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(source),512);
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(target));
+
+        /**
+         * 读取一行文本。 一行被认为是由换行符 ('\n')、回车符 ('\r') 或紧跟回车符的换行符('\r\n')中的任何一个终止的。
+         *
+         * @param      ignoreLF  如果为true，将跳过下一个 '\n'
+         *
+         * @return   包含行内容的字符串，不包括任何行终止字符，如果已到达流的末尾，则为 null
+         */
+        //bufferedReader.readLine(false);
+        String readLine;
+        while((readLine = bufferedReader.readLine())!=null){
+            log.debug(readLine.length()+"");
+            log.info(readLine);
+            bufferedWriter.write(readLine);
+            bufferedWriter.newLine();
+        }
+
+        bufferedWriter.close();
+        bufferedReader.close();
+    }
+
+    public static void main(String[] args) throws Exception{
+        //testRead();
+        //testRead2();
+        //testWrite();
+        testWrite2();
+    }
+
+}
+```
+
+#### 转换流
+* InputStreamReader : 把字节流转换为字符流
+
+* OutputStreamWriter : 把字符流转换为字节流
+```text
+InputStreamReader是字节流到字符流的桥梁，它读取字节并使用指定的{@link java.nio.charset.Charset charset}将它们解码为字符。
+它使用的字符集可以通过名称来指定，也可以显式地给出，或者可以接受平台的默认字符集。
+
+每次调用InputStreamReader的read()方法都可能导致从底层字节输入流读取一个或多个字节。要启用字节到字符的有效转换，可以从底层流中提前读取比满足当前读取操作所需的字节数更多的字节。
+
+为了获得最高效率，请考虑将InputStreamReader封装在BufferedReader中。例如:
+
+BufferedReader在= new BufferedReader(new InputStreamReader(System.in));
+```
+
+```text
+OutputStreamWriter是字符流到字节流之间的桥梁:写入它的字符将使用指定的{@link java.nio.charset.Charset charset}编码成字节。
+它使用的字符集可以通过名称来指定，也可以显式地给出，或者可以接受平台的默认字符集。
+
+每次对write()方法的调用都会导致对给定字符调用编码转换器。结果字节在写入基础输出流之前在缓冲区中累积。
+可以指定这个缓冲区的大小，但是默认情况下，对于大多数目的来说，它已经足够大了。注意，传递给write()方法的字符没有缓冲。
+
+为了获得最高的效率，请考虑将OutputStreamWriter封装在BufferedWriter中，以避免频繁的转换器调用。例如:
+
+Writer out = new BufferedWriter(newOutputStreamWriter(System.out));
+
+这个类总是用字符集的默认<i>替换序列</i>替换格式错误的代理元素和不可映射的字符序列。当需要对编码过程进行更多控制时，应使用 {@linkplain java.nio.charset.CharsetEncoder} 类。
+```
+
+#### 内存流（数组流）
+
+把数据先临时存在数组中，也就是内存中。所以关闭 内存流是无效的，关闭后还是可以调用这个类的方法。底层源码的 close()是一个空方法
+
+* 字节内存流：ByteArrayOutputStream 、ByteArrayInputStream
+
+* 字符内存流：CharArrayReader 、CharArrayWriter
+
+* 字符串流：StringReader 、StringWriter
+
+
+#### 合并流
+
+SequenceInputStream 把多个输入流合并为一个流，也叫顺序流，因为在读取的时候是先读第一个，读完了在读下面一个流。
 
 
 ### 参考

@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
  **/
 public class InputStreamTest {
 
-    public static void testMethod() throws IOException {
+    public static void testRead() throws IOException {
 //        InputStream inputStream1 = new FileInputStream(FileDescriptor.in);
 //        inputStream1.read();
 //        inputStream1.close();
@@ -107,7 +107,7 @@ public class InputStreamTest {
     }
 
     public static void main(String[] args) throws Exception{
-        //testMethod();
+        //testRead();
         //copyFile();
         testEncode();
     }

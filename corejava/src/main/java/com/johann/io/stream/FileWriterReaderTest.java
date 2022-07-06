@@ -84,7 +84,7 @@ public class FileWriterReaderTest {
         char[] chars = new char[16];
         while((len = reader.read(chars))!=-1){
             //如果不使用 len，则本次读取的字符个数如果少于 16 个，则剩余部分的字符会显示上次读取的字符
-            log.info(String.copyValueOf(chars,0,len));
+            log.info(String.valueOf(chars,0,len));
             //log.info(String.copyValueOf(chars));
         }
         reader.close();
