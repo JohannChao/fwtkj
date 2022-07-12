@@ -24,8 +24,8 @@ public class UdpEchoClient {
              * 构造一个数据报套接字并将其绑定到本地主机上的任何可用端口。
              * 套接字将绑定到 {@link InetAddress#isAnyLocalAddress 通配符} 地址，这是内核选择的 IP 地址。
              */
-            //udpClient = new DatagramSocket();
-            udpClient = new DatagramSocket(9080, InetAddress.getByName("localhost"));
+            udpClient = new DatagramSocket();
+            //udpClient = new DatagramSocket(9080, InetAddress.getByName("localhost"));
 
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("请输入待发送的消息(exit退出)...");

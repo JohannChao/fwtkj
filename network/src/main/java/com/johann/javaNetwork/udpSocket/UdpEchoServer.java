@@ -22,7 +22,7 @@ public class UdpEchoServer {
         DatagramSocket udpServer = null;
         try {
             udpServer = new DatagramSocket(PORT, InetAddress.getByName(SERVER_NAME));
-            udpServer.setSoTimeout(1000);
+            //udpServer.setSoTimeout(10000);
             System.out.println("创建 UDP server socket ： " + udpServer.getLocalSocketAddress());
 
             byte[] data = new byte[PACKET_LENGTH];
