@@ -1,4 +1,4 @@
-package com.johann.url;
+package com.johann.javaNetwork.url;
 
 import java.io.BufferedReader;
 import java.io.IOException;

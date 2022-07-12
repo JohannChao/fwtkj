@@ -1,4 +1,4 @@
-package com.johann.javaNetwork;
+package com.johann.javaNetwork.tcpSocket;
 
 import java.io.*;
 import java.net.*;
