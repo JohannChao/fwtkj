@@ -1,5 +1,7 @@
 package com.johann.javaNetwork.tcpSocket;
 
+import com.johann.util.ProcessProperties;
+
 import java.io.*;
 import java.net.*;
 
@@ -14,7 +16,8 @@ import java.net.*;
 public class SocketSayHelloServer extends Thread{
 
     private ServerSocket serverSocket;
-    private final String ADDRESS = "localhost";
+    private static final String ADDRESS = ProcessProperties.getProperties("local_host");
+    private static final String PORT = ProcessProperties.getProperties("tcp_port");
     private final Integer BACKLOG = 10;
     private final Integer SO_TIMEOUT = 10000;
 
@@ -77,7 +80,7 @@ public class SocketSayHelloServer extends Thread{
 
     public static void main(String[] args) {
         try {
-            Thread t = new SocketSayHelloServer(6543);
+            Thread t = new SocketSayHelloServer(Integer.valueOf(PORT));
             t.run();
         } catch (IOException e) {
             e.printStackTrace();

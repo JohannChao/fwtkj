@@ -1,5 +1,7 @@
 package com.johann.javaNetwork.udpSocket;
 
+import com.johann.util.ProcessProperties;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,10 +13,11 @@ import java.net.*;
  * @Author: Johann
  * @Version: 1.0
  **/
+@SuppressWarnings("all")
 public class UdpEchoClient {
 
-    private final static String REMOTE_SERVERNAME = "localhost";
-    private final static Integer REMOTE_PORT = 6544;
+    private final static String REMOTE_SERVERNAME = ProcessProperties.getProperties("local_host");
+    private final static Integer REMOTE_PORT = Integer.valueOf(ProcessProperties.getProperties("udp_port"));
     private final static Integer PACKET_LENGTH = 1024;
 
     public static void sayHello(){
@@ -25,7 +28,17 @@ public class UdpEchoClient {
              * 套接字将绑定到 {@link InetAddress#isAnyLocalAddress 通配符} 地址，这是内核选择的 IP 地址。
              */
             udpClient = new DatagramSocket();
+            /**
+             * 构造一个数据报套接字并将其绑定到指定的本地主机上的指定端口。
+             */
             //udpClient = new DatagramSocket(9080, InetAddress.getByName("localhost"));
+            /**
+             * 构造一个数据报套接字并将其绑定到本地主机上的指定端口。
+             */
+            //udpClient = new DatagramSocket(9080);
+
+            System.out.println("创建 UDP 客户端 ："+udpClient.getLocalSocketAddress());
+            System.out.println("UDP 客户端对应的远程 ："+udpClient.getRemoteSocketAddress());
 
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             System.out.print("请输入待发送的消息(exit退出)...");

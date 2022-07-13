@@ -1,5 +1,7 @@
 package com.johann.javaNetwork.udpSocket;
 
+import com.johann.util.ProcessProperties;
+
 import java.io.IOException;
 import java.net.*;
 
@@ -11,19 +13,16 @@ import java.net.*;
  **/
 public class UdpEchoServer {
 
-    private final static String SERVER_NAME = "localhost";
-    private final static Integer PORT = 6544;
+    private final static String SERVERNAME = ProcessProperties.getProperties("local_host");
+    private final static Integer PORT = Integer.valueOf(ProcessProperties.getProperties("udp_port"));
     private final static Integer PACKET_LENGTH = 1024;
-
-    private final static String CLIENT_SERVERNAME = "localhost";
-    private final static Integer CLIENT_PORT = 9080;
 
     public static void sayHello(){
         DatagramSocket udpServer = null;
         try {
-            udpServer = new DatagramSocket(PORT, InetAddress.getByName(SERVER_NAME));
+            udpServer = new DatagramSocket(PORT, InetAddress.getByName(SERVERNAME));
             //udpServer.setSoTimeout(10000);
-            System.out.println("创建 UDP server socket ： " + udpServer.getLocalSocketAddress());
+            System.out.println("创建 UDP 服务器 ： " + udpServer.getLocalSocketAddress());
 
             byte[] data = new byte[PACKET_LENGTH];
             while (true) {

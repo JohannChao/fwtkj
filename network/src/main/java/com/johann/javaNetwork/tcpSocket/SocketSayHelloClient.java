@@ -1,5 +1,7 @@
 package com.johann.javaNetwork.tcpSocket;
 
+import com.johann.util.ProcessProperties;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -13,9 +15,13 @@ import java.net.Socket;
 @SuppressWarnings("all")
 public class SocketSayHelloClient {
 
+    private static final String ADDRESS = ProcessProperties.getProperties("local_host");
+    private static final Integer PORT = Integer.valueOf(ProcessProperties.getProperties("tcp_port"));
+
     public static void sayHello(String host,int port){
         System.out.println("连接远程主机："+host+"，对应端口："+port);
         try {
+            //创建一个Socket，连接到指定的host和port。当前Socket本地host和port默认分配
             Socket client = new Socket(host,port);
 
 //            //return the remote IP address to which this socket is connected,or {@code null} if the socket is not connected.
@@ -98,6 +104,6 @@ public class SocketSayHelloClient {
     }
 
     public static void main(String[] args) {
-        sayHello("localhost",6543);
+        sayHello(ADDRESS,PORT);
     }
 }

@@ -1,12 +1,16 @@
 package com.johann.javaNetwork.url;
 
+import com.johann.util.ProcessProperties;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @ClassName: UrlTest
@@ -21,7 +25,7 @@ public class UrlTest {
      */
     public static void testUrl(){
         try {
-            URL url = new URL("http://www.runoob.com/index.html?language=cn#j2se");
+            URL url = new URL(ProcessProperties.getProperties("test_url"));
             System.out.println("协议："+url.getProtocol());
             System.out.println("主机名："+url.getHost());
             System.out.println("端口："+url.getPort());
@@ -56,7 +60,7 @@ public class UrlTest {
     public static void testUrlConnection(){
 
         try {
-            URL url = new URL("https://www.runoob.com");
+            URL url = new URL(ProcessProperties.getProperties("test_connection_url"));
             URLConnection urlConnection = url.openConnection();
             if(urlConnection instanceof HttpURLConnection){
                 BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
@@ -124,8 +128,9 @@ public class UrlTest {
         }
     }
 
+
     public static void main(String[] args) {
-        //testUrl();
+        testUrl();
         testUrlConnection();
     }
 }
