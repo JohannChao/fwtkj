@@ -24,15 +24,29 @@ public class UdpEchoServer {
             //udpServer.setSoTimeout(10000);
             System.out.println("创建 UDP 服务器 ： " + udpServer.getLocalSocketAddress());
 
+            /***** case 1  ********/
             byte[] data = new byte[PACKET_LENGTH];
-            while (true) {
-                System.out.println("等待消息中... ");
-                DatagramPacket packetReceived = new DatagramPacket(data, data.length);
-                //接收消息
-                udpServer.receive(packetReceived);
-                processData(packetReceived);
-                udpServer.send(packetReceived);
-            }
+//            while (true) {
+//                System.out.println("等待消息中... ");
+//                DatagramPacket packetReceived = new DatagramPacket(data, data.length);
+//                //接收消息
+//                udpServer.receive(packetReceived);
+//                processData(packetReceived);
+//                udpServer.send(packetReceived);
+//            }
+            /***** case 1  ********/
+
+
+            /***** case 2 反序列化字节消息为对象 ********/
+            System.out.println("等待消息中... ");
+            DatagramPacket packetReceived = new DatagramPacket(data, data.length);
+            //接收消息
+            udpServer.receive(packetReceived);
+            UdpMessage rMsg = new UdpMessage();
+            // inMessage 是一个 DatagramPacket 类型的实例
+            rMsg.deserialize(packetReceived);
+            System.out.println("服务器接收到消息 ："+rMsg.toString());
+            /***** case 2  ********/
         } catch (SocketException e) {
             System.out.println(e.getMessage());
         }catch (SocketTimeoutException e){

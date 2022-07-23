@@ -19,6 +19,7 @@ public class UdpEchoClient {
     private final static String REMOTE_SERVERNAME = ProcessProperties.getProperties("local_host");
     private final static Integer REMOTE_PORT = Integer.valueOf(ProcessProperties.getProperties("udp_port"));
     private final static Integer PACKET_LENGTH = 1024;
+    private static short sequence = 1;
 
     public static void sayHello(){
         DatagramSocket udpClient = null;
@@ -40,19 +41,36 @@ public class UdpEchoClient {
             System.out.println("创建 UDP 客户端 ："+udpClient.getLocalSocketAddress());
             System.out.println("UDP 客户端对应的远程 ："+udpClient.getRemoteSocketAddress());
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            System.out.print("请输入待发送的消息(exit退出)...");
-            String inMsg;
-            while((inMsg = br.readLine())!=null){
-                if("exit".equalsIgnoreCase(inMsg)){
-                    break;
-                }
-                DatagramPacket packet = preparePacket(inMsg,REMOTE_SERVERNAME,REMOTE_PORT);
-                udpClient.send(packet);
-                udpClient.receive(packet);
-                processData(packet);
-                System.out.print("请输入待发送的消息(exit退出)...");
-            }
+            /** case 1 ********/
+//            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+//            System.out.print("请输入待发送的消息(exit退出)...");
+//            String inMsg;
+//            while((inMsg = br.readLine())!=null){
+//                if("exit".equalsIgnoreCase(inMsg)){
+//                    break;
+//                }
+//                DatagramPacket packet = preparePacket(inMsg,REMOTE_SERVERNAME,REMOTE_PORT);
+//                udpClient.send(packet);
+//                udpClient.receive(packet);
+//                processData(packet);
+//                System.out.print("请输入待发送的消息(exit退出)...");
+//            }
+            /** case 1 ********/
+
+
+            /** case 2 序列化对象为字节 ********/
+            String req = "Hello Server!";
+            UdpMessage sMsg = new UdpMessage();
+            sMsg.setVersion((byte)1);
+            sMsg.setFlag((byte)21);
+            sMsg.setSequence(sequence++);
+            sMsg.setTimestamp((int)System.currentTimeMillis()&0xFFFFFFFF);
+            sMsg.setBody(req.getBytes());
+            DatagramPacket outMessage = sMsg.serialize();
+            outMessage.setSocketAddress(new InetSocketAddress(REMOTE_SERVERNAME, REMOTE_PORT));
+            System.out.println("客户端发送的消息 ："+sMsg.toString());
+            udpClient.send(outMessage);
+            /** case 2 ********/
         } catch (SocketException e) {
             e.printStackTrace();
         }catch (IOException e){

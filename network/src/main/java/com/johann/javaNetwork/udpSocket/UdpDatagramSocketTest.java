@@ -44,6 +44,7 @@ public class UdpDatagramSocketTest {
          *
          *   DatagramSocket udpClient = new DatagramSocket();
          */
+        //DatagramSocket udpClient = new DatagramSocket();
         //DatagramSocket udpSocket = new DatagramSocket(new InetSocketAddress(InetAddress.getByName("localhost"),12345));
         //DatagramSocket udpSocket = new DatagramSocket(12345);
         DatagramSocket udpSocket = new DatagramSocket(12345, InetAddress.getByName("localhost"));
@@ -98,6 +99,12 @@ public class UdpDatagramSocketTest {
 
         //创建一个数据包以发送1024字节的数据，目标地址为 localhost:6543
         DatagramPacket dpSend = new DatagramPacket(data,data.length,InetAddress.getByName("localhost"),6543);
+
+        /**
+         * 返回这个数据报将要被发送的机器IP （接下来要使用 send方法，发送这个数据包）
+         * 或者，返回这个数据报的来源机器IP （这个数据报是通过 receive方法接收到的）
+         */
+        InetAddress address = dpReceive.getAddress();
     }
 
 
