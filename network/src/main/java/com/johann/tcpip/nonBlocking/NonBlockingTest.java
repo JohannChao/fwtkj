@@ -3,6 +3,7 @@ package com.johann.tcpip.nonBlocking;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
@@ -38,14 +39,22 @@ public class NonBlockingTest {
         sc.configureBlocking(false);
 
         /**
-         * 创建一个套接字channel
+         * 打开一个套接字通道
+         * 新通道是通过调用系统范围默认SelectorProvider对象的openSocketChannel方法创建的。
          */
         SocketChannel socketChannel = SocketChannel.open();
         /**
          * 打开一个套接字通道并将其连接到一个远程地址。
+         * 这种便捷方法的工作方式类似于调用open()方法，在生成的套接字通道上调用connect方法，将其传递给remote ，然后返回该通道。
          */
         SocketChannel socketChannel1 = SocketChannel.open(new InetSocketAddress(InetAddress.getByName("localhost"),5540));
 
+        /**
+         * 分配一个新的字节缓冲区。
+         * 新缓冲区的位置将为零，其限制将是其容量，其标记将未定义，并且其每个元素将被初始化为零。
+         * 它将有一个backing array ，并且它的array offset为零。
+         */
+        ByteBuffer recvBuff = ByteBuffer.allocate(1024);
 
 
     }
