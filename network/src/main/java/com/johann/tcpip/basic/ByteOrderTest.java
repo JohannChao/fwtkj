@@ -1,4 +1,4 @@
-package com.johann.tcpip.netWorkBasic;
+package com.johann.tcpip.basic;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
