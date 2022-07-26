@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
+    <title>模板语法</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="">
@@ -28,6 +28,66 @@
         <span>v-once指令在绑定DOM元素（mount执行）后生效</span>
         <br>
         <span v-once> Message : {{ msg }} --- {{counter}}</span>
+        <br>
+        <button v-on:click="changeMsg">修改msg</button>
+        <hr>
+
+        <!-- 双大括号会将数据解释为普通文本，而非 HTML 代码。为了输出真正的 HTML，你需要使用v-html 指令-->
+        <div>{{htmlStr}}</div>
+        <br>
+        <div v-html="htmlStr"></div>
+        <hr>
+
+        <div v-bind:id="dynamicId">dynamicId</div>
+        <br>
+        <!--对于布尔 attribute (它们只要存在就意味着值为 true)，v-bind 工作起来略有不同。
+        如果 isButtonDisabled 的值是 truthy[1]，那么 disabled attribute 将被包含在内
+        在 JavaScript 中，truthy（真值）指的是在布尔值上下文中，转换后的值为 true 的值。被定义为假值以外的任何值都为真值。
+        （即所有除 false、0、-0、0n、""、null、undefined 和 NaN 以外的皆为真值）。
+        -->
+        <button v-bind:name="buttonName" v-bind:disabled="isButtonDisabled">按钮</button>
+        <hr>
+
+        <span> Message : {{ msg.split('').reverse().join('') }}</span>
+        <br>
+        <span>counter ： {{counter + 1}}</span>
+        <br>
+        <span>{{isButtonDisabled ? 'true' : 'false'}}</span>
+        <br>
+        <span v-bind:id="'list-'+counter">span:id="'list-'+counter"</span>
+        <br>
+        <!--
+            上述这些表达式会在当前活动实例的数据作用域下作为 JavaScript 被解析。
+            有个限制就是，每个绑定都只能包含单个表达式，所以下面的例子都不会生效。
+        -->
+        <!--  这是语句，不是表达式：-->
+        <!-- {{ var a = 1 }} -->
+        <!-- 流程控制也不会生效，请使用三元表达式 -->
+        <!-- {{ if (ok) { return message } }} -->
+        <hr>
+
+        <!--
+            指令 (Directives) 是带有 v- 前缀的特殊 attribute。
+            指令 attribute 的值预期是单个 JavaScript 表达式 (v-for 和 v-on 是例外情况，稍后我们再讨论)。
+            指令的职责是，当表达式的值改变时，将其产生的连带影响，响应式地作用于 DOM。
+        -->
+        <!-- v-if指令，可以传入一个值，也可以传入一个函数-->
+        <p v-if="seen()">v-if="seen()" 你可以看见我</p>
+        <p v-if="1==1">v-if="1==1" 你可以看见我</p>
+        <a v-bind:href="url">国旗</a>
+        <br>
+        <!--TMD 这俩为啥没有生效呢？-->
+        <a v-bind:[aName]="url">国旗2</a>
+        <br>
+        <button v-on:[eName]="changeMsg">changeMsg2</button>
+        <hr>
+
+        <!--缩写-->
+        <!--v-bind 缩写-->
+        <a :href="url"> v-bind缩写 </a>
+        <br>
+        <!--v-on 缩写-->
+        <a @click="changeMsg"> v-on缩写 </a>
     </div>
 
     <script>
@@ -35,7 +95,26 @@
             data() {
                 return {
                     msg: 'hello,vue',
-                    counter: 0
+                    counter: 0,
+                    htmlStr: `<h1>标题</h1>`,
+                    dynamicId: 199,
+                    isButtonDisabled: false,
+                    buttonName: 'btName',
+                    //seen: true
+                    url: 'https://image.baidu.com/search/index?ct=201326592&z=0&tn=baiduimage&ipn=r&word=%E5%9B%BD%E6%97%97&pn=0&spn=0&ie=utf-8&oe=utf-8&cl=2&lm=-1&ln=30&fr=ala&se=&sme=&cs=626714649%2C3570498950&os=3953295703%2C75991846&objurl=https%3A%2F%2Fgimg2.baidu.com%2Fimage_search%2Fsrc%3Dhttp%3A%2F%2Fwww.chengde.gov.cn%2Fpicture%2F0%2F4fe23cd435e641dbbf9304406a4cd57a.jpg%26refer%3Dhttp%3A%2F%2Fwww.chengde.gov.cn%26app%3D2002%26size%3Df9999%2C10000%26q%3Da80%26n%3D0%26g%3D0n%26fmt%3Dauto%3Fsec%3D1661446180%26t%3De3406cf3bf256245c4cf0ebf04e4f294&di=7108135681917976577&tt=1&is=0%2C0&adpicid=0&gsm=1e&dyTabStr=MCwzLDYsMSw1LDQsNywyLDgsOQ%3D%3D',
+                    aName: 'href',
+                    eName: "click",
+
+
+                }
+            },
+            methods: {
+                changeMsg() {
+                    this.msg = 'changeMsg';
+                    this.counter = 101;
+                },
+                seen(){
+                    return true; 
                 }
             },
             beforeCreate() {
@@ -54,11 +133,15 @@
                 }, 1000)
             }
 
-        }
+        };
+        /** 
+         * let,const,var 三者区别  
+         * 
+         * 
+         */
+        const app = Vue.createApp(appConst);
 
-        const app = Vue.createApp(appConst)
-
-        const vm = app.mount("#app")
+        const vm = app.mount("#app");
 
     </script>
 </body>
