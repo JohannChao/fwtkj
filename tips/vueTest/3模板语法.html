@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <div id="app">
+        <span> Message : {{ msg }} --- {{counter}}</span>
+        <br>
+        <span>使用了 v-once指令,当数据改变时，插值处的内容不会更新个不会改变</span>
+        <br>
+        <span>v-once指令在绑定DOM元素（mount执行）后生效</span>
+        <br>
+        <span v-once> Message : {{ msg }} --- {{counter}}</span>
+    </div>
+
+    <script>
+        const appConst = {
+            data() {
+                return {
+                    msg: 'hello,vue',
+                    counter: 0
+                }
+            },
+            beforeCreate() {
+                this.msg = 'beforeCreate'
+            },
+            created() {
+                this.msg = 'created'
+            },
+            beforeMount() {
+                this.msg = 'beforeMount'
+            },
+            mounted() {
+                this.msg = 'mounted'
+                setInterval(() => {
+                    this.counter++;
+                }, 1000)
+            }
+
+        }
+
+        const app = Vue.createApp(appConst)
+
+        const vm = app.mount("#app")
+
+    </script>
+</body>
+
+</html>

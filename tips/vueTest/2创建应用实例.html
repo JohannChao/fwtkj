@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <!--
+            每个 Vue 应用都是通过用 createApp 函数创建一个新的应用实例开始的
+
+            传递给 createApp 的选项用于配置根组件。当我们挂载应用时，该组件被用作渲染的起点
+            const RootComponent = { 
+                /* 选项 */ 
+            }
+            const app = Vue.createApp(RootComponent)
+            
+            一个应用需要被挂载到一个 DOM 元素中
+            const vm = app.mount('#app')     
+            与大多数应用方法不同的是，mount 不返回应用本身。相反，它返回的是根组件实例
+            
+            应用理解：感觉像是一个 Model，里面存储的是数据以及事件交互，作用是渲染 View
+            组件理解：它相当于是 view（DOM 元素显示的页面），与 Model（RootComponent中的数据以及事件交互）之间
+            的一个桥梁，model与view对应起来
+
+        -->
+    <div id="app"> 
+        count : {{count}}
+        <div id = "test"> name = {{ userName }} </div>
+    </div>
+
+    <script>
+        const appConst = {
+            data() {
+                return {
+                    count: 1 ,
+                    userName: 'Johann'
+                }
+            },
+            
+            //生命周期函数
+            //创建应用实例之前
+            beforeCreate() {
+                console.log('beforeCreate count is: ' + this.count) // => "count is: undefined"
+                console.log(document.getElementById("test"))// null
+            },
+            //创建应用实例之后
+            created() {
+                // `this` 指向 vm 实例
+                console.log('created count is: ' + this.count) // => "count is: 1"
+                console.log(document.getElementById("test"))// null
+            },
+            //绑定 DOM，返回一个　vm 实例之前
+            beforeMount() {
+                console.log('beforeMount count is: ' + this.count) // => "count is: 1"
+                console.log(document.getElementById("test"))// null
+            },
+            //绑定 DOM，返回一个　vm 实例之后
+            mounted() {
+                console.log('mounted count is: ' + this.count) // => "count is: 1"
+                console.log(document.getElementById("test"))
+            },
+        }    
+        //创建应用实例
+        const app = Vue.createApp(appConst)
+        //绑定 DOM，返回一个　vm 实例
+        const vm = app.mount('#app')
+
+        //console.log(vm.count)
+
+    </script>
+</body>
+
+</html>
