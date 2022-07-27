@@ -48,11 +48,6 @@
             vm.plus();
             console.log("vm.counter "+vm.counter);
 
-            vm.counter = 5;
-            console.log("vm.$data.counter "+vm.$data.counter);
-            vm.$data.counter=6;
-            console.log("vm.counter "+vm.counter);
-            console.log(vm);
             /**
              * 这些实例 property 仅在实例首次创建时被添加，所以你需要确保它们都在 data 函数返回的对象中。
              * 必要时，要对尚未提供所需值的 property 使用 null、undefined 或其他占位的值。
@@ -63,8 +58,14 @@
              * Vue 使用 $ 前缀通过组件实例暴露自己的内置 API。它还为内部 property 保留 _ 前缀。
              * 你应该避免使用这两个字符开头的顶级 data property 名称。
              */
+            vm.counter = 5;
+            console.log("vm.$data.counter "+vm.$data.counter);
+            vm.$data.counter=6;
+            console.log("vm.counter "+vm.counter);
+            console.log(vm);
+            
 
-
+            //在组件外部，不要使用this.而要改为使用 vm.
             //this.counter undefined
             //console.log("this.counter "+this.counter);
             //4Data属性与方法.html:47 Uncaught TypeError: this.plus is not a function

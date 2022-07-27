@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Class与Style绑定</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <div id="app">
+        <!-- 1，对象语法 -->
+        <!--,1.1，我们可以传给 :class (v-bind:class 的简写) 一个对象，以动态地切换 class -->
+        <div :class="{ active: isActive }">
+            D1.1
+        </div>
+
+        <!-- 1.2，你可以在对象中传入更多字段来动态切换多个 class。此外，:class 指令也可以与普通的 class attribute 共存。 -->
+        <div class="static" :class="{ active: isActive, 'text-danger': hasError }">
+            D1.2
+        </div>
+
+        <!-- 1.3，绑定的数据对象不必内联定义在模板 -->
+        <div :class="classObject">
+            D1.3
+        </div>
+
+        <!-- 1.4，渲染的结果和上面一样。我们也可以在这里绑定一个返回对象的计算属性。这是一个常用且强大的模式 -->
+        <div :class="classObject2">
+            D1.4
+        </div>
+        <hr>
+
+        <!-- 2，数组语法 -->
+        <!-- 2.1，我们可以把一个数组传给 :class，以应用一个 class 列表 -->
+        <div :class="[activeClass, errorClass]">
+            D2.1
+        </div>
+        <!-- 2.2。如果你想根据条件切换列表中的 class，可以使用三元表达式 -->
+        <div :class="[isActive ? activeClass : '', errorClass]">
+            D2.2
+        </div>
+        <!-- 2.3，不过，当有多个条件 class 时这样写有些繁琐。所以在数组语法中也可以使用对象语法： -->
+        <div :class="[{ active: isActive }, errorClass]">
+            D2.3
+        </div>
+        <hr>
+
+        <!-- 3，在组件上使用 -->
+        <!-- 3.1，当你在带有单个根元素的自定义组件上使用 class attribute 时，
+            这些 class 将被添加到该元素中。此元素上的现有 class 将不会被覆盖。 -->
+        <my-component class="baz boo"></my-component>
+        <!-- 3.2，对于带数据绑定 class 也同样适用： -->
+        <my-component :class="{ active: isActivess }"></my-component>
+        <!-- 3.3，如果你的组件有多个根元素，你需要定义哪些部分将接收这个 class。可以使用 $attrs 组件 property 执行此操作： -->
+        <my-component2 class="baz"></my-component2>
+
+
+
+    </div>
+
+    <script>
+        const myComponent = {
+            template: `<p class="foo bar">Hi,3.1!</p>`,
+            data() {
+                return {
+                    isActivess: false,
+                }
+            }
+        }
+
+        const myComponent2 = {
+            template: `
+                <p :class="$attrs.class">Hi,3.3!</p>
+                <span>This is a child component</span>
+            `,
+            data() {
+                return {
+                    isActivess: false,
+                }
+            }
+        }
+
+        const App = {
+            // component: {
+            //     myComponent2
+            // },
+            data() {
+                return {
+                    isActive: true,
+                    hasError: true,
+                    error: {
+                        value: false,
+                        type: 'fatal'
+                    },
+                    classObject: {
+                        active: true,
+                        'text-danger': true
+                    },
+                    activeClass: 'active',
+                    errorClass: 'text-danger'
+                }
+            },
+            methods: {
+
+            },
+            computed: {
+                classObject2() {
+                    return {
+                        active: this.isActive && !this.error,
+                        'text-danger': this.error && this.error.type === 'fatal'
+                    }
+                }
+            },
+        }
+        const app = Vue.createApp(App);
+        app.component('my-component', myComponent).component('my-component2', myComponent2);
+        const vm = app.mount("#app");
+    </script>
+
+</body>
+
+</html>
