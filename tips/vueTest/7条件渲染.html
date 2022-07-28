@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>条件渲染</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <script src="https://unpkg.com/vue@next"></script>
+    </head>
+    <body>
+        <div id="app">
+            <!-- （即所有除 false、0、-0、0n、""、null、undefined 和 NaN 以外的皆为真值）此处 awesome 未定义undefined-->
+            <h1 v-if="awesome">Vue is awesome!</h1>
+            <h1 v-else>Oh no 😢</h1>
+            
+            <!-- 因为 v-if 是一个指令，所以必须将它添加到一个元素上。但是如果想切换多个元素呢？
+                此时可以把一个 <template> 元素当做不可见的包裹元素，并在上面使用 v-if。
+                最终的渲染结果将不包含 <template> 元素。 -->
+            <template v-if="!awesome">
+                <h1>Title</h1>
+                <p>Paragraph 1</p>
+                <p>Paragraph 2</p>
+            </template>
+
+            <!-- v-else 元素必须紧跟在带 v-if 或者 v-else-if 的元素的后面，否则它将不会被识别 
+                与 v-else 的用法类似，v-else-if 也必须紧跟在带 v-if 或者 v-else-if 的元素之后 -->
+            <div v-if="type === 'A'">
+                A
+            </div>
+            <div v-else-if="type === 'B'">
+                B
+            </div>
+            <div v-else-if="type === 'C'">
+                C
+            </div>
+            <div v-else>
+                Not A/B/C
+            </div>
+
+            <!-- 带有 v-show 的元素始终会被渲染并保留在 DOM 中。v-show 只是简单地切换元素的 display CSS property。
+                v-show 不支持 <template> 元素，也不支持 v-else -->
+            <!-- <h1 style="display: none;">Hello!</h1>  -->
+            <h1 v-show="awesome">Hello!</h1>
+
+            <!-- 
+                v-if vs v-show 对比：
+                1，v-if 是“真正”的条件渲染，因为它会确保在切换过程中，条件块内的事件监听器和子组件适当地被销毁和重建。
+                2，v-if 也是惰性的：如果在初始渲染时条件为假，则什么也不做——直到条件第一次变为真时，才会开始渲染条件块。
+                相比之下，v-show 就简单得多——不管初始条件是什么，元素总是会被渲染，并且只是简单地基于 CSS 进行切换。
+                3，一般来说，v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。
+                因此，如果需要非常频繁地切换，则使用 v-show 较好；如果在运行时条件很少改变，则使用 v-if 较好。
+             -->
+            
+             
+            <!--  -->
+        </div>
+
+        <script >
+            const App = {
+                data() {
+                    return {
+                        //awesome:'',
+                        //type: ''
+                    }
+                },
+                methods: {
+                    
+                },
+                mounted() {
+                    
+                },
+                computed: {
+                    
+                },
+                watch: {
+                    
+                },
+            }
+            const app = Vue.createApp(App);
+            const vm = app.mount("#app");
+        </script>
+    </body>
+</html>
