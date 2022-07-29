@@ -117,11 +117,11 @@
         <!-- 1，对象语法 -->
         <!-- 1.1，:style 的对象语法十分直观——看着非常像 CSS，但其实是一个 JavaScript 对象。
             CSS property 名可以用驼峰式 (camelCase) 或短横线分隔 (kebab-case，记得用引号括起来) 来命名 -->
-        <div :style="{ color: activeColor, fontSize: fontSize + 'px' }">style1.1</div>
+        <div style="color:sienna;margin-left:10px" :style="{ color: activeColor, fontSize: fontSize + 'px' }">style1.1</div>
         <!-- 1.2，直接绑定到一个样式对象通常更好，这会让模板更清晰 -->
         <div :style="styleObject">style1.2</div>
         <!-- 1.3，同样的，对象语法常常结合返回对象的计算属性使用 -->
-        <div :style="styleObject2">style1.3</div>
+        <div style="color:sienna;margin-left:10px" :style="styleObject2">style1.3</div>
         
         <!-- 2，数组语法 -->
         <!-- :style 的数组语法可以将多个样式对象应用到同一个元素上：  -->

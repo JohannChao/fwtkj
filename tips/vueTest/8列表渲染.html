@@ -93,7 +93,25 @@
             </template>
         </ul>
 
-        
+        <!-- 不推荐在同一元素上使用 v-if 和 v-for -->
+        <div class="demo">
+            <!-- 当它们处于同一节点，v-if 的优先级比 v-for 更高，这意味着 v-if 将没有权限访问 v-for 里的变量 
+                此处报错：Property "todo" was accessed during render but is not defined on instance. 
+            -->
+            <!-- <li v-for="todo in todos" v-if="!todo.isComplete">
+                {{ todo.name }}
+            </li> -->
+
+            <!-- 可以把 v-for 移动到 <template> 标签中来修正 -->
+            <template v-for="todo in todos" :key="todo.text">
+                <li v-if="!todo.isComplete">
+                    {{ todo.text }}
+                </li>
+            </template>
+        </div>
+
+        <!-- TODO: 组件学习完后待做-->
+        <!-- 在组件上使用 v-for  -->
 
 
 
@@ -103,7 +121,7 @@
 
 
 
-    
+
 
     <script>
         const App = {
@@ -117,7 +135,12 @@
                         publishedAt: '2016-04-10'
                     },
                     numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                    numberSet: [[1, 2, 3, 4, 5], [6, 7, 8, 9]]
+                    numberSet: [[1, 2, 3, 4, 5], [6, 7, 8, 9]],
+                    todos: [
+                        { text: 'Learn JavaScript' },
+                        { text: 'Learn Vue' },
+                        { text: 'Build something awesome' }
+                    ]
                 }
             },
             methods: {
