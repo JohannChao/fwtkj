@@ -50,7 +50,7 @@
 
         <span> Message : {{ msg.split('').reverse().join('') }}</span>
         <br>
-        <span>counter ： {{counter + 1}}</span>
+        <span>counter : {{counter + 1}}</span>
         <br>
         <span>{{isButtonDisabled ? 'true' : 'false'}}</span>
         <br>
@@ -76,10 +76,10 @@
         <p v-if="1==1">v-if="1==1" 你可以看见我</p>
         <a v-bind:href="url">国旗</a>
         <br>
-        <!--TMD 这俩为啥没有生效呢？-->
-        <a v-bind:[aName]="url">国旗2</a>
+        <!--TMD 这俩为啥没有生效呢？尼玛，动态参数名称竟然不能存在大写字母-->
+        <a v-bind:[attributename]="url">国旗2</a>
         <br>
-        <button v-on:[eName]="changeMsg">changeMsg2</button>
+        <button v-on:[eventname]="changeMsg">changeMsg2</button>
         <hr>
 
         <!--缩写-->
@@ -87,7 +87,7 @@
         <a :href="url"> v-bind缩写 </a>
         <br>
         <!--v-on 缩写-->
-        <a @click="changeMsg"> v-on缩写 </a>
+        <button @click="changeMsg"> v-on缩写 </button>
     </div>
 
     <script>
@@ -102,8 +102,8 @@
                     buttonName: 'btName',
                     //seen: true
                     url: 'https://image.baidu.com/search/index?ct=201326592&z=0&tn=baiduimage&ipn=r&word=%E5%9B%BD%E6%97%97&pn=0&spn=0&ie=utf-8&oe=utf-8&cl=2&lm=-1&ln=30&fr=ala&se=&sme=&cs=626714649%2C3570498950&os=3953295703%2C75991846&objurl=https%3A%2F%2Fgimg2.baidu.com%2Fimage_search%2Fsrc%3Dhttp%3A%2F%2Fwww.chengde.gov.cn%2Fpicture%2F0%2F4fe23cd435e641dbbf9304406a4cd57a.jpg%26refer%3Dhttp%3A%2F%2Fwww.chengde.gov.cn%26app%3D2002%26size%3Df9999%2C10000%26q%3Da80%26n%3D0%26g%3D0n%26fmt%3Dauto%3Fsec%3D1661446180%26t%3De3406cf3bf256245c4cf0ebf04e4f294&di=7108135681917976577&tt=1&is=0%2C0&adpicid=0&gsm=1e&dyTabStr=MCwzLDYsMSw1LDQsNywyLDgsOQ%3D%3D',
-                    aName: 'href',
-                    eName: "click",
+                    attributename: 'href',
+                    eventname: 'click',
 
 
                 }

@@ -20,6 +20,11 @@
             user-select: none;
             overflow-x: auto;
         }
+
+        .text-1 {
+            color: sienna;
+            /* margin-left:10px */
+        }
     </style>
 </head>
 
@@ -35,14 +40,52 @@
         <div class="demo">
             <ol>
                 <!-- <li v-for="(item, index) in messageArray" :key="index"> -->
-                <li v-for="(item) of messageArray" :key="item.message">
-                    {{ parentMessage }} - {{ item }} - {{ item.message }}
+                <!-- 使用v-for 的时候，需要绑定一个key属性 
+                TODO:    https://zhuanlan.zhihu.com/p/94415002-->
+                <li v-for="(item,key,index) of messageArray" :key="item.id">
+                    parentMessage:{{ parentMessage }} - index:{{index}} - key:{{key}} - item:{{item}} -
+                    item.message:{{item.message}}
                 </li>
             </ol>
             <button @click="push">push</button><br>
             <button @click="pop">pop</button><br>
             <button @click="filter">filter</button><br>
             <!-- <button @click="sort">sort</button><br> -->
+        </div>
+
+        <div class="demo text-1">
+            <h3>为什么使用v-for 的时候，需要绑定一个key属性？</h3>
+            <div>
+                <input type="text" v-model="name">
+                <button @click="add">添加</button>
+            </div>
+            <h5>case1:不使用label标签绑定checkbox，且不绑定 :key 属性</h5>
+            <ul>
+                <li v-for="(item, i) in list">
+                    <input type="checkbox"> {{item.name}}
+                </li>
+            </ul>
+
+            <h5>case2:不使用label标签绑定checkbox，但是绑定 :key 属性</h5>
+            <ul>
+                <li v-for="(item, i) in list" :key="item.id">
+                    <input type="checkbox"> {{item.name}}
+                </li>
+            </ul>
+
+            <h5>case3:使用lable的for属性绑定checkbox的id属性</h5>
+            <ul>
+                <li v-for="(item, i) in list" >
+                    <input type="checkbox" :id="item.id" :value="item.name" v-model="checked" />
+                    <!--属性 for element_id 规定lable与哪个表单元素绑定 
+                    属性 form form_id 规定lable字段所属的一个或多个表单-->
+                    <label :for="item.id">{{item.name}}</label>
+                </li>
+            </ul>
+
+            <h5></h5>
+            checked: {{checked}}
+
         </div>
 
         <!-- 也可以用 v-for 来遍历一个对象的 property。 -->
@@ -53,8 +96,8 @@
         -->
         <div class="demo">
             <ul>
-                <li v-for="(value, name, index) in myObject">
-                    {{ index }}. {{ name }} : {{ value }}
+                <li v-for="(object, key, index) in myObject" :key="object">
+                    index: {{ index }} --- key : {{ key }} --- object : {{ object }}
                 </li>
             </ul>
         </div>
@@ -128,7 +171,7 @@
             data() {
                 return {
                     parentMessage: 'Parent',
-                    messageArray: [{ message: 'Foo' }, { message: 'Bar' }],
+                    messageArray: [{ id: 1, message: 'Foo' }, { id: 2, message: 'Bar' }],
                     myObject: {
                         title: 'How to do lists in Vue',
                         author: 'Jane Doe',
@@ -140,19 +183,28 @@
                         { text: 'Learn JavaScript' },
                         { text: 'Learn Vue' },
                         { text: 'Build something awesome' }
-                    ]
+                    ],
+                    list: [
+                        { id: 1, name: '李斯' },
+                        { id: 2, name: '吕不韦' },
+                        { id: 3, name: '嬴政' }
+                    ],
+                    checked:[],
                 }
             },
             methods: {
                 /**
                  * Vue 将被侦听的数组的变更方法进行了包裹，所以它们也将会触发视图更新。这些被包裹过的方法包括：
-                    push()
-                    pop()
-                    shift()
-                    unshift()
-                    splice()
-                    sort()
-                    reverse()
+                    push()  向数组的末尾添加一个或更多元素，并返回新的长度。
+                    pop()  删除数组的最后一个元素并返回删除的元素。
+                    shift()  删除并返回数组的第一个元素。
+                    unshift()  向数组的开头添加一个或更多元素，并返回新的长度。
+                    splice()  从数组中添加或删除元素。
+                    sort() 对数组的元素进行排序。
+                    reverse()  反转数组的元素顺序。
+                    filter()  检测数值元素，并返回符合条件所有元素的数组。
+
+                    https://www.runoob.com/jsref/jsref-obj-array.html
                  */
                 push() {
                     this.messageArray.push({ message: 'Foo' });
@@ -167,12 +219,18 @@
                     this.messageArray = this.messageArray.filter(item => item.message.match(/Foo/));
                 },
                 // 未生效
-                // sort(){
-                //     this.messageArray = this.messageArray.sort(function(a,b){return a-b});
-                // }
+                sort() {
+                    this.messageArray = this.messageArray.sort();
+                },
 
                 even(numbers) {
                     return numbers.filter(number => number % 2 === 0)
+                },
+                add() {
+                    let newId = this.list.length;
+                    //注意这里是unshift，向数组的开头添加一个或更多元素，并返回新的长度
+                    this.list.unshift({ id: newId, name: this.name });
+                    this.name = '';
                 }
             },
             computed: {
