@@ -54,19 +54,19 @@
         </div>
 
         <div class="demo text-1">
-            <h3>为什么使用v-for 的时候，需要绑定一个key属性？</h3>
+            <h3>为什么使用v-for 的时候,需要绑定一个key属性?</h3>
             <div>
                 <input type="text" v-model="name">
                 <button @click="add">添加</button>
             </div>
-            <h5>case1:不使用label标签绑定checkbox，且不绑定 :key 属性</h5>
+            <h5>case1:不使用label标签绑定checkbox,且不绑定 :key 属性</h5>
             <ul>
                 <li v-for="(item, i) in list">
                     <input type="checkbox"> {{item.name}}
                 </li>
             </ul>
 
-            <h5>case2:不使用label标签绑定checkbox，但是绑定 :key 属性</h5>
+            <h5>case2:不使用label标签绑定checkbox,但是绑定 :key 属性</h5>
             <ul>
                 <li v-for="(item, i) in list" :key="item.id">
                     <input type="checkbox"> {{item.name}}

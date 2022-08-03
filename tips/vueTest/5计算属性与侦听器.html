@@ -125,13 +125,17 @@
                     return Date.now();
                 },
                 setName() {
+                    console.log('即将执行 methods setName() 方法');
+                    console.log("方法 setName() before this.fullName ");
+                    console.log("方法 setName() before this.firstName "+this.firstName);
+                    console.log("方法 setName() before this.lastName "+this.lastName);
                     this.fullName = 'Johann Zhao';
                     //this.firstName = 'Johann';
                     //this.lastName = 'Zhao'
                     console.log("方法 setName() this.fullName "+this.fullName);
                     console.log("方法 setName() this.firstName "+this.firstName);
                     console.log("方法 setName() this.lastName "+this.lastName);
-                    this.consoles();
+                    //this.consoles();
                 },
                 consoles(){
                     console.log("方法 consoles() "+this.fullName);
@@ -186,8 +190,14 @@
                     // setter
                     set(newValue) {
                         const names = newValue.split(' ')
+                        console.log("计算属性 set(newValue) before this.fullName ");
+                        console.log("计算属性 set(newValue) before this.firstName ");
+                        console.log("计算属性 set(newValue) before this.lastName ");
                         this.firstName = names[0]
                         this.lastName = names[names.length - 1]
+                        //console.log("计算属性 set(newValue) this.fullName "+this.fullName);
+                        console.log("计算属性 set(newValue) this.firstName "+this.firstName);
+                        console.log("计算属性 set(newValue) this.lastName "+this.lastName);
                     }
                 }
             },

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>组件基础</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <script src="https://unpkg.com/vue@next"></script>
+    <style type="text/css">
+        .demo {
+            font-family: sans-serif;
+            border: 1px solid rgb(34, 145, 130);
+            border-radius: 2px;
+            padding: 20px 30px;
+            margin-top: 1em;
+            margin-bottom: 40px;
+            user-select: none;
+            overflow-x: auto;
+            /* display: inline-flex; */
+            /* align-items: center; */
+            /* box-sizing: border-box; */
+        }
+
+        .text-1 {
+            color: sienna;
+            /* margin-left:10px */
+        }
+
+        .demo-alert-box {
+            padding: 10px 20px;
+            background: #f3beb8;
+            border: 1px solid #f09898;
+        }
+
+        .demo-tab {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .tab-button {
+            padding: 6px 10px;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+            border: 1px solid rgb(213, 216, 21);
+            cursor: pointer;
+            background: #82b6ce;
+            margin-bottom: -1px;
+            margin-right: -1px;
+        }
+
+        /* tab-button 类选择器的伪类 :hover “悬停样式” */
+        .tab-button:hover {
+            background: #671c99;
+        }
+
+        /* 一个类选择器名叫 “tab-button” 的下面的 class叫 “xuanzhong” 的样式 */
+        .tab-button.xuanzhong {
+            background: #10af4d;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="demo">
+            <h3>基本示例</h3>
+            <p>组件是带有名称的可复用实例，我们可以把这个组件作为一个根实例中的自定义元素来使用。</p>
+            <p>因为组件是可复用的实例，所以它们与根实例接收相同的选项，例如 data、computed、watch、methods 以及生命周期钩子等。</p>
+            <component1-alias></component1-alias><br>
+            <component1-alias></component1-alias><br>
+            <component1-alias></component1-alias>
+            <p>注意当点击按钮时，每个组件都会各自独立维护它的 counter。因为你每用一次组件，就会有一个它的新实例被创建。</p>
+        </div>
+
+        <div class="demo text-1">
+            <h3>组件的复用</h3>
+            <h5>通过 Prop 向子组件传递数据</h5>
+            <ul>
+                <blog-post v-for="(item,key) in blogList" :key="item.id" :title="item.title" :author="item.author"
+                    :tags="item.tags" :timeStr="item.timeStr">
+                </blog-post>
+            </ul>
+            <!-- <ul>
+                    <blog-post2
+                        v-for="(item,key) in blogList" 
+                        :key="item.id"
+                        :blog="item"
+                    >
+                    </blog-post2>
+                </ul> -->
+        </div>
+
+        <div class="demo" contenteditable="true">
+            <h3>监听子组件事件</h3>
+            <!-- 
+                 * 当点击这个按钮时，我们需要告诉父级组件放大所有博文的文本。
+                 * 幸好组件实例提供了一个自定义事件的系统来解决这个问题。
+                 * 父级组件可以像处理原生 DOM 事件一样通过 v-on 或 @ 监听子组件实例的任意事件
+                 * 
+                 * 同时子组件可以通过调用内建的 $emit 方法并传入事件名称来触发一个事件
+                 * 
+                 * 多亏了 @enlarge-text="postFontSize += 0.1" 监听器，父级组件能够接收事件并更新 postFontSize 的值。    
+                 -->
+            <div :style="{ fontSize: postFontSize + 'em' }">
+                父组件按钮：<button @click="postFontSize += 0.1">放大0.1倍字体</button><br />
+                父组件按钮：<button @click="postFontSize -= 0.1">缩小0.1倍字体</button>
+                <ul>
+                    <blog-post2 v-for="(item,key) in blogList" :key="item.id" :blog="item"
+                        @enlarge-text="postFontSize += 0.1" @reduce-text="postFontSize -= 0.1">
+                    </blog-post2>
+                </ul>
+            </div>
+
+            <h5>使用事件抛出一个值</h5>
+            <div :style="{ fontSize: postFontSize + 'em' }">
+                父组件按钮：<button @click="postFontSize += 1">放大自定义倍数字体</button><br />
+                父组件按钮：<button @click="reduceText(1)">缩小自定义倍数字体</button>
+                <ul>
+                    <blog-post3 v-for="(item,key) in blogList" :key="item.id" :blog="item"
+                        @enlarge-text="postFontSize += $event" @reduce-text="reduceText">
+                        <!--有的时候用一个事件来抛出一个特定的值是非常有用的。
+                            例如我们可能想让 <blog-post> 组件决定它的文本要放大多少。
+                            这时可以使用 $emit 的第二个参数来提供这个值 
+                            
+                            如果这个事件处理函数是一个方法,那么这个值将会作为第一个参数传入这个方法 
+                            @reduce-text="reduceText($event)" 可以写成 @reduce-text="reduceText"
+                        -->
+                    </blog-post3>
+                </ul>
+            </div>
+
+            <h5>在组件上使用 v-model</h5>
+            <p>自定义事件也可以用于创建支持 v-model 的自定义输入组件</p>
+            <input v-model="searchText" />
+            <p>等价于（将其拆分成两部分，一个是数据绑定，另一个是监听事件）：</p>
+            <input :value="searchText" @input="searchText = $event.target.value" />
+            <br>
+
+            <!-- TODO: -->
+            <p>当用在组件上时，v-model 则会这样</p>
+            <!-- <module-model :model-value="searchText" @update:model-value="searchText = $event"></module-model> -->
+            <module-model v-model="searchText"></module-model>
+        </div>
+
+        <div class="demo text-1">
+            <h3>通过插槽分发内容</h3>
+            <p>和 HTML 元素一样，我们经常需要向一个组件传递内容，像这样:</p>
+            <alert-box>
+                Something bad happened.
+            </alert-box>
+            <p>我们使用 '< slot>' 作为我们想要插入内容的占位符</p>
+        </div>
+
+        <div class="demo text-1">
+            <h3>动态组件</h3>
+            <button 
+                v-for="(tab, key) in tabs" 
+                :key="tab" 
+                :class="['tab-button', { xuanzhong: currentTab === tab }]" 
+                @click="currentTab=tab"
+            >【tab名:{{tab}}】-【当前选中tab:{{currentTab}}】-【对应显示子组件:{{currentTabComponent}}】
+            </button>
+
+            <component :is="currentTabComponent" class="tab"></component>
+
+            <p>在上述示例中，currentTabComponent 可以包括：
+                <br>
+                1）已注册组件的名字（当前代码使用的是组件的名字）,
+                【https://codepen.io/team/Vue/pen/oNXaoKy】---（绑定了组件注册名官方Demo）；
+                <br>
+                2）一个组件选项对象
+                【https://codepen.io/team/Vue/pen/oNXapXM】---（绑定了组件选项对象的官方Demo）
+            </p>
+        </div>
+
+        <div class="demo text-1">
+            <h3>解析 DOM 模板时的注意事项</h3>
+            <h5>元素位置受限</h5>
+            <p>有些 HTML 元素，诸如 < ul >、< ol >、< table > 和 < select >，对于哪些元素可以出现在其内部是有严格限制的。
+                而有些元素，诸如 < li >、< tr > 和 < option >，只能出现在其它某些特定的元素内部。
+            </p>
+            <p>这会导致我们使用这些有约束条件的元素时遇到一些问题。例如：</p>
+            <table>
+                <blog-post-row></blog-post-row>
+            </table>
+            <p>这个自定义组件 < blog-post-row > 会被作为无效的内容提升到外部，并导致最终渲染结果出错。
+                我们可以使用特殊的 is attribute 作为一个变通的办法：
+            </p>
+            <table>
+                <tr is="vue:blog-post-row"></tr>
+            </table>
+            <p style="color:blue">当它用于原生 HTML 元素时，is 的值必须以 vue: 开头，才可以被解释为 Vue 组件。这是避免和原生自定义元素混淆。</p>
+        
+            <h5>大小写不敏感</h5>
+            <p>HTML attribute 名不区分大小写，因此浏览器将所有大写字符解释为小写。这意味着<span style="color:rgb(30, 204, 152)">当你在 DOM 模板中使用时，
+                驼峰 prop 名称和 event 处理器参数需要使用它们的 kebab-cased (横线字符分隔)</span> 等效值：
+            </p>
+            
+        </div>
+
+    </div>
+
+    <script>
+        const blogPostRow = {
+
+        }
+
+        const tabHome = {
+            template: `<div class="demo-tab">Home component</div>`
+        }
+        const tabPosts = {
+            template: `<div class="demo-tab">Posts component</div>`
+        }
+        const tabArchive = {
+            template: `<div class="demo-tab">Archive component</div>`
+        }
+
+
+        const alertBox = {
+            template: `
+                <div class="demo-alert-box">
+                    <strong>Error!</strong>
+                    <slot></slot>
+                </div>    
+                `
+        }
+
+        const moduleModel = {
+            /**
+             * 为了让它正常工作，这个组件内的 <input> 必须：
+
+                1，将其 value attribute 绑定到一个名叫 modelValue 的 prop 上
+                2，在其 input 事件被触发时，将新的值通过自定义的 update:modelValue 事件抛出
+             */
+            // props:['modelValue'],
+            // emits: ['update:modelValue'],
+            // template:`
+            // <input :value="modelValue" @input="$emit('update:modelValue', $event.target.value)" />
+            // `,
+
+            /**
+             * 使用 computed property 的功能来定义 getter 和 setter。
+             * get 方法应返回 modelValue property，set 方法应该触发相应的事件
+             */
+            props: ['modelValue'],
+            emits: ['update:modelValue'],
+            template: `<input v-model="value">`,//`<input v-model.lazy="value">`,
+            computed: {
+                value: {
+                    get() {
+                        return this.modelValue
+                    },
+                    set(value) {
+                        this.$emit('update:modelValue', value);
+                        console.log(value);
+                    }
+                }
+            },
+
+        }
+
+        const component1 = {
+            data() {
+                return {
+                    counter: 0,
+                }
+            },
+            methods: {
+                countPlus() {
+                    this.counter += 1;
+                }
+            },
+            template: `
+                <button @click="countPlus">
+                    You clicked me {{ counter }} times.
+                </button>`,
+        }
+
+        const blogPost = {
+            props: ['title', 'author', 'timeStr', 'tags'],
+            template: `
+                <li>标题: {{title}},  作者: {{author}},  标签: {{tags}},  创建时间: {{timeStr}}</li>
+                `,
+        }
+
+        const blogPost2 = {
+            props: ['blog'],
+            /** 
+             * 当点击这个按钮时，我们需要告诉父级组件放大所有博文的文本。
+             * 幸好组件实例提供了一个自定义事件的系统来解决这个问题。
+             * 父级组件可以像处理原生 DOM 事件一样通过 v-on 或 @ 监听子组件实例的任意事件
+             * 
+             * 同时子组件可以通过调用内建的 $emit 方法并传入事件名称来触发一个事件
+             * 
+             * 多亏了 @enlarge-text="postFontSize += 0.1" 监听器，父级组件能够接收事件并更新 postFontSize 的值。
+             */
+            emits: ['enlargeText', 'reduceText'],
+            template: `
+                <div class="blogPost2">
+                    <li>标题: {{blog.title}},  作者: {{blog.author}},  标签: {{blog.tags}},  创建时间: {{blog.timeStr}}</li>
+                </div>
+                子组件按钮：<button @click="$emit('enlargeText')">Enlarge text 0.1倍</button><br/>
+                子组件按钮：<button @click="$emit('reduceText')">Reduce text 0.1倍</button>
+                `,
+        }
+
+        const blogPost3 = {
+            props: ['blog'],
+            emits: ['enlargeText', 'reduceText'],
+            /** 
+             * 有的时候用一个事件来抛出一个特定的值是非常有用的。
+             * 例如我们可能想让 <blog-post> 组件决定它的文本要放大多少。
+             * 这时可以使用 $emit 的第二个参数来提供这个值
+             */
+            template: `
+                <div class="blogPost3">
+                    <li>标题: {{blog.title}},  作者: {{blog.author}},  标签: {{blog.tags}},  创建时间: {{blog.timeStr}}</li>
+                </div>
+                子组件按钮：<button @click="$emit('enlargeText',1)">Enlarge text 自定义倍数</button><br/>
+                子组件按钮：<button @click="$emit('reduceText',1)">Reduce text 自定义倍数</button>
+                `,
+        }
+
+        const App = {
+            components: {
+                //'component1-alias': component1,
+                'blog-post': blogPost,
+                'blog-post2': blogPost2,
+                'blog-post3': blogPost3,
+                 moduleModel,
+                 alertBox,
+                'tab-home': tabHome,
+                'tab-posts': tabPosts,
+                'tab-archive': tabArchive,
+                blogPostRow,
+            },
+            data() {
+                return {
+                    blogList: [
+                        { id: 121, title: '文章1', author: 'Johann', timeStr: new Date().toDateString(), tags: [{ id: 1, name: '标签1' }] },
+                        { id: 122, title: '文章2', author: 'Jessie', timeStr: new Date().toDateString(), tags: [{ id: 1, name: '标签1' }] },
+                        { id: 123, title: '文章3', author: 'Bruce', timeStr: new Date().toDateString(), tags: [{ id: 1, name: '标签1' }] },
+                        //new Date().toDateString
+                    ],
+                    now: new Date(),
+                    postFontSize: 1,
+                    searchText: '',
+                    currentTab: 'Home',
+                    tabs: ['Home', 'Posts', 'Archive'],
+                }
+            },
+            methods: {
+                reduceText(reduceAmount) {
+                    this.postFontSize -= reduceAmount;
+                }
+            },
+            mounted() {
+
+            },
+            computed: {
+                currentTabComponent() {
+                    return 'tab-' + this.currentTab.toLowerCase();
+                }
+            },
+            watch: {
+
+            },
+        }
+        const app = Vue.createApp(App);
+        app.component("component1-alias", component1);
+        const vm = app.mount("#app");
+    </script>
+</body>
+
+</html>

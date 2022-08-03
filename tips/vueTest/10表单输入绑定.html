@@ -94,11 +94,11 @@
 
                 
                 <h3>单选框(Radio)</h3>
-                <input type="radio" id="one" value="yi" v-model="picked"/>    
-                <label for="one">One</label>
+                <input type="radio" id="picked-1" value="one" v-model="picked"/>    
+                <label for="picked-1">第一项</label>
                 <br>
-                <input type="radio" id="two" value="er" v-model="picked"/>    
-                <label for="two">Two</label>
+                <input type="radio" id="picked-2" value="two" v-model="picked"/>    
+                <label for="picked-2">第二项</label>
                 <br>  
                 <span>Picked : {{picked}}</span>   
                 
@@ -133,6 +133,7 @@
                 
                 <h5>3,用v-for渲染动态选项</h5>
                 <select name="动态选择框" id="dynamicSelected" v-model="dynamicSelected">
+                    <option disabled value="" >Please select one</option>
                     <option v-for="option in dynamicDatas" :key="option.id" :value="option.value" >
                         {{option.id}}:{{option.text}}
                     </option>
@@ -170,12 +171,35 @@
                 <span>radioValueBind: {{ radioValueBind }}</span>
 
                 <h3>选择框</h3>
-                <p>参见上述 用v-for渲染动态选项</p>
+                <span>参见上述 用v-for渲染动态选项</span>
             </div>
 
             <div id="修饰符" class="demo" contenteditable="true">
-                
+                <h3>修饰符</h3>
+                <h5>1, '.lazy修饰符'</h5>
+                <p>在默认情况下, v-model 在每次 input 事件触发后将输入框的值与数据进行同步 (除了上述输入法组织文字时)。
+                    你可以添加 lazy 修饰符，从而转为在 change 事件之后进行同步</p>
+                <!-- v-model 本质上不过是语法糖 -->
+                注意此时只有当 input 失去焦点,触发change事件后才会再次渲染
+                <br>
+                <!-- 在“change”时而非“input”时更新 -->
+                <input v-model.lazy="msg" placeholder="v-model是个语法糖,注意console变化" :style="{width:'220px'}" />
+                <br>
+                <span>msg is: {{ msg }}</span>
 
+                <h5>2,'.number修饰符'</h5>    
+                <p>如果想自动将用户的输入值转为数值类型，可以给 v-model 添加 number 修饰符</p>
+                <p>当输入类型为 text 时这通常很有用。如果输入类型是 number，Vue 能够自动将原始字符串转换为数字，
+                    无需为 v-model 添加 .number 修饰符。如果这个值无法被 parseFloat() 解析，则返回原始的值。</p>
+                <input type="text" name="age" id="age" v-model.number="age" placeholder="当前输入框的值将被转为数值类型" :style="{width:'220px'}"/>
+                <br>
+                <span>age is : {{age}}</span>    
+
+                <h5>3,'.trim修饰符'</h5>
+                <p>如果要自动过滤用户输入的首尾空白字符，可以给 v-model 添加 trim 修饰符</p>
+                <input v-model.trim="trimMsg" placeholder="当前输入框的值将被过滤首尾空字符" :style="{width:'220px'}"/>    
+                <br>
+                <span>trimMsg is:{{trimMsg}}</span>  
             </div>
         </div>
 
@@ -206,6 +230,9 @@
                         checkboxValueBind:'',
                         radioValueBind: '',
                         a: 'a',
+                        msg: '',
+                        age: '',
+                        trimMsg: '',
                     }
                 },
                 methods: {
@@ -231,6 +258,13 @@
                     selected(newMsg, oldMsg) {
                         console.log(newMsg+" -- "+oldMsg);
                     },
+                    msg(newMsg, oldMsg) {
+                        console.log(newMsg+" -- "+oldMsg);
+                    },
+                    age(newMsg, oldMsg) {
+                        console.log("typeof newMsg : "+typeof newMsg);
+                    },
+                    
                 },
             }
             const app = Vue.createApp(App);
