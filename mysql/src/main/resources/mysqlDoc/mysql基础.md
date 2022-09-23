@@ -34,6 +34,10 @@
 
 查看存储引擎命令
 ```sql 
+--连接MySQL数据库
+mysql -u root -p
+
+--查看所有存储引擎
 show engines\G
 ```
 ##### 1，InnoDB存储引擎
@@ -360,8 +364,730 @@ mysql> DROP TABLE IF EXISTS t_temporary_category;
 ```
 
 ### MySQL数据类型
+MySQL支持丰富的数据类型，总体上可以分为数值类型、日期和时间类型、字符串类型。数值类型包括整数类型、浮点数类型和定点数类型；字符串类型包括文本字符串类型和二进制字符串类型。
 
-##### 1，数值类型
+#### 1，数值类型
+MySQL中的数值类型包括整数类型、浮点数类型和定点数类型。
+
+##### 1.1，整数类型
+* MySQL中的整数类型包括TINYINT、SMALLINT、MEDIUMINT、INT(INTEGER)和BIGINT。不同的整数类型，其所需要的存储空间和数值范围不尽相同。
+
+| 整数类型      | 类型名称     | 存储空间   | 最大值                   |
+| :----------- | :----------- | :-------- | :------------------------ |
+| TINYINT      | 非常小的整数  | 1字节     | -128<->127               |
+| SMALLINT     | 小整数        | 2字节     | -32768<->32767           |
+| MEDIUMINT    | 中型大小整数  | 3字节     | -8300608<->8300607       |
+| INT(INTEGER) | 一般整数      | 4字节     | -2147483648<->2147483647 |
+| BIGINT       | 很大的整数    | 8字节     | -2^63 <-> 2^63-1 |
+
+```sql
+/**1，执行建表语句时，如果没有指定int类型的显示宽度，则默认的显示宽度是11，即 int(11) */
+mysql> CREATE TABLE t1(id INT); 
+mysql> SHOW CREATE TABLE t1 \G
+*************************** 1. row ***************************
+       Table: t1
+Create Table: CREATE TABLE `t1` (
+  `id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+1 row in set (0.09 sec)
+
+/**2，整数类型的显示宽度与数据类型的取值范围无关。显示宽度只是指定最大显示的数字个数，如果插入的数值大于显示宽度，但是没有超过整数类型的取值范围，则依然可以正确插入数据。
+整数类型的显示宽度能够配合ZEROFILL使用。ZEROFILL表示在数字的显示位数不够时，可以用字符0进行填充。 */
+mysql> CREATE TABLE t3(id1 INT ZEROFILL, id2 INT(6) ZEROFILL);
+mysql> INSERT INTO t3(id1, id2) VALUES(1, 1),(111111,111111);
+mysql> select * from t3;
++------------+--------+
+| id1        | id2    |
++------------+--------+
+| 00000000001 | 000001 |
+| 00000111111 | 111111 |
++------------+--------+
+
+/**3，所有的整数类型都有一个可选的属性 UNSIGNED（无符号属性），无符号整数类型的最小取值为0，所以，如果需要在MySQL数据库中保存非负整数值时，可以将整数类型设置为无符号类型。 
+特别地，如果在MySQL中创建数据表时，指定数据字段为ZEROFILL，则MySQL会自动为当前列添加UNSIGNED属性。*/
+mysql> show create table t3\G
+*************************** 1. row ***************************
+       Table: t3
+Create Table: CREATE TABLE `t3` (
+  `id1` int(10) unsigned zerofill DEFAULT NULL,
+  `id2` int(6) unsigned zerofill DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--建表语句指定整数的无符号属性
+mysql> create table t3_1(id int unsigned,countNum int(6) unsigned);
+
+/**4，整数类型还有一个属性是AUTO_INCREMENT。
+一个表中最多只能有一个列被设置为AUTO_INCREMENT。设置为AUTO_INCREMENT的列需要定义为NOT NULL，并且定义为PRIMARY KEY，或者定义为NOT NULL并且定义为UNIQUE。 */
+mysql> CREATE TABLE t4(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, age int);
+mysql> CREATE TABLE t5 (id INT NOT NULL AUTO_INCREMENT UNIQUE, age int);
+```
+
+##### 1.2，浮点数类型
+* 浮点数类型主要有两种：单精度浮点数FLOAT和双精度浮点数DOUBLE。
+
+| 浮点数类型 | 类型名称     | 存储空间 |
+| ---------- | ------------ | -------- |
+| FLOAT      | 单精度浮点数 | 4个字节  |
+| DOUBLE     | 双精度浮点数 | 8个字节  |
+
+```sql
+/**1，浮点数类型未指定数据精度 */
+mysql> CREATE TABLE t6 (f FLOAT, d DOUBLE);
+--查看数据表结构
+mysql> show create table t6\G
+*************************** 1. row ***************************
+       Table: t6
+Create Table: CREATE TABLE `t6` (
+  `f` float DEFAULT NULL,
+  `d` double DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据
+mysql> insert into t6(f,d) values (3.14,5.98),(3.0123456789,5.01234567890123456789);
+mysql> select * from t6;
++---------+-------------------+
+| f       | d                 |
++---------+-------------------+
+|    3.14 |              5.98 |
+| 3.01235 | 5.012345678901235 |
++---------+-------------------+
+/**浮点数类型中的FLOAT和DOUBLE类型在不指定数据精度时，默认会按照实际的计算机硬件和操作系统决定的数据精度进行显示。如果用户指定的精度超出了浮点数类型的数据精度，则MySQL会自动进行四舍五入操作。 */
+
+/**2，浮点数类型指定数据精度 */
+/**浮点数的数据精度可以使用(M,D)的方式进行表示。
+(M,D)表示当前数值包含整数位和小数位一共会显示M位数字，其中，小数点后会显示D位数字。
+M又被称为精度，D又被称为标度。
+当指定一个浮点数数的数据精度为(M,D)时，整数位最多有 M-D位数字，超过这个范围的数据在插入时，报错“Out of range value”。插入数据的小数位可以是任意的，只不过最终会被截取到 D位，小数点后面的位数不足 D位，会进行补零 */
+--建表语句，f字段整数部分最多 3位数，d字段整数部分最多 8位数。
+mysql> CREATE TABLE t7 (f FLOAT(5,2),d DOUBLE(10,2));
+--查看数据表结构
+mysql> show create table t7\G
+*************************** 1. row ***************************
+       Table: t7
+Create Table: CREATE TABLE `t7` (
+  `f` float(5,2) DEFAULT NULL,
+  `d` double(10,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据（整数位超出限制）
+mysql> insert into t7(f,d) values (1234,123456789);
+ERROR 1264 (22003): Out of range value for column 'f' at row 1
+mysql> insert into t7(f,d) values (123,123456789);
+ERROR 1264 (22003): Out of range value for column 'd' at row 1
+--正常插入数据
+mysql> insert into t7(f,d) values (123,12345678);
+mysql> select * from t7;
++--------+-------------+
+| f      | d           |
++--------+-------------+
+| 123.00 | 12345678.00 |
++--------+-------------+
+mysql> insert into t7(f,d) values (123.123456,12345678.123456);
+mysql> select * from t7;
++--------+-------------+
+| f      | d           |
++--------+-------------+
+| 123.00 | 12345678.00 |
+| 123.12 | 12345678.12 |
++--------+-------------+
+```
+
+##### 1.3，定点数类型
+
+* MySQL中的定点数类型只有DECIMAL一种类型。DECIMAL类型也可以使用(M,D)进行表示，其中，M被称为精度，是数据的总位数；D被称为标度，表示数据的小数部分所占的位数。整数位最多 M-D 位。
+* 定点数在MySQL内部是以字符串的形式进行存储的，它的精度比浮点数更加精确，适合存储表示金额等需要高精度的数据。
+* DECIMAL(M,D)类型的数据的最大取值范围与DOUBLE类型一样，但是有效的数据范围是由M和D决定的。
+* DECIMAL的存储空间并不是固定的，由精度值M决定，总共占用的存储空间为M+2个字节。
+* 当DECIMAL类型不指定精度和标度时，其默认为DECIMAL(10,0)。
+```sql
+--建表语句
+mysql> create table t8(d1 DECIMAL,d2 DECIMAL(5,2),d3 DECIMAL(12,2));
+Query OK, 0 rows affected (0.19 sec)
+--查看表结构
+mysql> show create table t8\G
+*************************** 1. row ***************************
+       Table: t8
+Create Table: CREATE TABLE `t8` (
+  `d1` decimal(10,0) DEFAULT NULL,
+  `d2` decimal(5,2) DEFAULT NULL,
+  `d3` decimal(12,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据
+mysql> insert into t8(d1,d2,d3) values (3.1415926,3.1415926,3.1415926), (1234567890.123,123.456,1234567890.123);
+mysql> select * from t8;
++------------+--------+---------------+
+| d1         | d2     | d3            |
++------------+--------+---------------+
+|          3 |   3.14 |          3.14 |
+| 1234567890 | 123.46 | 1234567890.12 |
++------------+--------+---------------+
+```
+
+##### 1.4，浮点数类型和定点数类型对比
+* 浮点数类型中的FLOAT类型和DOUBLE类型在不指定精度时，默认会按照计算机硬件和操作系统决定的精度进行表示；而定点数类型中的DECIMAL类型不指定精度时，默认为DECIMAL(10,0)。
+* 当数据类型的长度一定时，浮点数能够表示的数据范围更大，但是浮点数会引起精度问题，不适合存储高精度类型的数据。
+
+#### 2，日期和时间类型
+
+MySQL提供了表示日期和时间的数据类型，主要有YEAR类型、TIME类型、DATE类型、DATETIME类型和TIMESTAMP类型。
+* DATE类型通常用来表示年月日；
+* DATETIME类型通常用来表示年、月、日、时、分、秒；
+* TIME类型通常用来表示时、分、秒。
+
+| 日期/时间类型 | 类型名称 | 存储空间 | 日期格式            | 零值表示            | 最小值                  | 最大值                  |
+| ------------- | -------- | -------- | ------------------- | ------------------- | ----------------------- | ----------------------- |
+| YEAR          | 年       | 1个字节  | YYYY                | 0000                | 1901                    | 2155                    |
+| TIME          | 时间     | 3个字节  | HH:MM:SS            | 00:00:00            | -838:59:59              | 838:59:59               |
+| DATE          | 日期     | 3个字节  | YYYY-MM-DD          | 0000-00-00          | 1000-01-01              | 9999-12-03              |
+| DATETIME      | 日期时间 | 8个字节  | YYYY-MM-DD HH:MM:SS | 0000-00-00 00:00:00 | 1000-01-01 00:00:00     | 9999-12-31 23:59:59     |
+| TIMESTAMP     | 日期时间 | 4个字节  | YYYY-MM-DD HH:MM:SS | 0000-00-00 00:00:00 | 1970-01-01 00:00:01 UTC | 2038-01-19 03:14:07 UTC |
+
+##### 2.1，YEAR类型
+YEAR类型用来表示年份，在所有的日期时间类型中所占用的存储空间最小，只需要1个字节的存储空间。
+
+在MySQL中，YEAR有以下几种存储格式：
+* 以4位字符串或数字格式表示YEAR类型，其格式为YYYY，最小值为1901，最大值为2155。
+* 以2位字符串格式表示YEAR类型，最小值为00，最大值为99。其中，当取值为00到69时，表示2000到2069；当取值为70到99时，表示1970到1999。如果插入的数据超出了取值范围，则MySQL会将值自动转换为2000。
+* 以2位数字格式表示YEAR类型，最小值为1，最大值为99。其中，当取值为1到69时，表示2001到2069，当取值为70到99时，表示1970到1999。
+* 注意：当使用两位数字格式表示YEAR类型时，数值0将被转化为0000。
+```sql
+--建表语句
+mysql> create table t9(y YEAR);
+--查看表结构
+mysql> show create table t9\G
+*************************** 1. row ***************************
+       Table: t9
+Create Table: CREATE TABLE `t9` (
+  `y` year(4) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据【以4位字符串或数字格式表示YEAR类型，最小值为1901，最大值为2155】
+mysql> insert into t9(y) values (2018),('2018');
+mysql> select * from t9;
++------+
+| y    |
++------+
+| 2018 |
+| 2018 |
++------+
+mysql> insert into t9(y) values (2156),('2156');
+ERROR 1264 (22003): Out of range value for column 'y' at row 1
+--插入数据【以2位字符串格式表示YEAR类型，最小值为00，最大值为99】
+mysql> delete from t9;
+mysql> insert into t9(y) values ('0'),('00'),('59'),('70'),('99');
+mysql> select * from t9;
++------+
+| y    |
++------+
+| 2000 |
+| 2000 |
+| 2059 |
+| 1970 |
+| 1999 |
++------+
+--插入数据【以2位数字格式表示YEAR类型,最小值为1，最大值为99】
+mysql> delete from t9;
+mysql> insert into t9(y) values (0),(00),(59),(99),(70);
+mysql> select * from t9;
++------+
+| y    |
++------+
+| 0000 |
+| 0000 |
+| 2059 |
+| 1999 |
+| 1970 |
++------+
+mysql> insert into t9(y) values (100);
+ERROR 1264 (22003): Out of range value for column 'y' at row 1
+```
+
+##### 2.2，TIME类型
+TIME类型用来表示时间，不包含日期部分。在MySQL中，需要3个字节的存储空间来存储TIME类型的数据，可以使用“HH:MM:SS”格式来表示TIME类型，其中，HH表示小时，MM表示分钟，SS表示秒。
+
+在MySQL中，向TIME类型的字段插入数据时，也可以使用几种不同的格式：
+* 可以使用带有冒号的字符串，比如D HH:MM:SS、HH:MM:SS、HH:MM、D HH:MM、D HH或SS格式，都能被正确地插入TIME类型的字段中。其中D表示天，其最小值为0，最大值为34。如果使用带有D格式的字符串插入TIME类型的字段时，D会被转化为小时，计算格式为D*24+HH。
+* 可以使用不带有冒号的字符串或者数字，格式为"HHMMSS"或者HHMMSS。如果插入一个不合法的字符串或者数字，MySQL在存储数据时，会将其自动转化为00:00:00进行存储。
+* 使用CURRENT_TIME或者NOW()，会插入当前系统的时间。
+* 12:10表示12:10:00，而不是00:12:10；1210或者'1210'，表示00:12:10，而不是12:10:00。
+```sql
+--建表语句
+mysql> create table t10(t TIME);
+mysql> show create table t10\G
+*************************** 1. row ***************************
+       Table: t10
+Create Table: CREATE TABLE `t10` (
+  `t` time DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据【D HH:MM，D会被转化为小时，计算格式为D*24+HH】
+mysql> INSERT INTO t10 (t) VALUES ('2 12:30:29'), ('12:35:29'), ('12:40'), ('2 12:40'), ('45');
+mysql> select * FROM t10;
++----------+
+| t        |
++----------+
+| 60:30:29 |
+| 12:35:29 |
+| 12:40:00 |
+| 60:40:00 |
+| 00:00:45 |
++----------+
+--插入数据【HHMMSS格式数据】
+mysql> DELETE FROM t10;
+mysql> INSERT INTO t10 (t) VALUES ('123520'), (124011), ('0'),('1236'), (1248);;
+mysql> select * from t10;
++----------+
+| t        |
++----------+
+| 12:35:20 |
+| 12:40:11 |
+| 00:00:00 |
+| 00:12:36 |
+| 00:12:48 |
++----------+
+--插入当前时间
+mysql> DELETE FROM t10;
+mysql> INSERT INTO t10 (t) VALUES (NOW()), (CURRENT_TIME);
+mysql> select * from t10;
++----------+
+| t        |
++----------+
+| 17:23:14 |
+| 17:23:14 |
++----------+
+```
+
+##### 2.3，DATE类型
+DATE类型表示日期，没有时间部分，格式为YYYY-MM-DD，其中，YYYY表示年份，MM表示月份，DD表示日期。需要3个字节的存储空间。
+
+* 以YYYY-MM-DD格式或者YYYYMMDD格式表示的字符串日期，其最小取值为1000-01-01，最大取值为9999-12-03。
+* 以YY-MM-DD格式或者YYMMDD格式表示的字符串日期，此格式中，年份为两位数值或字符串满足YEAR类型的格式条件为：当年份取值为00到69时，会被转化为2000到2069；当年份取值为70到99时，会被转化为1970到1999。
+* 以YYYYMMDD格式表示的数字日期，能够被转化为YYYY-MM-DD格式。
+* 以YYMMDD格式表示的数字日期，同样满足年份为两位数值或字符串YEAR类型的格式条件为：当年份取值为00到69时，会被转化为2000到2069；当年份取值为70到99时，会被转化为1970到1999。
+* 使用CURRENT_DATE或者NOW()函数，会插入当前系统的日期。
+```sql
+--建表语句
+mysql> create table t11(d DATE);
+mysql> show create table t11\G
+*************************** 1. row ***************************
+       Table: t11
+Create Table: CREATE TABLE `t11` (
+  `d` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据【YYYY-MM-DD，YYYYMMDD】
+mysql> INSERT INTO t11 (d) VALUES ('2020-10-01'), ('20201001');
+--插入数据【YYMMDD，YY-MM-DD】
+mysql> DELETE FROM t11;
+mysql> INSERT INTO t11 (d) VALUES ('00-01-01'), ('000101'), ('69-10-01'), ('691001'), ('70-01-01'), ('700101'), ('99-01-01'), ('990101');
+mysql> select * from t11;
++------------+
+| d          |
++------------+
+| 2000-01-01 |
+| 2000-01-01 |
+| 2069-10-01 |
+| 2069-10-01 |
+| 1970-01-01 |
+| 1970-01-01 |
+| 1999-01-01 |
+| 1999-01-01 |
++------------+
+mysql> DELETE FROM t11;
+mysql> INSERT INTO t11 (d) VALUES (000101), (691001), (700101), (990101);         
+--插入当前日期【CURRENT_DATE()), (NOW()】
+mysql> DELETE FROM t11;
+mysql> INSERT INTO t11 (d) VALUES (CURRENT_DATE()), (NOW());
+```
+
+##### 2.4，DATETIME类型
+DATETIME类型在所有的日期时间类型中占用的存储空间最大，总共需要8个字节的存储空间。在格式上为DATE类型和TIME类型的组合，可以表示为YYYY-MM-DD HH:MM:SS，其中YYYY表示年份，MM表示月份，DD表示日期，HH表示小时，MM表示分钟，SS表示秒。
+
+在向DATETIME类型的字段插入数据时，同样需要满足一定的格式条件。
+* 以YYYY-MM-DD HH:MM:SS格式或者YYYYMMDDHHMMSS格式的字符串插入DATETIME类型的字段时，最小值为10000-01-01 00:00:00，最大值为9999-12-03 23:59:59。
+* 以YY-MM-DD HH:MM:SS格式或者YYMMDDHHMMSS格式的字符串插入DATETIME类型的字段时，两位数的年份规则符合YEAR类型的规则，00到69表示2000到2069；70到99表示1970到1999。
+* 以YYYYMMDDHHMMSS格式的数字插入DATETIME类型的字段时，会被转化为YYYY-MM-DD HH:MM:SS格式。
+* 以YYMMDDHHMMSS格式的数字插入DATETIME类型的字段时，两位数的年份规则符合YEAR类型的规则，00到69表示2000到2069；70到99表示1970到1999。
+* 使用函数CURRENT_TIMESTAMP()和NOW()，可以向DATETIME类型的字段插入系统的当前日期和时间。
+```sql
+--建表语句
+mysql> create table t12(dt DATETIME);
+mysql> show create table t12\G
+*************************** 1. row ***************************
+       Table: t12
+Create Table: CREATE TABLE `t12` (
+  `dt` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据
+mysql> INSERT INTO t12 (dt) VALUES ('2020-01-01 00:00:00'), ('20200101000000');
+mysql> INSERT INTO t12 (dt) VALUES ('99-01-01 00:00:00'), ('990101000000'), ('20-01-01 00:00:00'), ('200101000000');
+mysql> SELECT * FROM t12;
++---------------------+
+| dt                  |
++---------------------+
+| 2020-01-01 00:00:00 |
+| 2020-01-01 00:00:00 |
+| 1999-01-01 00:00:00 |
+| 1999-01-01 00:00:00 |
+| 2020-01-01 00:00:00 |
+| 2020-01-01 00:00:00 |
++---------------------+
+--插入当前日期时间【CURRENT_TIMESTAMP()), (NOW()】
+mysql> DELETE FROM t12;
+mysql> INSERT INTO t12 (dt) VALUES (CURRENT_TIMESTAMP()), (NOW());
+mysql> select * from t12;
++---------------------+
+| dt                  |
++---------------------+
+| 2022-09-22 14:22:05 |
+| 2022-09-22 14:22:05 |
++---------------------+
+```
+
+##### 2.5，TIMESTAMP类型
+TIMESTAMP类型也可以表示日期时间，其显示格式与DATETIME类型相同，都是YYYY-MM-DD HH:MM:SS，需要4个字节的存储空间。
+
+但是TIMESTAMP存储的时间范围比DATETIME要小很多，只能存储“1970-01-01 00:00:01 UTC”到“2038-01-19 03:14:07 UTC”之间的时间。其中，UTC表示世界统一时间，也叫作世界标准时间。
+
+如果向TIMESTAMP类型的字段插入的时间超出了TIMESTAMP类型的范围，则MySQL会抛出错误信息。
+```sql
+--建表语句
+mysql> create table t13(ts TIMESTAMP);
+mysql> show create table t13\G
+*************************** 1. row ***************************
+       Table: t13
+Create Table: CREATE TABLE `t13` (
+  `ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据
+mysql> INSERT INTO t13 (ts) VALUES ('1999-01-01 00:00:00'), ('19990101000000'), ('99-01-01 00:00:00'), ('990101000000'), ('20-01-01 00:00:00'), ('200101000000');
+--插入数据【超出时间范围】
+mysql> INSERT INTO t13 (ts) VALUES ('1945-01-01 00:00:00');
+ERROR 1292 (22007): Incorrect datetime value: '1945-01-01 00:00:00' for column 'ts' at row 1
+--插入当前日期时间
+mysql> INSERT INTO t13 (ts) VALUES (CURRENT_TIMESTAMP()),(NOW());
+mysql> select * from t13;
++---------------------+
+| ts                  |
++---------------------+
+| 2022-09-22 14:28:22 |
+| 2022-09-22 14:28:22 |
++---------------------+
+
+/**TIMESTAMP在存储数据的时候是以UTC（世界统一时间，也叫作世界标准时间）格式进行存储的，
+存储数据的时候需要对当前时间所在的时区进行转换，查询数据的时候再将时间转换回当前的时区。
+因此，使用TIMESTAMP存储的同一个时间值，在不同的时区查询时会显示不同的时间。 */
+mysql> create table t14(ts1 TIMESTAMP,ts2 TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP);
+--查看当前所处的时区
+mysql> SHOW VARIABLES LIKE 'time_zone'; 
++---------------+--------+
+| Variable_name | Value  |
++---------------+--------+
+| time_zone     | SYSTEM |
++---------------+--------+
+/**time_zone时区的值为SYSTEM，也就是服务器所在的东八区。 */
+--插入时间
+mysql> insert into t14(ts1) values (NOW());
+mysql> select * from t14;
++---------------------+---------------------+
+| ts1                 | ts2                 |
++---------------------+---------------------+
+| 2022-09-22 14:35:49 | 2022-09-22 14:35:49 |
++---------------------+---------------------+
+
+--修改时区为零时区
+mysql> SET time_zone = '+0:00';
+mysql> SHOW VARIABLES LIKE 'time_zone';
++---------------+--------+
+| Variable_name | Value  |
++---------------+--------+
+| time_zone     | +00:00 |
++---------------+--------+
+--查看当前表内存储的 TIMESTAMP 字段值
+mysql> select * from t14;
++---------------------+---------------------+
+| ts1                 | ts2                 |
++---------------------+---------------------+
+| 2022-09-22 06:35:49 | 2022-09-22 06:35:49 |
++---------------------+---------------------+
+
+--重置时区为 东八区【东部区时为+，西部区时为-】
+mysql> SET time_zone = '+8:00';
+```
+
+#### 3，文本字符串类型
+MySQL中，文本字符串总体上分为CHAR、VARCHAR、TINYTEXT、TEXT、MEDIUMTEXT、LONGTEXT、ENUM、SET和JSON等类型。
+
+| 文本字符串类型 | 值的长度 | 长度范围                | 存储空间         |
+| -------------- | -------- | ----------------------- | ---------------- |
+| CHAR(M)        | M        | 0<=M<=255 (2^8)         | M个字节          |
+| VARCHAR(M)     | M        | 0<=M<=65535 (2^16)      | M+1个字节        |
+| TINYTEXT       | L        | 0<=L<=255 (2^8)         | L+1个字节        |
+| TEXT           | L        | 0<=L<=65535 (2^16)      | L+2个字节        |
+| MEDIUMTEXT     | L        | 0<=L<=16777215 (2^24)   | L+3个字节        |
+| LONGTEXT       | L        | 0<=L<=4294967295 (2^32) | L+4个字节        |
+| ENUM           | L        | 1<=L<=65535             | 1或2个字节       |
+| SET            | L        | 0<=L<=64                | 1,2,3,4或8个字节 |
+
+##### 3.1，CHAR与VARCHAR类型
+CHAR字段特性：
+* CHAR和VARCHAR类型都可以存储比较短的字符串。
+* CHAR类型的字段长度是固定的，为创建表时声明的字段长度，最小取值为0，最大取值为255。
+* 如果保存时，数据的实际长度比CHAR类型声明的长度小，则会在右侧填充空格以达到指定的长度。当MySQL检索CHAR类型的数据时，CHAR类型的字段会去除尾部的空格。
+* 对于CHAR类型的数据来说，定义CHAR类型字段时，声明的字段长度即为CHAR类型字段所占的存储空间的字节数。
+
+VARCHAR字段特性：
+* VARCHAR类型修饰的字符串是一个可变长的字符串，长度的最小值为0，最大值为65535。
+* 检索VARCHAR类型的字段数据时，会保留数据尾部的空格。VARCHAR类型的字段所占用的存储空间为字符串实际长度加1个字节。
+
+```sql
+--建表语句
+mysql> create table t15(c CHAR(4),vc VARCHAR(4));
+mysql> show create table t15\G
+*************************** 1. row ***************************
+       Table: t15
+Create Table: CREATE TABLE `t15` (
+  `c` char(4) DEFAULT NULL,
+  `vc` varchar(4) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据
+/**MySQL在检索CHAR类型的字段时，会去除尾部的空格；而在检索VARCHAR类型的字段时，则不会去除尾部的空格。 */
+mysql> insert into t15(c,vc) values ('abc','abc'),('a  ','a  ');
+mysql> select c,length(c),vc,length(vc) from t15;
++------+-----------+------+------------+
+| c    | length(c) | vc   | length(vc) |
++------+-----------+------+------------+
+| abc  |         3 | abc  |          3 |
+| a    |         1 | a    |          3 |
++------+-----------+------+------------+
+mysql> SELECT CONCAT(c, 'b'),CONCAT(vc, 'b')  FROM t15;
++----------------+-----------------+
+| CONCAT(c, 'b') | CONCAT(vc, 'b') |
++----------------+-----------------+
+| abcb           | abcb            |
+| ab             | a  b            |
++----------------+-----------------+
+```
+
+##### 3.2，TEXT类型
+在MySQL中，Text用来保存文本类型的字符串，总共包含4种类型，分别为TINYTEXT、TEXT、MEDIUMTEXT和LONGTEXT类型。
+
+在向TEXT类型的字段保存和查询数据时，不会删除数据尾部的空格，这一点和VARCHAR类型相同。其中，每种TEXT类型保存的数据长度和所占用的存储空间不同
+
+```sql
+--建表语句
+mysql> create table t16(tt TINYTEXT,t TEXT,mt MEDIUMTEXT,lt LONGTEXT);
+mysql> show create table t16\G
+*************************** 1. row ***************************
+       Table: t16
+Create Table: CREATE TABLE `t16` (
+  `tt` tinytext,
+  `t` text,
+  `mt` mediumtext,
+  `lt` longtext
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据
+mysql> insert into t16(tt,t,mt,lt) values ("A  ","A  ","A  ","A  ");
+mysql> select tt,length(tt),t,length(t),mt,length(mt),lt,length(lt) from t16;
++------+------------+------+-----------+------+------------+------+------------+
+| tt   | length(tt) | t    | length(t) | mt   | length(mt) | lt   | length(lt) |
++------+------------+------+-----------+------+------------+------+------------+
+| A    |          3 | A    |         3 | A    |          3 | A    |          3 |
++------+------------+------+-----------+------+------------+------+------------+
+```
+
+##### 3.3，ENUM类型
+* ENUM类型也叫作枚举类型，ENUM类型的取值范围需要在定义字段时进行指定，其所需要的存储空间由定义ENUM类型时指定的成员个数决定。
+* 当ENUM类型包含1～255个成员时，需要1个字节的存储空间；当ENUM类型包含256～65535个成员时，需要2个字节的存储空间。
+* ENUM类型的成员个数的上限为65535个。
+```sql
+--建表语句
+mysql> CREATE TABLE t17 (e ENUM ('A', 'B', 'C'));
+mysql> show create table t17\G
+*************************** 1. row ***************************
+       Table: t17
+Create Table: CREATE TABLE `t17` (
+  `e` enum('A','B','C') DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据
+mysql> INSERT INTO t17 (e) VALUES ('A'), ('B');
+/**定义e字段时，ENUM类型的成员被定义为大写的A、B、C当插入小写的a和b时，MySQL会将其自动转化为大写的A和B进行存储。 */
+mysql> INSERT INTO t17 (e) VALUES ('b'), ('c');
+/**在ENUM类型中，第一个成员的下标为1，第二个成员的下标为2，以此类推。 */
+mysql> INSERT INTO t17 (e) VALUES ('1'), ('3');
+mysql> INSERT INTO t17 (e) VALUES (1), (2);
+/**当ENUM类型的字段没有声明为NOT NULL时，插入NULL也是有效的。 */
+mysql> INSERT INTO t17 (e) VALUES (NULL);
+mysql> select * FROM t17;
++------+
+| e    |
++------+
+| A    |
+| B    |
+| B    |
+| C    |
+| A    |
+| C    |
+| A    |
+| B    |
+| NULL |
++------+
+/**在定义字段时，如果将ENUM类型的字段声明为NULL时，NULL为有效值，默认值为NULL；
+如果将ENUM类型的字段声明为NOT NULL时，NULL为无效的值，默认值为ENUM类型成员的第一个成员。
+另外，ENUM类型只允许从成员中选取单个值，不能一次选取多个值。 */
+```
+
+##### 3.4，SET类型c
+* SET表示一个字符串对象，可以包含0个或多个成员，但成员个数的上限为64。
+* SET类型在存储数据时一定程度上，成员个数越多，其占用的存储空间越大。
+* 注意：SET类型在选取成员时，可以一次选择多个成员，这一点与ENUM类型不同。
+
+| SET成员个数范围（L表示实际成员个数） | 存储空间 |
+| ------------------------------------ | -------- |
+| 1<=L<=8                              | 1个字节  |
+| 9<=L<=16                             | 2个字节  |
+| 17<=L<=24                            | 3个字节  |
+| 25<=L<=32                            | 4个字节  |
+| 33<=L<=64                            | 8个字节  |
+
+```sql
+--建表语句
+mysql> CREATE TABLE t18 (s SET ('A', 'B', 'C'));
+mysql> show create table t18\G
+*************************** 1. row ***************************
+       Table: t18
+Create Table: CREATE TABLE `t18` (
+  `s` set('A','B','C') DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据
+/**SET类型在选取成员时，可以一次选择多个成员，这一点与ENUM类型不同。 */
+mysql> INSERT INTO t18 (s) VALUES ('A'), ('A,B');
+/**当向表中的SET类型的字段插入重复的SET类型成员时，MySQL会自动删除重复的成员。 */
+mysql> INSERT INTO t18 (s) VALUES ('A,B,C,A');
+/**当向SET类型的字段插入SET成员中不存在的值时，MySQL会抛出错误 */
+mysql> INSERT INTO t18 (s) VALUES ('A,B,C,D');
+ERROR 1265 (01000): Data truncated for column 's' at row 1
+mysql> SELECT * FROM t18;
++-------+
+| s     |
++-------+
+| A     |
+| A,B   |
+| A,B,C |
++-------+
+```
+
+##### 3.4，JSON类型
+在MySQL 5.7中，就已经支持JSON数据类型。在MySQL 8.x版本中，JSON类型提供了可以进行自动验证的JSON文档和优化的存储结构，使得在MySQL中存储和读取JSON类型的数据更加方便和高效。
+
+```sql
+--建表语句
+mysql> show create table t19;
+mysql> show create table t19\G
+*************************** 1. row ***************************
+       Table: t19
+Create Table: CREATE TABLE `t19` (
+  `j` json DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据
+mysql> INSERT INTO t19 (j) VALUES ('{"name":"johann", "age":1, "address":{"province":"hebei", "city":"handan"}}');
+mysql> INSERT INTO t19 (j) VALUES ('{"name":"jessie", "age":1, "address":{"province":"hebei", "city":"cangzhou"}}');
+mysql> select * from t19;
++------------------------------------------------------------------------------------+
+| j                                                                                  |
++------------------------------------------------------------------------------------+
+| {"age": 1, "name": "johann", "address": {"city": "handan", "province": "hebei"}}   |
+| {"age": 1, "name": "jessie", "address": {"city": "cangzhou", "province": "hebei"}} |
++------------------------------------------------------------------------------------+
+/**可以使用“->”和“->>”符号，检索JSON类型的字段中数据的某个具体值 */
+mysql> SELECT j->'$.name' AS name, j->'$.address.province' AS province, j->'$.address.city' AS city FROM t19;
++----------+----------+------------+
+| name     | province | city       |
++----------+----------+------------+
+| "johann" | "hebei"  | "handan"   |
+| "jessie" | "hebei"  | "cangzhou" |
++----------+----------+------------+
+```
+
+#### 4，二进制字符串类型
+MySQL中的二进制字符串类型主要存储一些二进制数据，比如可以存储图片、音频和视频等二进制数据。
+
+MySQL中支持的二进制字符串类型主要包括BIT、BINARY、VARBINARY、TINYBLOB、BLOB、MEDIUMBLOB和LONGBLOB类型。
+
+| 二进制字符串类型 | 值的长度 | 长度范围                | 存储空间         |
+| ---------------- | -------- | ----------------------- | ---------------- |
+| BIT              | M        | 1<=M<=64                | 约为(M+7)8个字节 |
+| BINARY           | M        |                         | M个字节          |
+| VARBINARY        | M        |                         | M+1个字节        |
+| TINYBLOB         | L        | 0<=L<=255 (2^8)         | L+1个字节        |
+| BLOB             | L        | 0<=L<=65535 (2^16)      | L+2个字节        |
+| MEDIUMBLOB       | L        | 0<=L<=16777215 (2^24)   | L+3个字节        |
+| LONGBLOB         | L        | 0<=L<=4294967295 (2^32) | L+4个字节        |
+
+##### 4.1，BIT类型
+BIT类型中，每个值的位数最小值为1，最大值为64，默认的位数为1。BIT类型中存储的是二进制值。
+```sql
+--建表语句
+mysql> CREATE TABLE t20 (b BIT);
+/**若不设置BIT长度，默认为1 */
+mysql> show create table t20\G
+*************************** 1. row ***************************
+       Table: t20
+Create Table: CREATE TABLE `t20` (
+  `b` bit(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+--插入数据
+mysql> INSERT INTO t20 (b) VALUES (2), (8), (16);
+ERROR 1406 (22001): Data too long for column 'b' at row 1
+/**在向BIT类型的字段中插入数据时，一定要确保插入的数据在BIT类型支持的范围内。 */
+/**此时需要更改BIG类型的长度 */
+mysql> ALTER TABLE t20 MODIFY b BIT(10) DEFAULT NULL;
+mysql> show create table t20\G
+*************************** 1. row ***************************
+       Table: t20
+Create Table: CREATE TABLE `t20` (
+  `b` bit(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
+/**重新插入数据，并查看数据 */
+mysql> INSERT INTO t20 (b) VALUES (2), (8), (16);
+mysql> select * from t20;
++------+
+| b    |
++------+
+|     |
+|    |
+|     |
++------+
+/**BIT类型存储的是二进制数据。无法直接查看，可以通过 BIN()函数将数字转化为了二进制。
+将存储的二进制值的结果转化为对应的二进制数字的值。 */
+mysql> SELECT BIN(b+0) FROM t20;
++----------+
+| BIN(b+0) |
++----------+
+| 10       |
+| 1000     |
+| 10000    |
++----------+
+/**也可以通过以下方式查询，直接显示十进制数据 */
+mysql> SELECT b+0 FROM t20;
++------+
+| b+0  |
++------+
+|    2 |
+|    8 |
+|   16 |
++------+
+```
+
+##### 4.2，BINARY与VARBINARY类型
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
