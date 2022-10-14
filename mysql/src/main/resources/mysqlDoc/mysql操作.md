@@ -1416,7 +1416,165 @@ where match(note_text) against('+mysql +(>good <like)' in boolean mode);
 ```
 
 ### MySQL视图
-TODO
+视图本质上是一个虚拟表，它可以由数据库中的一张表或者多张表组合而成，视图从结构上也包含行和列。
+
+#### 1，视图概述
+
+##### 1.1，视图概念
+视图可以由数据库中的一张表或者多张表生成，在结构上与数据表类似，但是视图本质上是一张虚拟表，视图中的数据也是由一张表或多张表中的数据组合而成。可以对视图中的数据进行增加、删除、修改、查看等操作，也可以对视图的结构进行修改。
+
+在数据库中，视图不会保存数据，数据真正保存在数据表中。当对视图中的数据进行增加、删除和修改操作时，数据表中的数据会相应地发生变化；反之亦然。也就是说，不管是视图中的数据发生变化，还是数据表中的数据发生变化，另一方的数据也会相应地变化。
+
+##### 1.2，视图的优点
+1. 操作简单
+将经常使用的查询操作定义为视图，可以使开发人员不需要关心视图对应的数据表的结构、表与表之间的关联关系，也不需要关心数据表之间的业务逻辑和查询条件，而只需要简单地操作视图即可，极大简化了开发人员对数据库的操作。
+
+2. 数据安全
+MySQL根据权限将用户对数据的访问限制在某些数据的结果集上，而这些数据的结果集可以使用视图来实现。因此，可以根据权限将用户对数据的访问限制在某些视图上，而不必直接查询或操作数据表，这在一定程度上保障了数据表中数据的安全性。
+
+3. 数据独立
+视图创建完成后，视图的结构就被确定了，当数据表的结构发生变化时不会影响视图的结构。当数据表的字段名称发生变化时，只需要简单地修改视图的查询语句即可，而不会影响用户对数据的查询操作。
+
+4. 适应灵活多变的需求
+当业务系统的需求发生变化后，如果需要改动数据表的结构，则工作量相对较大，可以使用视图来减少改动的工作量。这种方式在实际工作中使用得比较多。
+
+5. 能够分解复杂的查询逻辑
+数据库中如果存在复杂的查询逻辑，则可以将问题进行分解，创建多个视图获取数据，再将创建的多个视图结合起来，完成复杂的查询逻辑。
+
+#### 2，创建视图
+```sql
+/**创建视图的语法 */
+CREATE [OR REPLACE]
+[ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}]
+[DEFINER = user]
+[SQL SECURITY { DEFINER | INVOKER }]
+VIEW view_name [(column_list)]
+AS select_statement
+[WITH [CASCADED | LOCAL] CHECK OPTION]
+
+语法格式说明如下：
+·CREATE：新建视图。
+·REPLACE：替换已经存在的视图。
+·ALGORITHM：标识视图使用的算法。
+·{UNDEFINED | MERGE | TEMPTABLE}：视图使用的算法。其中，UNDEFINED表示MySQL会自动选择算法；MERGE表示将引用视图的语句与视图定义进行合并；TEMPTABLE表示将视图的结果放置到临时表中，接下来使用临时表执行相应的SQL语句。
+·DEFINER：定义视图的用户。
+·SQL SECURITY：安全级别。DEFINER表示只有创建视图的用户才能访问视图；INVOKER表示具有相应权限的用户能够访问视图。
+·view_name：创建的视图名称。
+·column_list：视图中包含的字段名称列表。
+·select_statement：SELECT语句。
+·[WITH [CASCADED | LOCAL] CHECK OPTION]：保证在视图的权限范围内更新视图。
+
+/**创建视图示例 */
+mysql> CREATE VIEW view_name_price 
+  AS 
+  SELECT t_name, t_price FROM t_goods;
+
+mysql> CREATE VIEW view_category_goods(category, name, price)
+  AS
+  SELECT category.t_category, goods.t_name, goods.t_price
+  FROM t_goods_category category, t_goods goods
+  WHERE category.id = goods.t_category_id;
+```
+
+#### 3，查看视图
+```sql
+/**1，SHOW TABLES语句查看视图 */
+mysql> show tables;
++-------------------------+
+| Tables_in_test_new      |
++-------------------------+
+| full_text_search_test   |
+| table_test              |
+| tbl_partition_innodb    |
+| view_category_goods     |
+| view_name_price         |
++-------------------------+
+
+/**2，DESCRIBE/DESC语句查看视图 */
+mysql> DESC view_category_goods;
++----------+---------------+------+-----+---------+-------+
+| Field    | Type          | Null | Key | Default | Extra |
++----------+---------------+------+-----+---------+-------+
+| category | varchar(30)   | YES  |     | NULL    |       |
+| name     | varchar(50)   | YES  |     | NULL    |       |
+| price    | decimal(10,2) | YES  |     | NULL    |       |
++----------+---------------+------+-----+---------+-------+
+
+/**3，SHOW TABLE STATUS语句查看视图 */
+mysql> SHOW TABLE STATUS like 'view_category_goods' \G
+*************************** 1. row ***************************
+           Name: view_category_goods
+         Engine: NULL
+        Version: NULL
+     Row_format: NULL
+           Rows: NULL
+ Avg_row_length: NULL
+    Data_length: NULL
+Max_data_length: NULL
+   Index_length: NULL
+      Data_free: NULL
+ Auto_increment: NULL
+    Create_time: NULL
+    Update_time: NULL
+     Check_time: NULL
+      Collation: NULL
+       Checksum: NULL
+ Create_options: NULL
+        Comment: VIEW
+
+/**4，SHOW CREATE VIEW语句查看视图 */
+mysql> show create view view_name_price \G
+*************************** 1. row ***************************
+        View: view_name_price
+  Create View: CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER 
+  VIEW `view_name_price` AS select `t_goods`.`t_name` AS `t_name`,`t_goods`.`t_price` AS `t_price` from `t_goods`
+character_set_client: utf8
+collation_connection: utf8_general_ci
+
+/**5，查看views数据表中的视图信息 
+MySQL中会将视图的信息存储到 information_schema 数据库下的 views 数据表中，可以查看 views 数据表来查看视图的信息。
+*/
+mysql> SELECT * FROM information_schema.views where table_name like 'view%' \G
+*************************** 1. row ***************************
+       TABLE_CATALOG: def
+        TABLE_SCHEMA: test_new
+          TABLE_NAME: view_category_goods
+     VIEW_DEFINITION: select `category`.`t_category` AS `category`,`goods`.`t_name` AS `name`,`goods`.`t_price` AS `price` from `test_new`.`t_goods_category` `category` join `test_new`.`t_goods` `goods` where (`category`.`id` = `goods`.`t_category_id`)
+        CHECK_OPTION: NONE
+        IS_UPDATABLE: YES
+             DEFINER: root@localhost
+       SECURITY_TYPE: DEFINER
+CHARACTER_SET_CLIENT: utf8
+COLLATION_CONNECTION: utf8_general_ci
+*************************** 2. row ***************************
+       TABLE_CATALOG: def
+        TABLE_SCHEMA: test_new
+          TABLE_NAME: view_name_price
+     VIEW_DEFINITION: select `test_new`.`t_goods`.`t_name` AS `t_name`,`test_new`.`t_goods`.`t_price` AS `t_price` from `test_new`.`t_goods`
+        CHECK_OPTION: NONE
+        IS_UPDATABLE: YES
+             DEFINER: root@localhost
+       SECURITY_TYPE: DEFINER
+CHARACTER_SET_CLIENT: utf8
+COLLATION_CONNECTION: utf8_general_ci
+```
+
+#### 4，修改视图
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### MySQL存储过程和函数
 TODO
@@ -2225,3 +2383,174 @@ mysql> CREATE TABLE t_member_partitions (
 1. 在RANGE分区中，NULL值会被当作最小值进行处理。
 2. 向LIST分区中写入NULL值时，LIST分区的值列表中必须包含NULL值才能被成功写入，否则MySQL会报错。
 3. HASH分区与KEY分区中处理NULL值的方式相同，就是将NULL值当作0进行处理。
+
+### MySQL公用表表达式和生成列
+
+#### 1，公用表表达式
+从MySQL 8.x版本开始支持公用表表达式（Common table expression，简称为CTE）。公用表表达式通过WITH语句实现，可以分为非递归公用表表达式和递归公用表表达式。
+
+在常规的子查询中，派生表无法被引用两次，否则会引起MySQL的性能问题。如果使用CTE查询的话，子查询只会被引用一次，这也是使用CTE的一个重要原因。
+
+##### 1.1，非递归CTE
+```sql
+/**cte语句，单字段*/
+with cte_year as 
+(select year(now()) as years)
+select * from cte_year;
+---
+| years |
+| ----- |
+| 2022  |
+---
+
+/**cte语句，多个字段 */
+with cte_year_month(years,months) as 
+(select year(now()) as years,month(now()) as months)
+select * from cte_year_month;
+---
+| years | months |
+| ----- | ------ |
+| 2022  | 10     |
+---
+
+/**cte语句，多个CTE之间相互引用 */
+with cte_year_month(years,months) as 
+(select year(now()) as years,month(now()) as months),
+cte2(next_year,next_month) as 
+(select years+1 as next_year,months+1 as next_month from cte_year_month)
+select * from cte_year_month,cte2;
+---
+| years | months | next_year | next_month |
+| ----- | ------ | --------- | ---------- |
+| 2022  | 10     | 2023      | 11         |
+---
+```
+
+##### 1.2，递归CTE
+递归CTE的子查询可以引用自身，递归CTE的语法格式比非递归CTE的语法格式多一个关键字RECURSIVE。
+
+在递归CTE中，子查询包含两种：一种是种子查询（种子查询会初始化查询数据，并在查询中不会引用自身），一种是递归查询（递归查询是在种子查询的基础上，根据一定的规则引用自身的查询）。这两个查询之间会通过UNION、UNION ALL或者UNION DISTINCT语句连接起来。
+
+```sql
+/**使用递归CTE在MySQL命令行中输出1～10的序列。 */
+mysql> WITH RECURSIVE cte_num(num) AS
+  (
+  SELECT 1
+  UNION ALL
+  SELECT num + 1 FROM cte_num WHERE num < 10 
+  )
+  SELECT * FROM cte_num;
++------+
+| num  |
++------+
+|    1 |
+|    2 |
+|    3 |
+|    4 |
+|    5 |
+|    6 |
+|    7 |
+|    8 |
+|    9 |
+|   10 |
++------+
+
+/**CTE 进行树形查询 */
+create table t1(id int, value char(10), parent_id int);
+insert into t1 values(1, 'A', NULL);
+insert into t1 values(2, 'B', 1);
+insert into t1 values(3, 'C', 1);
+insert into t1 values(4, 'D', 1);
+insert into t1 values(5, 'E', 2);
+insert into t1 values(6, 'F', 2);
+insert into t1 values(7, 'G', 4);
+insert into t1 values(8, 'H', 6);
+
+--层序遍历
+with recursive cte as (
+  select id, value, 0 as level from t1 where parent_id is null
+  union all
+  select t1.id, t1.value, cte.level+1 from cte join t1 on t1.parent_id=cte.id
+)
+select * from cte;
++------+-------+-------+
+| id   | value | level |
++------+-------+-------+
+|    1 | A     |     0 |
+|    2 | B     |     1 |
+|    3 | C     |     1 |
+|    4 | D     |     1 |
+|    5 | E     |     2 |
+|    6 | F     |     2 |
+|    7 | G     |     2 |
+|    8 | H     |     3 |
++------+-------+-------+
+
+--深度优先遍历
+with recursive cte as (
+  select id, value, 0 as level, CAST(id AS CHAR(200)) AS path  from t1 where parent_id is null
+  union all
+  select t1.id, t1.value, cte.level+1, CONCAT(cte.path, ",", t1.id)  from cte join t1 on t1.parent_id=cte.id
+)
+select * from cte order by path;
++------+-------+-------+---------+
+| id   | value | level | path    |
++------+-------+-------+---------+
+|    1 | A     |     0 | 1       |
+|    2 | B     |     1 | 1,2     |
+|    5 | E     |     2 | 1,2,5   |
+|    6 | F     |     2 | 1,2,6   |
+|    8 | H     |     3 | 1,2,6,8 |
+|    3 | C     |     1 | 1,3     |
+|    4 | D     |     1 | 1,4     |
+|    7 | G     |     2 | 1,4,7   |
++------+-------+-------+---------+
+```
+
+##### 1.3，递归CTE的限制
+递归CTE的查询语句中需要包含一个终止递归查询的条件。当由于某种原因在递归CTE的查询语句中未设置终止条件时，MySQL会根据相应的配置信息，自动终止查询并抛出相应的错误信息。在MySQL中默认提供了如下两个配置项来终止递归CTE。
+
+* cte_max_recursion_depth：如果在定义递归CTE时没有设置递归终止条件，当达到cte_max_recursion_depth参数设置的执行次数后【默认值为1000】，MySQL会报错。
+* max_execution_time：表示SQL语句执行的最长毫秒时间，当SQL语句的执行时间超过此参数设置的值时，MySQL报错。
+
+#### 2，生成列
+MySQL中生成列的值是根据数据表中定义列时指定的表达式计算得出的，主要包含两种类型：Virtual生成列和Stored生成列，其中Virtual生成列是从数据表中查询记录时，计算该列的值；Stored生成列是向数据表中写入记录时，计算该列的值并将计算的结果数据作为常规列存储在数据表中。
+
+通常，使用的比较多的是Virtual生成列，原因是Virtual生成列不占用存储空间。
+
+```sql
+/**1，创建表时指定生成列 */
+mysql> CREATE TABLE t_genearted_column(
+    a DOUBLE,
+    b DOUBLE,
+    c DOUBLE AS (a * a + b * b)
+  );
+mysql> CREATE TABLE t_column_virsual (
+    a DOUBLE,
+    b DOUBLE,
+    c DOUBLE GENERATED ALWAYS AS (a + b) VIRTUAL
+  );
+
+/**2，为已有表添加生成列 */
+mysql> CREATE TABLE t_add_column(
+    a DOUBLE,
+    b DOUBLE
+  );
+mysql> ALTER TABLE t_add_column ADD COLUMN c DOUBLE GENERATED ALWAYS AS(a * a + b * b) STORED;
+
+/**3，修改已有的生成列 */
+mysql> ALTER TABLE t_add_column MODIFY COLUMN c DOUBLE GENERATED ALWAYS AS (a * b) STORED;
+
+/**4，删除生成列 */
+mysql> ALTER TABLE t_add_column DROP COLUMN c;
+```
+
+
+
+
+
+
+
+
+
+
