@@ -2232,7 +2232,8 @@ mysql> create procedure SelectTotalpriceUseCursor(OUT totalprice decimal(10,2))
     -> REPEAT
     -> fetch cursor_price into price;
     -> set totalprice = totalprice + price;
-    -> until 0 end REPEAT;
+    -> until 0 
+    -> END REPEAT;
     -> close cursor_price;
     -> end //
 
@@ -2261,7 +2262,8 @@ mysql> CREATE FUNCTION StatisticsStock()
     -> REPEAT
     -> FETCH cursor_stock INTO stock;
     -> SET totalstock = totalstock + stock;
-    -> UNTIL 0 END REPEAT;
+    -> UNTIL 0 
+    -> END REPEAT;
     -> CLOSE cursor_stock;
     -> RETURN totalstock;
     -> END $$
@@ -2277,18 +2279,297 @@ mysql> SELECT StatisticsStock();
 ```
 
 #### 10，MySQL中控制流程的使用
+MySQL数据库支持使用IF语句、CASE语句、LOOP语句、LEAVE语句、ITERATE语句、REPEAT语句和WHILE语句进行流程的控制。
 
+##### 10.1，使用IF语句控制流程
+```sql
+/**使用IF语句控制流程语法说明 */
+IF search_condition THEN statement_list
+    [ELSEIF search_condition THEN statement_list] ...
+    [ELSE statement_list]
+END IF
 
+--示例
+mysql> DELIMITER $$ 
+mysql> CREATE PROCEDURE CompareNumber()
+    -> BEGIN
+    -> DECLARE x INT DEFAULT 0;
+    -> SET x = 100;
+    -> IF x < 100 THEN
+    -> SELECT 'x < 100';
+    -> ELSEIF x = 100 THEN
+    -> SELECT 'x = 100';
+    -> ELSE 
+    -> SELECT 'x > 100';
+    -> END IF;
+    -> END $$
+Query OK, 0 rows affected (0.00 sec)
+mysql> DELIMITER ;
+--执行存储过程
+mysql> CALL CompareNumber();
++---------+
+| x = 100 |
++---------+
+| x = 100 |
++---------+
+1 row in set (0.00 sec)
+Query OK, 0 rows affected (0.00 sec)
+```
 
+##### 10.2，使用CASE语句控制流程
+```sql
+/**使用CASE语句控制流程语法说明 */
+CASE case_value
+    WHEN when_value THEN statement_list
+    [WHEN when_value THEN statement_list] ...
+    [ELSE statement_list]
+END CASE
+--或者
+CASE
+    WHEN search_condition THEN statement_list
+    [WHEN search_condition THEN statement_list] ...
+    [ELSE statement_list]
+END CASE
 
+--示例
+mysql> DELIMITER $$
+mysql> CREATE PROCEDURE CompareNumberWithCase()
+    -> BEGIN
+    -> DECLARE x INT DEFAULT 0;
+    -> SET x = 100;
+    -> CASE
+    -> WHEN x < 100 THEN SELECT 'x < 100';
+    -> WHEN x = 100 THEN SELECT 'x = 100';
+    -> WHEN x > 100 THEN SELECT 'x > 100';
+    -> ELSE SELECT 'x NOT FOUND';
+    -> END CASE;
+    -> END $$
+Query OK, 0 rows affected (0.00 sec)
+mysql> DELIMITER ;
+--执行存储过程
+mysql> CALL CompareNumberWithCase();
++---------+
+| x = 100 |
++---------+
+| x = 100 |
++---------+
+1 row in set (0.00 sec)
+Query OK, 0 rows affected (0.00 sec)
+```
 
+##### 10.3，使用LOOP语句控制流程
+```sql
+/**使用LOOP语句控制流程语法说明 
+LOOP语句能够循环执行某些语句，而不进行条件判断，可以使用LEAVE语句退出LOOP循环。*/
+ [begin_label:] LOOP
+    statement_list
+END LOOP [end_label]
+--begin_label和end_label都是LOOP语句的标注名称，该参数可以省略。如果begin_label和end_label两者都出现，则它们必须是相同的。
 
+--示例
+mysql> delimiter //
+mysql> create procedure HandlerDataWithLoop()
+    -> begin
+    -> declare x int default 0;
+    -> x_loop: LOOP
+    -> set x = x+1;
+    -> if x >= 10 then LEAVE x_loop;
+    -> end if;
+    -> select x;
+    -> END LOOP x_loop;
+    -> END //
+Query OK, 0 rows affected (0.00 sec)
+mysql> delimiter ;
+--执行存储过程
+mysql> call HandlerDataWithLoop();     
++------+                               
+| x    |                               
++------+                               
+|    1 |                               
++------+                               
+1 row in set (0.00 sec)                
++------+                               
+| x    |                               
++------+                               
+|    2 |                               
++------+                               
+1 row in set (0.00 sec)                
++------+                               
+| x    |                               
++------+                               
+|    3 |                               
++------+                               
+1 row in set (0.00 sec)                
++------+                               
+| x    |                               
++------+                               
+|    4 |                               
++------+                               
+1 row in set (0.01 sec)                
++------+                               
+| x    |                               
++------+                               
+|    5 |                               
++------+                               
+1 row in set (0.01 sec)                
++------+                               
+| x    |                               
++------+                               
+|    6 |                               
++------+                               
+1 row in set (0.01 sec)                
++------+                               
+| x    |                               
++------+                               
+|    7 |                               
++------+                               
+1 row in set (0.01 sec)                
++------+                               
+| x    |                               
++------+                               
+|    8 |                               
++------+                               
+1 row in set (0.01 sec)                
++------+                               
+| x    |                               
++------+                               
+|    9 |                               
++------+                               
+1 row in set (0.01 sec)                
+Query OK, 0 rows affected (0.01 sec)   
+```
 
+##### 10.4，使用LEAVE语句控制流程
+```sql
+/**语法说明 */
+LEAVE label  --label表示被标注的流程标志
 
+/**本节中大量流程控制均用到LEAVE语句，不再单独示例 */
+```
 
+##### 10.5，使用ITERATE语句控制流程
+```sql
+/**ITERATE语句表示跳过本次循环，而执行下次循环操作。语法格式如下： */
+ITERATE label  --label表示被标注的流程标志。
+--注意：ITERATE只可以出现在LOOP、REPEAT和WHILE语句内。
 
+--示例【注意与上个示例中的 HandlerDataWithLoop 进行对比】
+mysql> DELIMITER $$
+mysql> CREATE PROCEDURE HandlerDataWithIterate()
+    -> BEGIN
+    -> DECLARE x INT DEFAULT 0;
+    -> x_loop: LOOP
+    -> SET x = x + 1;
+    -> IF x < 5 THEN ITERATE x_loop;
+    -> ELSEIF x >= 10 THEN LEAVE x_loop;
+    -> END IF;
+    -> SELECT x;
+    -> END LOOP x_loop;
+    -> END $$
+Query OK, 0 rows affected (0.00 sec)
+mysql> DELIMITER ;
+--执行存储过程
+mysql> CALL HandlerDataWithIterate();
++------+
+| x    |
++------+
+|    5 |
++------+
+1 row in set (0.00 sec)
++------+
+| x    |
++------+
+|    6 |
++------+
+1 row in set (0.00 sec)
++------+
+| x    |
++------+
+|    7 |
++------+
+1 row in set (0.00 sec)
++------+
+| x    |
++------+
+|    8 |
++------+
+1 row in set (0.00 sec)
++------+
+| x    |
++------+
+|    9 |
++------+
+1 row in set (0.00 sec)
+Query OK, 0 rows affected (0.00 sec)
+```
 
+##### 10.6，使用REPEAT语句控制流程
+```sql
+/**使用REPEAT语句控制流程语法说明 
+REPEAT语句会创建一个带有条件判断的循环语句。如果条件判断为TRUE，则退出循环，否则继续执行循环体
+*/
+[begin_label:] REPEAT
+    statement_list
+UNTIL search_condition
+END REPEAT [end_label]
+--begin_label和end_label为循环的标志，二者可以省略，如果二者同时出现，则必须相同。
 
+--示例
+mysql> DELIMITER $$
+mysql> CREATE PROCEDURE HandlerDataWithRepeat()
+    -> BEGIN
+    -> DECLARE x INT DEFAULT 0;
+    -> x_repeat: REPEAT
+    -> SET x = x + 1;
+    -> UNTIL x >= 10
+    -> END REPEAT x_repeat;
+    -> SELECT x;
+    -> END $$
+Query OK, 0 rows affected (0.00 sec)
+mysql> DELIMITER ;
+--执行存储过程
+mysql> CALL HandlerDataWithRepeat();
++------+
+| x    |
++------+
+|   10 |
++------+
+1 row in set (0.00 sec)
+Query OK, 0 rows affected (0.00 sec)
+```
+
+##### 10.7，使用WHILE语句控制流程
+```sql
+/**使用WHILE语句控制流程语法说明 
+WHILE语句同样可以创建一个带有条件判断的循环语句。与REPEAT语句不同，WHILE语句的条件判断为TRUE时，继续执行循环体。
+*/
+[begin_label:] WHILE search_condition DO
+    statement_list
+END WHILE [end_label]
+--begin_label和end_label为循环的标志，二者可以省略，如果二者同时出现，则必须相同。
+
+--示例
+mysql> DELIMITER $$
+mysql> CREATE PROCEDURE HandlerDataWithWhile()
+    -> BEGIN
+    -> DECLARE x INT DEFAULT 0;
+    -> x_while: WHILE x < 10 DO
+    -> SET x = x + 1;
+    -> END WHILE x_while;
+    -> SELECT x;
+    -> END $$
+Query OK, 0 rows affected (0.00 sec)
+mysql> DELIMITER ;
+--执行存储过程
+mysql> CALL HandlerDataWithWhile();
++------+
+| x    |
++------+
+|   10 |
++------+
+1 row in set (0.00 sec)
+Query OK, 0 rows affected (0.00 sec)
+```
 
 ### MySQL触发器
 MySQL从5.0.2版本开始支持触发器。MySQL中的触发器需要满足一定的条件才能执行，比如，在对某个数据表进行更新操作前首先需要验证数据的合法性，此时就可以使用触发器来执行。在MySQL中定义触发器能够在一定程度上保证数据的完整性。
