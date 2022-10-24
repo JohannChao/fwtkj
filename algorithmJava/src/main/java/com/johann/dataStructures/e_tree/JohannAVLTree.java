@@ -201,7 +201,7 @@ public class JohannAVLTree<T extends Comparable<T>> {
      * @param current root
      * @param value 插入的节点值
      */
-    public void insert(Node current,Comparable<T> value) throws InsertExc{
+    public void insert(Node current,Comparable<T> value) throws InsertException{
 
         //Node current = root;
         if (current == null){
@@ -247,22 +247,20 @@ public class JohannAVLTree<T extends Comparable<T>> {
         }else {
             System.out.println("已存在相同的节点，禁止插入");
             //如果插入失败，直接return回去，停止递归后续操作。即height不会被递归更新
-            throw new InsertExc("插入异常：已存在相同的节点，禁止插入");
+            throw new InsertException("插入异常：已存在相同的节点，禁止插入");
         }
         //递归更新 插入节点父结点，祖父节点等节点的 height
         current.height = Math.max(current.leftChild.height,current.rightChild.height)+1;
     }
 
 
-    /*
-     * 删除结点(z)，返回根节点
-     *
-     * 参数说明：
-     *     tree AVL树的根结点
-     *     z 待删除的结点
-     * 返回值：
-     *     根节点
-     */
+    /**
+    * @Description: 删除结点(z)，返回根节点
+    * @Param: [tree, z]  AVL树的根结点,待删除的结点
+    * @return: com.johann.dataStructures.e_tree.JohannAVLTree<T>.Node<T>  根节点
+    * @Author: Johann
+    * @Date: 2022/10/19
+    */
     private Node<T> remove(Node<T> tree, Node<T> z) {
         // 根为空 或者 没有要删除的节点，直接返回null。
         if (tree==null || z==null){
@@ -270,7 +268,8 @@ public class JohannAVLTree<T extends Comparable<T>> {
         }
 
         int cmp = z.data.compareTo(tree.data);
-        if (cmp < 0) {        // 待删除的节点在"tree的左子树"中
+        // 待删除的节点在"tree的左子树"中
+        if (cmp < 0) {
             tree.leftChild = remove(tree.leftChild, z);
             // 删除节点后，若AVL树失去平衡，则进行相应的调节。
             if (tree.rightChild.height - tree.leftChild.height == 2) {
@@ -281,7 +280,8 @@ public class JohannAVLTree<T extends Comparable<T>> {
                     tree = rightRightRotation(tree);
                 }
             }
-        } else if (cmp > 0) {    // 待删除的节点在"tree的右子树"中
+        // 待删除的节点在"tree的右子树"中
+        } else if (cmp > 0) {
             tree.rightChild = remove(tree.rightChild, z);
             // 删除节点后，若AVL树失去平衡，则进行相应的调节。
             if (tree.leftChild.height - tree.rightChild.height == 2) {
@@ -355,11 +355,11 @@ public class JohannAVLTree<T extends Comparable<T>> {
 /**
  * 自定义插入失败异常，用于终止递归
  */
-class InsertExc extends Exception{
-    public InsertExc(){
+class InsertException extends Exception{
+    public InsertException(){
         super();
     }
-    public InsertExc(String message){
+    public InsertException(String message){
         super(message);
     }
 }

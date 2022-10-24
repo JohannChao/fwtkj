@@ -866,7 +866,6 @@ ALTER TABLE table_name DROP INDEX index_name
 
 /**2，使用 CREATE INDEX语句删除索引 */
 DROP INDEX index_name ON table_name
-
 --删除索引示例
 mysql> ALTER TABLE t_index_alter DROP INDEX name_fulltext_index;
 mysql> DROP INDEX name_fulltext_index ON t_index_create;
@@ -1373,7 +1372,7 @@ note_text: i do do do do do do like Oracle so so so so so
   -           排除，词必须不存在
   >           包含，且增加等级值
   <           包含，且增加等级值
-  ()          吧词组成子表达式，允许这些子表达式作为一个组被包含，排除，排列等
+  ()          把词组成子表达式，允许这些子表达式作为一个组被包含，排除，排列等
   ~           取消一个词的排序值
   *           词尾通配符
   ""          定义一个短语，里面的短语是一个整体
@@ -1452,7 +1451,7 @@ VIEW view_name [(column_list)]
 AS select_statement
 [WITH [CASCADED | LOCAL] CHECK OPTION]
 
-语法格式说明如下：
+--语法格式说明如下：
 ·CREATE：新建视图。
 ·REPLACE：替换已经存在的视图。
 ·ALGORITHM：标识视图使用的算法。
@@ -1463,7 +1462,6 @@ AS select_statement
 ·column_list：视图中包含的字段名称列表。
 ·select_statement：SELECT语句。
 ·[WITH [CASCADED | LOCAL] CHECK OPTION]：保证在视图的权限范围内更新视图。
-
 /**创建视图示例 */
 mysql> CREATE VIEW view_name_price 
   AS 
@@ -1560,27 +1558,894 @@ COLLATION_CONNECTION: utf8_general_ci
 ```
 
 #### 4，修改视图
+MySQL中支持使用CREATE OR REPLACE VIEW语句和ALTER语句来修改视图的结构信息。
+```sql
+--使用CREATE OR REPLACE VIEW语句修改视图结构
+CREATE [OR REPLACE]
+    [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}]
+    [DEFINER = user]
+    [SQL SECURITY { DEFINER | INVOKER }]
+    VIEW view_name [(column_list)]
+    AS select_statement
+    [WITH [CASCADED | LOCAL] CHECK OPTION]
 
+mysql> CREATE OR REPLACE VIEW view_category_goods(category, name, price)
+  AS
+  SELECT category.t_category, goods.t_name, goods.t_price
+  FROM t_goods_category category, t_goods goods
+  WHERE category.id = goods.t_category_id;
 
+--使用ALTER语句修改视图结构
+ALTER
+    [ALGORITHM = {UNDEFINED | MERGE | TEMPTABLE}]
+    [DEFINER = user]
+    [SQL SECURITY { DEFINER | INVOKER }]
+    VIEW view_name [(column_list)]
+    AS select_statement
+    [WITH [CASCADED | LOCAL] CHECK OPTION]
 
+mysql> ALTER VIEW view_category_goods(category, name, price)
+  AS
+  SELECT category.t_category, goods.t_name, goods.t_price
+  FROM t_goods_category category, t_goods goods
+  WHERE category.id = goods.t_category_id;
+```
 
+#### 5，更新视图的数据 
+MySQL支持使用INSERT、UPDATE和DELETE语句对视图中的数据进行插入、更新和删除操作。当视图中的数据发生变化时，数据表中的数据也会发生变化，反之亦然。
+```sql
+--创建测试视图
+mysql> CREATE OR REPLACE VIEW view_category(id,t_category)
+AS
+SELECT id,t_category FROM t_goods_category;
 
+mysql> select * from view_category;
++----+---------------------+
+| id | t_category          |
++----+---------------------+
+|  1 | 女装/女士精品       |
+|  2 | 户外运动            |
++----+---------------------+
+```
 
+##### 5.1，直接更新视图数据
+通过INSERT、UPDATE和DELETE语句对view_category视图中的数据进行了插入、更新和删除操作。
 
+```sql
+/**1，向视图插入数据 */
+mysql> INSERT INTO view_category(id, t_category) VALUES (3, '水果');
+--数据表中的数据，也随之发生变化
+mysql> select id,t_category from t_goods_category;
++----+---------------------+
+| id | t_category          |
++----+---------------------+
+|  1 | 女装/女士精品       |
+|  2 | 户外运动            |
+|  3 | 水果                |
++----+---------------------+
 
+/**2，更新视图中的数据 */
+mysql> UPDATE view_category SET t_category = '图书' WHERE id = 3;
+mysql> select id,t_category from t_goods_category;
++----+---------------------+
+| id | t_category          |
++----+---------------------+
+|  1 | 女装/女士精品       |
+|  2 | 户外运动            |
+|  3 | 图书                |
++----+---------------------+
 
+/**3，删除视图中的数据 */
+mysql> DELETE FROM view_category WHERE id = 3;
+mysql> select id,t_category from t_goods_category;
++----+---------------------+
+| id | t_category          |
++----+---------------------+
+|  1 | 女装/女士精品       |
+|  2 | 户外运动            |
++----+---------------------+
+```
 
+##### 5.2，间接更新视图数据
+间接更新视图数据就是通过更新数据表的数据达到更新视图数据的目的。
+```sql
+/**1，向视图插入数据 */
+mysql> INSERT INTO t_goods_category(id, t_category) VALUES (3, '电子设备');
+--视图中的数据，也随之发生变化
+mysql> select * from view_category;
++----+---------------------+
+| id | t_category          |
++----+---------------------+
+|  1 | 女装/女士精品       |
+|  2 | 户外运动            |
+|  3 | 电子设备            |
++----+---------------------+
 
+/**2，更新视图中的数据 */
+mysql> UPDATE t_goods_category SET t_category = '车辆配件' WHERE id = 3;
+mysql> select * from view_category;
++----+---------------------+
+| id | t_category          |
++----+---------------------+
+|  1 | 女装/女士精品       |
+|  2 | 户外运动            |
+|  3 | 车辆配件            |
++----+---------------------+
 
+/**3，删除视图中的数据 */
+mysql> DELETE FROM t_goods_category WHERE id = 3;
+mysql> select * from view_category;
++----+---------------------+
+| id | t_category          |
++----+---------------------+
+|  1 | 女装/女士精品       |
+|  2 | 户外运动            |
++----+---------------------+
+```
 
-
-
+#### 6，删除视图
+```sql
+/**删除视图语句 */
+DROP VIEW [IF EXISTS]
+    view_name [, view_name] ...
+    [RESTRICT | CASCADE]
+--删除视图示例 
+mysql> DROP VIEW view_category;
+Query OK, 0 rows affected (0.00 sec)
+mysql> DESC view_category;
+ERROR 1146 (42S02): Table 'test_new.view_category' doesn't exist
+```
 
 ### MySQL存储过程和函数
-TODO
+MySQL从5.0版本开始支持存储过程和函数。存储过程和函数能够将复杂的SQL逻辑封装在一起，应用程序无须关注存储过程和函数内部复杂的SQL逻辑，而只需要简单地调用存储过程和函数即可。
+
+#### 1，存储过程和函数简介
+在MySQL数据库中，存储程序可以分为存储过程和存储函数。存储过程和存储函数都是一系列SQL语句的集合，这些SQL语句被封装到一起组成一个存储过程或者存储函数保存到数据库中。
+
+应用程序调用存储过程只需要通过CALL关键字并指定存储过程的名称和参数即可；同样，应用程序调用存储函数只需要通过SELECT关键字并指定存储函数的名称和参数即可。
+
+存储过程和存储函数是有一定区别的，存储函数必须有返回值，而存储过程没有。
+
+另外，存储过程的参数类型可以是IN、OUT和INOUT，而存储函数的参数类型只能是IN。
+
+#### 2，创建存储过程和函数
+```sql
+/**1，创建存储过程的语法 */
+CREATE PROCEDURE sp_name ([proc_parameter[,...]])
+    [characteristic ...] routine_body
+--语法格式说明：
+·CREATE PROCEDURE：创建存储过程必须使用的关键字；
+·sp_name：创建存储过程时指定的存储过程名称；
+·proc_parameter：创建存储过程时指定的参数列表，参数列表可以省略；
+·characteristic：创建存储过程时指定的对存储过程的约束；
+·routine_body：存储过程的SQL执行体，使用 BEGIN…END 来封装存储过程需要执行的 SQL 语句。
+
+--1.1，参数详细说明
+--（1）proc_parameter：表示在创建存储过程时指定的参数列表。其列表形式如下：
+[ IN | OUT | INOUT ] param_name type
+--各项说明如下：
+·IN：当前参数为输入参数，也就是表示入参；
+·OUT：当前参数为输出参数，也就是表示出参；
+·INOUT：当前参数即可以为输入参数，也可以为输出参数，也就是即可以表示入参，也可以表示出参；
+·param_name：当前存储过程中参数的名称；
+·type：当前存储过程中参数的类型，此类型可以是MySQL数据库中支持的任意数据类型。
+--（2）characteristic：表示创建存储过程时指定的对存储过程的约束条件，其取值信息如下：
+LANGUAGE SQL
+  | [NOT] DETERMINISTIC
+  | { CONTAINS SQL | NO SQL | READS SQL DATA | MODIFIES SQL DATA }
+  | SQL SECURITY { DEFINER | INVOKER }
+  | COMMENT 'string'
+--各项说明如下：
+·LANGUAGE SQL：存储过程的SQL执行体部分（存储过程语法格式中的routine_body部分）是由SQL语句组成的。
+·[NOT] DETERMINISTIC：执行当前存储过程后，得出的结果数据是否确定。其中，DETERMINISTIC表示执行当前存储过程后得出的结果数据是确定的，即对于当前存储过程来说，每次输入相同的数据时，都会得到相同的输出结果。NOT DETERMINISTIC表示执行当前存储过程后，得出的结果数据是不确定的，即对于当前存储过程来说，每次输入相同的数据时，得出的输出结果可能不同。如果没有设置执行值，则MySQL默认为NOT DETERMINISTIC。
+·{CONTAINS SQL | NO SQL | READS SQL DATA | MODIFIES SQL DATA}：存储过程中的子程序使用SQL语句的约束限制。其中，CONTAINS SQL表示当前存储过程的子程序包含SQL语句，但是并不包含读写数据的SQL语句；NO SQL表示当前存储过程的子程序中不包含任何SQL语句；READS SQL DATA表示当前存储过程的子程序中包含读数据的SQL语句；MODIFIES SQL DATA表示当前存储过程的子程序中包含写数据的SQL语句。如果没有设置相关的值，则MySQL默认指定值为CONTAINS SQL。
+·SQL SECURITY {DEFINER | INVOKER}：执行当前存储过程的权限，即指明哪些用户能够执行当前存储过程。DEFINER表示只有当前存储过程的创建者或者定义者才能执行当前存储过程；INVOKER表示拥有当前存储过程的访问权限的用户能够执行当前存储过程。如果没有设置相关的值，则MySQL默认指定值为DEFINER。
+·COMMENT 'string'：表示当前存储过程的注释信息，解释说明当前存储过程的含义。
+
+/**注意：
+在MySQL的存储过程中允许包含DDL的SQL语句，允许执行Commit（提交）操作，也允许执行Rollback（回滚）操作，但是不允许执行LOAD DATA INFILE语句。在当前存储过程中，可以调用其他存储过程或者函数。 */
+
+--1.2，创建存储过程示例
+mysql> delimiter //
+mysql> CREATE PROCEDURE SelectAllData_goods()
+    -> BEGIN
+    -> SELECT * FROM t_goods;
+    -> END
+    -> //
+Query OK, 0 rows affected (0.00 sec)
+mysql> delimiter ;
+
+
+/**2，创建存储函数的语法 */
+CREATE FUNCTION func_name ([func_parameter[,...]])
+    RETURNS type
+    [characteristic ...] routine_body
+--语法格式说明：
+·CREATE FUNCTION：创建函数必须使用的关键字；
+·func_name：创建函数时指定的函数名称；
+·func_parameter：创建函数时指定的参数列表，参数列表可以省略；
+·RETURNS type：创建函数时指定的返回数据类型；
+·characteristic：创建函数时指定的对函数的约束；
+·routine_body：函数的SQL执行体。
+--2.1，参数详细说明
+--（1）对于参数列表而言，存储过程的参数类型可以是IN、OUT和INOUT类型，而存储函数的参数类型只能是IN类型。
+--（2）创建函数时对characteristic参数的说明与创建存储过程时对characteristic参数的说明相同，不再赘述。
+--2.2，创建存储函数示例
+mysql> delimiter $$
+mysql> CREATE FUNCTION SelectNameById_goods()
+    -> RETURNS varchar(50)
+    -> RETURN (SELECT t_name FROM t_goods WHERE id = 11);
+    -> $$
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> delimiter ;
+```
+
+#### 3，查看存储过程和函数
+MySQL数据库提供了3种方式来查看存储过程和函数，分别为：
+* 使用SHOW CREATE语句查看存储过程和函数的创建信息；
+* 使用SHOW STATUS语句查看存储过程和函数的状态信息；
+* 从information_schema数据库中查看存储过程和函数的信息。
+```sql
+/**1，SHOW CREATE语句查看存储过程和函数的创建信息 */
+SHOW CREATE {PROCEDURE | FUNCTION} sp_name
+--示例 1
+mysql> show create procedure SelectAllData_goods \G
+*************************** 1. row ***************************
+           Procedure: SelectAllData_goods
+            sql_mode: ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+    Create Procedure: CREATE DEFINER=`root`@`localhost` PROCEDURE `SelectAllData_goods`()
+BEGIN
+SELECT * FROM t_goods;
+END
+character_set_client: utf8
+collation_connection: utf8_general_ci
+  Database Collation: utf8_general_ci
+--示例 2
+mysql> show create function SelectNameById_goods \G
+*************************** 1. row ***************************
+            Function: SelectNameById_goods
+            sql_mode: ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+     Create Function: CREATE DEFINER=`root`@`localhost` FUNCTION `SelectNameById_goods`() RETURNS varchar(50) CHARSET utf8
+RETURN (SELECT t_name FROM t_goods WHERE id = 11)
+character_set_client: utf8
+collation_connection: utf8_general_ci
+  Database Collation: utf8_general_ci
+
+/**2，SHOW STATUS语句查看存储过程和函数的状态信息 */
+SHOW {PROCEDURE | FUNCTION} STATUS [LIKE 'pattern']
+--示例 1
+mysql> show procedure status like 'select%' \G
+*************************** 1. row ***************************
+                  Db: test_new
+                Name: SelectAllData_goods
+                Type: PROCEDURE
+             Definer: root@localhost
+            Modified: 2022-10-18 11:48:12
+             Created: 2022-10-18 11:48:12
+       Security_type: DEFINER
+             Comment:
+character_set_client: utf8
+collation_connection: utf8_general_ci
+  Database Collation: utf8_general_ci
+--示例 2
+mysql> show function status like 'select%' \G
+*************************** 1. row ***************************
+                  Db: test_new
+                Name: SelectNameById_goods
+                Type: FUNCTION
+             Definer: root@localhost
+            Modified: 2022-10-18 11:50:52
+             Created: 2022-10-18 11:50:52
+       Security_type: DEFINER
+             Comment:
+character_set_client: utf8
+collation_connection: utf8_general_ci
+  Database Collation: utf8_general_ci
+
+/**3，从information_schema数据库中查看存储过程和函数的信息 */
+SELECT * FROM information_schema.ROUTINES where ROUTINE_NAME = 'sp_name' [and ROUTINE_TYPE = 
+{'PROCEDURE|FUNCTION'}];
+SELECT * FROM information_schema.ROUTINES where ROUTINE_NAME LIKE 'sp_name' [and ROUTINE_TYPE = 
+{'PROCEDURE|FUNCTION'}];
+--示例 1
+mysql> SELECT * FROM information_schema.ROUTINES where ROUTINE_NAME like 'Select%' and ROUTINE_TYPE = 'PROCEDURE' \G
+*************************** 1. row ***************************
+           SPECIFIC_NAME: SelectAllData_goods
+         ROUTINE_CATALOG: def
+          ROUTINE_SCHEMA: test_new
+            ROUTINE_NAME: SelectAllData_goods
+            ROUTINE_TYPE: PROCEDURE
+               DATA_TYPE:
+CHARACTER_MAXIMUM_LENGTH: NULL
+  CHARACTER_OCTET_LENGTH: NULL
+       NUMERIC_PRECISION: NULL
+           NUMERIC_SCALE: NULL
+      DATETIME_PRECISION: NULL
+      CHARACTER_SET_NAME: NULL
+          COLLATION_NAME: NULL
+          DTD_IDENTIFIER: NULL
+            ROUTINE_BODY: SQL
+      ROUTINE_DEFINITION: BEGIN
+SELECT * FROM t_goods;
+END
+           EXTERNAL_NAME: NULL
+       EXTERNAL_LANGUAGE: NULL
+         PARAMETER_STYLE: SQL
+        IS_DETERMINISTIC: NO
+         SQL_DATA_ACCESS: CONTAINS SQL
+                SQL_PATH: NULL
+           SECURITY_TYPE: DEFINER
+                 CREATED: 2022-10-18 11:48:12
+            LAST_ALTERED: 2022-10-18 11:48:12
+                SQL_MODE: ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+         ROUTINE_COMMENT:
+                 DEFINER: root@localhost
+    CHARACTER_SET_CLIENT: utf8
+    COLLATION_CONNECTION: utf8_general_ci
+      DATABASE_COLLATION: utf8_general_ci
+--示例 2
+mysql> SELECT * FROM information_schema.ROUTINES where ROUTINE_NAME like 'Select%' and ROUTINE_TYPE = 'FUNCTION' \G
+*************************** 1. row ***************************
+           SPECIFIC_NAME: SelectNameById_goods
+         ROUTINE_CATALOG: def
+          ROUTINE_SCHEMA: test_new
+            ROUTINE_NAME: SelectNameById_goods
+            ROUTINE_TYPE: FUNCTION
+               DATA_TYPE: varchar
+CHARACTER_MAXIMUM_LENGTH: 50
+  CHARACTER_OCTET_LENGTH: 150
+       NUMERIC_PRECISION: NULL
+           NUMERIC_SCALE: NULL
+      DATETIME_PRECISION: NULL
+      CHARACTER_SET_NAME: utf8
+          COLLATION_NAME: utf8_general_ci
+          DTD_IDENTIFIER: varchar(50)
+            ROUTINE_BODY: SQL
+      ROUTINE_DEFINITION: RETURN (SELECT t_name FROM t_goods WHERE id = 11)
+           EXTERNAL_NAME: NULL
+       EXTERNAL_LANGUAGE: NULL
+         PARAMETER_STYLE: SQL
+        IS_DETERMINISTIC: NO
+         SQL_DATA_ACCESS: CONTAINS SQL
+                SQL_PATH: NULL
+           SECURITY_TYPE: DEFINER
+                 CREATED: 2022-10-18 11:50:52
+            LAST_ALTERED: 2022-10-18 11:50:52
+                SQL_MODE: ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+         ROUTINE_COMMENT:
+                 DEFINER: root@localhost
+    CHARACTER_SET_CLIENT: utf8
+    COLLATION_CONNECTION: utf8_general_ci
+      DATABASE_COLLATION: utf8_general_ci
+```
+
+#### 4，修改存储过程和函数
+创建存储过程和函数后，可以通过ALTER语句修改存储过程和函数的某些特性。
+```sql
+/**1，修改存储过程语法 */
+ALTER PROCEDURE sp_name [characteristic ...]
+--示例
+mysql> ALTER PROCEDURE SelectAllData_goods
+    LANGUAGE SQL
+    NOT DETERMINISTIC
+    READS SQL DATA
+    SQL SECURITY INVOKER
+    COMMENT 'Select All Data Create By Johann';
+    
+
+/**2，修改存储函数语法 */
+ALTER FUNCTION func_name [characteristic ...]
+--示例
+mysql> ALTER FUNCTION SelectNameById_goods
+    LANGUAGE SQL
+    MODIFIES SQL DATA
+    SQL SECURITY INVOKER
+    COMMENT 'SelectNameById Create By Johann';
+
+```
+
+#### 5，调用存储过程和函数
+调用存储过程和调用函数的方式稍有区别，调用存储过程使用的是CALL语句，而调用函数使用的是SELECT语句。
+```sql
+/**1，调用存储过程语句 */
+CALL proc_name ([parameter[,…]])
+--语法格式说明：
+·CALL：调用存储过程的关键字；
+·proc_name：调用存储过程的名称；
+·parameter：存储过程定义的参数列表，当创建存储过程时没有定义参数列表，则参数列表为空。
+--示例
+mysql> call SelectAllData_goods();
++----+---------------+---------------------+--------------------+---------+---------+---------------------+
+| id | t_category_id | t_category          | t_name             | t_price | t_stock | t_upper_time        |
++----+---------------+---------------------+--------------------+---------+---------+---------------------+
+|  1 |             1 | 女装/女士精品       | T恤                |   39.90 |    1000 | 2020-11-10 00:00:00 |
+|  2 |             1 | 女装/女士精品       | 连衣裙             |   79.90 |    2500 | 2020-11-10 00:00:00 |
+|  3 |             1 | 女装/女士精品       | 卫衣               |   79.90 |    1500 | 2020-11-10 00:00:00 |
+|  4 |             1 | 女装/女士精品       | 牛仔裤             |   89.90 |    3500 | 2020-11-10 00:00:00 |
+|  5 |             1 | 女装/女士精品       | 百褶裙             |   29.90 |     500 | 2020-11-10 00:00:00 |
+|  6 |             1 | 女装/女士精品       | 呢绒外套           |  399.90 |    1200 | 2020-11-10 00:00:00 |
+|  7 |             2 | 户外运动            | 自行车             |  399.90 |    1000 | 2020-11-10 00:00:00 |
+|  8 |             2 | 户外运动            | 山地自行车         | 1399.90 |    2500 | 2020-11-10 00:00:00 |
+|  9 |             2 | 户外运动            | 登山杖             |   59.90 |    1500 | 2020-11-10 00:00:00 |
+| 10 |             2 | 户外运动            | 骑行装备           |  399.90 |    3500 | 2020-11-10 00:00:00 |
+| 11 |             2 | 户外运动            | 户外运动外套       |  799.90 |     500 | 2020-11-10 00:00:00 |
+| 12 |             2 | 户外运动            | 滑板               |  499.90 |    1200 | 2020-11-10 00:00:00 |
+| 13 |             2 | 户外运动            | NULL               |   39.90 |    1000 | 2022-09-27 15:49:30 |
+| 14 |             2 | 户外运动            |                    |   79.90 |    2500 | 2022-09-27 15:49:30 |
++----+---------------+---------------------+--------------------+---------+---------+---------------------+
+
+/**2，调用存储函数语句 */
+SELECT func_name ([parameter[,…]])
+
+--示例
+mysql> select SelectNameById_goods();
++------------------------+
+| SelectNameById_goods() |
++------------------------+
+| 户外运动外套           |
++------------------------+
+```
+
+#### 6，删除存储过程和函数
+删除存储过程和函数可以使用DROP语句。
+```sql
+/**删除存储过程、存储函数语句 */
+DROP {PROCEDURE | FUNCTION} [IF EXISTS] proc_name|func_name
+```
+
+#### 7，MySQL中使用变量
+在MySQL数据库的存储过程和函数中，可以使用变量来存储查询或计算的中间结果数据，或者输出最终的结果数据。
+
+##### 7.1，如何定义变量及给变量赋值
+在MySQL数据库中，可以使用 DECLARE 语句定义一个局部变量，变量的作用域为 BEGIN…END 语句块，变量也可以被用在嵌套的语句块中。变量的定义需要写在复合语句的开始位置，并且需要在任何其他语句的前面。定义变量时，可以一次声明多个相同类型的变量，也可以使用DEFAULT为变量赋予默认值。
+```sql
+/**1，定义变量语句 */
+DECLARE var_name[,...] type [DEFAULT value]
+--示例
+DECLARE totalPrice,avgPrice DECIMAL(10,2) DEFAULT 0.00;
+DECLARE totalCount DECIMAL(10,2) DEFAULT 0.00;
+
+/**2，定义变量后，可以为变量进行赋值操作。变量可以直接赋值，也可以通过查询语句赋值。 */
+/**2.1，直接赋值 */
+SET var_name = expr [, var_name = expr] ...
+--示例
+SET totalPrice = 2999.99,avgPrice = (2999.99 / 12);
+SET totalCount = 12;
+
+/**2.2，查询语句赋值 */
+SELECT col_name[,...] INTO var_name[,...] table_expr
+--示例
+SELECT SUM(t_price),COUNT(*) INTO totalprice,totalCount FROM t_goods;
+SET avgPrice = (totalprice/totalCount);
+```
+
+##### 7.2，使用变量案例
+```sql
+/**1，存储过程中使用变量 */
+mysql> delimiter //
+mysql> create procedure SelectCountAndPrice()
+    -> begin
+    -> declare totalcount int default 0;
+    -> declare totalprice,avgprice decimal(10,2) default 0.00;
+    -> select sum(t_price) into totalprice from t_goods;
+    -> select count(*) into totalcount from t_goods;
+    -> set avgprice = (totalprice/totalcount);
+    -> select totalprice,totalcount,avgprice;
+    -> end //
+Query OK, 0 rows affected (0.00 sec)
+mysql> delimiter ;
+
+/**存储函数中使用变量 */
+mysql> delimiter //
+mysql> create function SelectAvgStock()
+    -> returns int
+    -> begin
+    -> declare totalcount,totalstock,avgstock int default 0;
+    -> select count(*),sum(t_stock) into totalcount,totalstock from t_goods;
+    -> set avgstock = (totalstock/totalcount);
+    -> return avgstock;
+    -> end //
+Query OK, 0 rows affected (0.00 sec)
+mysql> delimiter ;
+```
+
+#### 8，定义条件和处理程序
+MySQL数据库支持定义条件和处理程序。
+
+定义条件就是提前将程序执行过程中遇到的问题及对应的状态等信息定义出来，在程序执行过程中遇到问题时，可以返回提前定义好的条件信息。
+
+处理程序能够定义在程序执行过程中遇到问题时应该采取何种处理方式来保证程序能够继续执行。
+
+##### 8.1，如何定义条件和处理程序
+```sql
+/**1，定义条件语句 */
+DECLARE condition_name CONDITION FOR condition_value
+--语法格式说明：
+·condition_name：定义的条件名称；
+·condition_value：定义的条件类型。
+--1.1，参数说明
+--condition_value的取值如下：
+SQLSTATE [VALUE] sqlstate_value | mysql_error_code
+--参数说明：
+·sqlstate_value：长度为5的字符串类型的错误信息；
+·mysql_error_code：数值类型的错误代码。
+--1.2，示例
+DECLARE exec_ refused CONDITION FOR SQLSTATE '48000';  --使用sqlstate_value进行定义
+DECLARE exec_refused CONDITION FOR 2199;  --使用mysql_error_code进行定义
+
+
+/**2，定义处理程序语句 */
+DECLARE handler_type HANDLER FOR condition_value[,...] sp_statement
+--语法格式说明：
+·handler_type：定义的错误处理方式；
+·condition_value：定义的错误类型；
+·sp_statement：当遇到定义的错误时，需要执行的存储过程或函数。
+--2.1，参数详细说明
+--1），handler_type参数的取值如下：
+CONTINUE | EXIT | UNDO
+--参数说明：
+·CONTINUE：遇到错误时，不进行处理，继续向后执行；
+·EXIT：遇到错误时，立刻退出程序；
+·UNDO：遇到错误时，撤回之前的操作。
+/** 注意：目前MySQL数据库还不支持UNDO操作。*/
+--2），condition_value参数的取值如下：
+SQLSTATE [VALUE] sqlstate_value
+  | mysql_error_code
+  | condition_name
+  | SQLWARNING
+  | NOT FOUND
+  | SQLEXCEPTION
+--参数说明：
+·SQLSTATE [VALUE] sqlstate_value：长度为5的字符串类型的错误信息；
+·mysql_error_code：数值类型的错误代码；
+·condition_name：定义的条件名称；
+·SQLWARNING：所有以01开头的SQLSTATE错误代码；
+·NOT FOUND：所有以02开头的SQLSTATE错误代码；
+·SQLEXCEPTION：所有没有被SQLWARNING或NOT FOUND捕获的SQLSTATE错误代码。
+--2.2，示例
+--1），定义处理程序捕获sqlstate_value值，当遇到sqlstate_value值为29011时，执行CONTINUE操作，并且输出DATABASE NOT FOUND信息。
+DECLARE CONTINUE HANDLER FOR SQLSTATE '29011' SET @log=' DATABASE NOT FOUND';
+--2），定义处理程序捕获mysql_error_code的值，当遇到mysql_error_code的值为1162时，执行CONTINUE操作
+DECLARE CONTINUE HANDLER FOR 1162 SET @log=' SEARCH FAILED';
+--3），先定义条件，捕获mysql_error_code的值，当遇到定义的条件名对应的异常时，执行CONTINUE操作
+DECLARE search_failed CONDITION FOR 1162;
+DECLARE CONTINUE HANDLER FOR search_failed SET @log=' SEARCH FAILED';
+--4），使用 SQLWARNING 捕获所有以01开头的sqlstate_value错误代码，执行CONTINUE操作
+DECLARE CONTINUE HANDLER FOR SQLWARNING SET @log=' SQLWARNING';
+--5），使用 NOT FOUND 捕获所有以02开头的sqlstate_value错误代码，执行EXIT操作
+DECLARE EXIT HANDLER FOR NOT FOUND SET @log=' SQL EXIT';
+--6），使用SQLEXCEPTION捕获所有没有被 SQLWARNING 或 NOT FOUND 捕获的 sqlstate_value 错误代码，执行EXIT操作
+DECLARE EXIT HANDLER FOR SQLEXCEPTION SET @log=' SQLEXCEPTION';
+```
+>注意：
+>带有@符号的变量（比如@log）是用户变量，可以使用SET语句进行赋值，用户变量与MySQL的连接有关。在一个客户端的连接会话中定义的用户变量，只能在此连接会话中可见并使用，当此连接会话关闭时，该连接会话中创建的所有变量都会被自动释放。
+
+##### 8.2，定义条件和处理程序案例
+
+1. 在存储过程中定义条件和处理程序
+```sql
+mysql> DELIMITER $$
+/**创建存储过程，并在存储过程中定义条件和处理程序*/
+mysql> CREATE PROCEDURE InsertDataWithCondition()
+    -> BEGIN
+    -> DECLARE CONTINUE HANDLER FOR SQLSTATE '23000' SET @proc_value=1;
+    -> SET @x = 1;
+    -> INSERT INTO db_goods.t_goods (id, t_name, t_category, t_price, t_stock, t_upper_time) VALUES 
+('1000011', '耐克运动鞋', '男鞋', '1399.90', '500', '2019-12-18 00:00:00');
+    -> SET @x = 2;
+    -> INSERT INTO db_goods.t_goods (id, t_name, t_category, t_price, t_stock, t_upper_time) VALUES 
+('1000010', '登山杖', '登山设备', '159.90', '500', '2019-12-18 00:00:00');
+    -> SET @x = 3;
+    -> END $$
+Query OK, 0 rows affected (0.13 sec)
+mysql> DELIMITER ;
+
+/**嗲用存储过程 */
+mysql> CALL InsertDataWithCondition();
+/**查询用户变量 */
+mysql> SELECT @proc_value, @x;
++-------------+------+
+| @proc_value | @x   |
++-------------+------+
+|           1 |    3 |
++-------------+------+
+```
+
+2. 在函数中定义条件和处理程序
+```sql
+mysql> DELIMITER $$
+/**创建函数，并在函数中定义条件和处理程序*/
+mysql> CREATE FUNCTION InsertDataWithCondition()
+    -> RETURNS INT
+    -> BEGIN
+    -> DECLARE CONTINUE HANDLER FOR SQLSTATE '23000' SET @func_value=1;
+    -> SET @x = 1;
+    -> INSERT INTO db_goods.t_goods (id, t_name, t_category, t_price, t_stock, t_upper_time) VALUES 
+('1000011', '耐克运动鞋', '男鞋', '1399.90', '500', '2019-12-18 00:00:00');
+    -> SET @x = 2;
+    -> INSERT INTO db_goods.t_goods (id, t_name, t_category, t_price, t_stock, t_upper_time) VALUES 
+('1000010', '登山杖', '登山设备', '159.90', '500', '2019-12-18 00:00:00');
+    -> SET @x = 3;
+    -> RETURN @x;
+    -> END $$
+Query OK, 0 rows affected (0.00 sec)
+mysql> DELIMITER ;
+
+/**调用函数，并查看用户变量 */
+mysql> SELECT InsertDataWithCondition();
++---------------------------+
+| InsertDataWithCondition() |
++---------------------------+
+|                         3 |
++---------------------------+
+```
+
+#### 9，MySQL中游标的使用
+如果在存储过程和函数中查询的数据量非常大，可以使用游标对结果集进行循环处理。
+
+MySQL中游标的使用包括声明游标、打开游标、使用游标和关闭游标。
+
+##### 9.1，游标的声明，打开，使用与关闭
+```sql
+/**1，声明游标 */
+DECLARE cursor_name CURSOR FOR select_statement
+--语法格式说明：
+·cursor_name：声明的游标名称；
+·select_statement：SELECT查询语句的内容，返回一个创建游标结果数据的集合。
+--示例
+DECLARE cursor_proc_func CURSOR FOR SELECT t_name, t_price, t_stock FROM t_goods
+
+/**2，打开游标 */
+OPEN cursor_name;
+--示例
+OPEN cursor_proc_func;
+
+/**3，使用游标 */
+FETCH cursor_name INTO var_name [, var_name] ...  --var_name必须在声明游标之前定义好
+--示例
+FETCH cursor_proc_func INTO name, price, stock;
+
+/**4，关闭游标 */
+CLOSE cursor_name
+--示例
+CLOSE cursor_proc_func;
+```
+
+>注意：
+>游标必须在声明处理程序之前被声明，并且变量和条件必须在声明游标或处理程序之前被声明。即声明顺序依次是【变量，条件-->游标-->处理程序】
+>游标只能用在存储过程和函数中。
+
+##### 9.2，游标的使用案例
+
+1. 在存储过程中使用游标
+```sql
+mysql> delimiter //
+/**创建带有游标的存储过程 */
+mysql> create procedure SelectTotalpriceUseCursor(OUT totalprice decimal(10,2))
+    -> begin
+    -> declare price decimal(10,2) default 0.00;
+    -> declare cursor_price CURSOR for select t_price from t_goods;
+    -> declare EXIT HANDLER for NOT FOUND close cursor_price;
+    -> set totalprice = 0.00;
+    -> open cursor_price;
+    -> REPEAT
+    -> fetch cursor_price into price;
+    -> set totalprice = totalprice + price;
+    -> until 0 end REPEAT;
+    -> close cursor_price;
+    -> end //
+
+mysql> delimiter ;
+/**调用存储过程 */
+mysql> call SelectTotalpriceUseCursor(@x);
+/**查询用户变量 */
+mysql> select @x;
++---------+
+| @x      |
++---------+
+| 4398.60 |
++---------+
+```
+2. 在函数中使用游标
+```sql
+mysql> DELIMITER $$
+/**创建带有游标的函数 */
+mysql> CREATE FUNCTION StatisticsStock()
+    -> RETURNS INT
+    -> BEGIN
+    -> DECLARE stock, totalstock INT DEFAULT 0;
+    -> DECLARE cursor_stock CURSOR FOR SELECT t_stock FROM t_goods
+    -> DECLARE CONTINUE HANDLER FOR NOT FOUND RETURN totalstock ;
+    -> OPEN cursor_stock;
+    -> REPEAT
+    -> FETCH cursor_stock INTO stock;
+    -> SET totalstock = totalstock + stock;
+    -> UNTIL 0 END REPEAT;
+    -> CLOSE cursor_stock;
+    -> RETURN totalstock;
+    -> END $$
+Query OK, 0 rows affected (0.00 sec)
+mysql> DELIMITER ;
+/**调用函数 */
+mysql> SELECT StatisticsStock();
++-------------------+
+| StatisticsStock() |
++-------------------+
+|              9130 |
++-------------------+
+```
+
+#### 10，MySQL中控制流程的使用
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### MySQL触发器
-TODO
+MySQL从5.0.2版本开始支持触发器。MySQL中的触发器需要满足一定的条件才能执行，比如，在对某个数据表进行更新操作前首先需要验证数据的合法性，此时就可以使用触发器来执行。在MySQL中定义触发器能够在一定程度上保证数据的完整性。
+
+#### 1，创建触发器
+MySQL中创建触发器可以使用CREATE TRIGGER语句。MySQL中的触发器可以包含一条执行语句，也可以包含多条执行语句。
+```sql
+/**创建触发器语句 */
+CREATE
+    [DEFINER = user]
+    TRIGGER trigger_name
+    trigger_time trigger_event
+    ON tbl_name FOR EACH ROW
+    [trigger_order]
+    trigger_body
+
+--语法格式说明如下：
+·trigger_name：创建的触发器的名称。
+·trigger_time：标识什么时候执行触发器，支持两个选项，分别为BEFORE和AFTER。其中，BEFORE表示在某个事件之前触发，AFTER表示在某个事件之后触发。
+·trigger_event：触发的事件，支持INSERT、UPDATE和DELETE操作。
+·tbl_name：数据表名称，表示在哪张数据表上创建触发器。
+·trigger_body：触发器中执行的SQL语句，可以有一条SQL语句，也可以是多条SQL语句。
+```
+
+##### 1.1，创建触发器示例
+```sql
+/**1，创建测试表 */
+/**对test_trigger数据表进行增加、删除和修改操作，使用触发器将test_trigger数据表中的数据变化日志写入test_trigger_log数据表中。 */
+mysql> CREATE TABLE test_trigger (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    t_note VARCHAR(30)
+    );
+mysql> CREATE TABLE test_trigger_log (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    t_log VARCHAR(30)
+    );
+
+/**2，在 test_trigger 表上创建一个 before insert 触发器*/
+/**delimiter 是mysql分隔符，在mysql客户端中分隔符默认是分号（；）。如果一次输入的语句较多，并且语句中间有分号，这时需要新指定一个特殊的分隔符。 */
+--重新定义分隔符
+mysql> DELIMITER $$
+--创建 before insert触发器
+mysql> CREATE TRIGGER test_trigger_before_insert
+    BEFORE INSERT 
+    ON test_trigger
+    FOR EACH ROW
+    INSERT INTO test_trigger_log (t_log)
+    VALUES ('before_insert');
+    $$
+--重新定义分隔符
+mysql> DELIMITER ;
+--插入数据
+mysql> INSERT INTO test_trigger (t_note) VALUES ('测试 BEFORE INSERT 触发器');
+--触发器生效
+mysql> SELECT * FROM test_trigger_log;
++----+---------------+
+| id | t_log         |
++----+---------------+
+|  1 | before_insert |
++----+---------------+
+--重新定义分隔符
+mysql> DELIMITER $$
+--创建 before insert触发器
+mysql> CREATE TRIGGER test_trigger_after_insert
+    AFTER INSERT 
+    ON test_trigger
+    FOR EACH ROW
+    INSERT INTO test_trigger_log (t_log)
+    VALUES ('after_insert');
+    $$
+--重新定义分隔符
+mysql> DELIMITER ;
+--插入数据
+mysql> INSERT INTO test_trigger (t_note) VALUES ('测试 AFTER INSERT 触发器');
+--触发器生效
+mysql> SELECT * FROM test_trigger_log;
++----+---------------+
+| id | t_log         |
++----+---------------+
+|  1 | before_insert |
+|  2 | before_insert |
+|  3 | after_insert  |
++----+---------------+
+```
+
+#### 2，查看触发器
+MySQL中支持使用SHOW TRIGGERS和SHOW CREATE TRIGGER语句查看触发器的信息。同时，在MySQL中会将触发器的信息存储在information_schema数据库中的triggers数据表中，所以也可以在trigger数据表中查看触发器的信息。
+```sql
+/**1，SHOW TRIGGERS语句查看触发器的信息 */
+SHOW TRIGGERS [{FROM | IN} db_name] [LIKE 'pattern' | WHERE expr]
+--示例
+mysql> show triggers from test_new where `table` = 'test_trigger' AND `trigger` like '%before%' \G
+*************************** 1. row ***************************
+             Trigger: test_trigger_before_insert
+               Event: INSERT
+               Table: test_trigger
+           Statement: INSERT INTO test_trigger_log(t_log)
+VALUES ('before_insert')
+              Timing: BEFORE
+             Created: 2022-10-17 11:44:32.53
+            sql_mode: ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+             Definer: root@localhost
+character_set_client: utf8
+collation_connection: utf8_general_ci
+  Database Collation: utf8_general_ci
+
+/**2，SHOW CREATE TRIGGER语句查看触发器的信息 */
+mysql> show create trigger test_trigger_after_insert \G
+*************************** 1. row ***************************
+               Trigger: test_trigger_after_insert
+              sql_mode: ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+SQL Original Statement: CREATE DEFINER=`root`@`localhost` TRIGGER test_trigger_after_insert
+AFTER INSERT
+ON test_trigger
+FOR EACH ROW
+INSERT INTO test_trigger_log(t_log)
+VALUES ('after_insert')
+  character_set_client: utf8
+  collation_connection: utf8_general_ci
+    Database Collation: utf8_general_ci
+               Created: 2022-10-17 13:45:35.07
+
+/**3，通过查看 information_schema.triggers 数据表中的数据查看触发器的信息 */
+mysql> SELECT * FROM information_schema.triggers where trigger_name like 'test_trigger_before%' \G
+*************************** 1. row ***************************
+           TRIGGER_CATALOG: def
+            TRIGGER_SCHEMA: test_new
+              TRIGGER_NAME: test_trigger_before_insert
+        EVENT_MANIPULATION: INSERT
+      EVENT_OBJECT_CATALOG: def
+       EVENT_OBJECT_SCHEMA: test_new
+        EVENT_OBJECT_TABLE: test_trigger
+              ACTION_ORDER: 1
+          ACTION_CONDITION: NULL
+          ACTION_STATEMENT: INSERT INTO test_trigger_log(t_log)
+VALUES ('before_insert')
+        ACTION_ORIENTATION: ROW
+             ACTION_TIMING: BEFORE
+ACTION_REFERENCE_OLD_TABLE: NULL
+ACTION_REFERENCE_NEW_TABLE: NULL
+  ACTION_REFERENCE_OLD_ROW: OLD
+  ACTION_REFERENCE_NEW_ROW: NEW
+                   CREATED: 2022-10-17 11:44:32.53
+                  SQL_MODE: ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+                   DEFINER: root@localhost
+      CHARACTER_SET_CLIENT: utf8
+      COLLATION_CONNECTION: utf8_general_ci
+        DATABASE_COLLATION: utf8_general_ci
+```
+
+#### 3，删除触发器
+```sql
+/**删除触发器语句 */
+DROP TRIGGER [IF EXISTS] [schema_name.]trigger_name
+--示例
+mysql> DROP TRIGGER IF EXISTS test_new.test_trigger_after_delete;
+```
 
 ### MySQL分区
 MySQL从5.1版本开始支持分区操作。对MySQL使用分区操作不仅能够存储更多的数据，而且在数据查询效率和数据吞吐量方面，也能够得到显著的提升。
@@ -2544,13 +3409,3 @@ mysql> ALTER TABLE t_add_column MODIFY COLUMN c DOUBLE GENERATED ALWAYS AS (a * 
 /**4，删除生成列 */
 mysql> ALTER TABLE t_add_column DROP COLUMN c;
 ```
-
-
-
-
-
-
-
-
-
-

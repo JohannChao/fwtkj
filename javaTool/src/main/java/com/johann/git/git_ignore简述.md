@@ -36,7 +36,7 @@ git rm -f --cached .
 git add .
 
 ### 3,提交到本地仓库
-git commmit -m "gitignore update"
+git commit -m "gitignore update"
 
 ### 4,提交到远程仓库
 git push 

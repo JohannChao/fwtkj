@@ -14,6 +14,7 @@
         <module>javaTool</module>
         <module>network</module>
         <module>springboottk</module>
+        <module>springboot-redis</module>
     </modules>
 
     <parent>
