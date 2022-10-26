@@ -44,6 +44,7 @@ public class TestEncrypt {
             //将原数据，放到一个新的数组中,新数组的长度为 16的倍数，超过原数组长度的剩余位数用 0 填充。如果选择 PKCS5Padding ，这一步可以省略
             byte[] plaintext = new byte[plaintextLength];
             System.arraycopy(dataBytes, 0, plaintext, 0, dataBytes.length);
+            String dataNew = new String(plaintext);
 
             //SecretKeySpec和KeyGenerator支持AES,DES,DESede 三种加密算法创建密匙;KeyPairGenerator支持RSA加密算法创建密匙
             SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
@@ -66,7 +67,8 @@ public class TestEncrypt {
     }
     
     public static void main(String[] args) throws Exception{
-        String data = "abcdefghigklmnopqabcdefghigklmnopq";
+        //注意：自动填充的 0 ，对应的ASCII码是 NUT，而不是空格
+        String data = "12345           ";
         String datastr = encrypt(data, KEY, IV);
         System.out.println(datastr);
         System.out.println(datastr.length());
