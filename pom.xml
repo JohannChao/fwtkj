@@ -16,6 +16,7 @@
         <module>springboottk</module>
         <module>springboot-redis</module>
         <module>computerSystem</module>
+        <module>algorithmLearning</module>
     </modules>
 
     <parent>
