@@ -30,19 +30,23 @@ import java.util.*;
 class SolutionJianzhi50 {
     public char firstUniqChar(String s) {
         char[] chars = s.toCharArray();
-        //map，用于存放字符出现的次数
+        //map<字符,字符出现的次数>，用于存放字符出现的次数
         HashMap<Character, Integer> charMap = new HashMap<Character, Integer>(2^8);
-        //存放所有出现过的字符
-        ArrayDeque<Character> charDeque = new ArrayDeque();;
+        //按照字符出现的顺序，在队列中依次存放所有出现过的字符，且只存放一次
+        ArrayDeque<Character> charDeque = new ArrayDeque();
+        //遍历字符数组
         for (char c : chars) {
             Integer count = charMap.get(c);
+            //如果此前字符未出现过，将其放入队列中
             if (count == null) {
                 count = 0;
                 charDeque.add(c);
             }
+            //更新map中字符出现的次数
             charMap.put(c,++count);
         }
         Character c;
+        //遍历队列，依次判断队列中字符出现的次数。如果发现的次数为 1 字符，直接返回该字符；若队列遍历完没有这种字符，返回 ' '
         while((c=charDeque.poll())!=null){
             int count = charMap.get(c);
             if (count == 1){

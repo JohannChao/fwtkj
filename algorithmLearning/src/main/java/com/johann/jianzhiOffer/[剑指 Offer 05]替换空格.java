@@ -23,7 +23,9 @@ class SolutionJianzhi05 {
         if(s==null){
             return null;
         }
+        //替换后的字符串
         StringBuilder sb = new StringBuilder(s.length());
+        //如果原来的字符是空格，则在新的字符串中插入"%20"
         for(char c : s.toCharArray()){
             if(32==c){
                 sb.append("%20");
@@ -32,6 +34,12 @@ class SolutionJianzhi05 {
             }
         }
         return sb.toString();
+    }
+
+    public static void main(String[] args) {
+        String s = "We are happy.";
+        s = new SolutionJianzhi05().replaceSpace(s);
+        System.out.println(s);
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
