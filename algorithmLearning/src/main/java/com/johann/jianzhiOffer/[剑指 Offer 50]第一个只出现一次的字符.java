@@ -29,13 +29,16 @@ import java.util.*;
 //leetcode submit region begin(Prohibit modification and deletion)
 class SolutionJianzhi50 {
     public char firstUniqChar(String s) {
-        char[] chars = s.toCharArray();
+        if (s.length() == 0){
+            return ' ';
+        }
         //map<字符,字符出现的次数>，用于存放字符出现的次数
         HashMap<Character, Integer> charMap = new HashMap<Character, Integer>(2^8);
         //按照字符出现的顺序，在队列中依次存放所有出现过的字符，且只存放一次
         ArrayDeque<Character> charDeque = new ArrayDeque();
-        //遍历字符数组
-        for (char c : chars) {
+        //遍历字符串
+        for (int i = 0;i < s.length();i++) {
+            char c = s.charAt(i);
             Integer count = charMap.get(c);
             //如果此前字符未出现过，将其放入队列中
             if (count == null) {

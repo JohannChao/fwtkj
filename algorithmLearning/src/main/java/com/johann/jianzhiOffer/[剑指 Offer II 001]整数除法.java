@@ -60,19 +60,15 @@ package com.johann.jianzhiOffer;
 //leetcode submit region begin(Prohibit modification and deletion)
 class SolutionJianzhiII001 {
     public int divide(int a, int b) {
-        //如果除数是Integer最小值，且被除数是-1，此时相除会溢出。
         if(a == Integer.MIN_VALUE && b == -1){
+            //如果除数是Integer最小值，且被除数是-1，此时相除会溢出。
             return Integer.MAX_VALUE;
-        }
-        //如果被除数是0，直接返回 0
-        if (a == 0){
+        }else if (a == 0){
+            //如果被除数是0，直接返回 0
             return 0;
         }
         //判断最终的商是正数，还是负数
-        boolean positiveFlag = false;
-        if ((a>0&&b<0) || (a<0&&b>0)){
-            positiveFlag = true;
-        }
+        boolean positiveFlag = (a>0&&b<0) || (a<0&&b>0);
         //将 a,b转为负数，防止负整数转正数溢出情况
         if (a > 0){
             a = ~(a-1);
@@ -85,36 +81,51 @@ class SolutionJianzhiII001 {
         //取反后，如果 被除数 > 除数（即|a| < |b|），此时直接返回 0
         if (a > b) {
             return 0;
-        //取反后，如果 被除数 = 除数（即|a| = |b|）或者 被除数 > 除数*2（即|a| < |2b|），此时商暂时取 1
-        }else if (a == b || a > (b << 1)) {
+        //取反后，如果 被除数 = 除数（即|a| = |b|）或者 被除数 > 除数*2（即|a| -|b| < |b|），此时商暂时取 1。具体是+1还是-1根据符号判断
+        }else if (a == b || a - b > b) {
             quotient = 1;
-        //如果被除数 < 除数*2（即|a| <= |2b|）
+        //如果被除数 < 除数*2（即|a| -|b| >= |b|）
         }else {
             //左移进位统计（乘2）
             int carryCount = 1;
             //中间值
             int temp = 0;
-            //统计除数需要左移多少位，才会不小于被除数
-            while (temp >= (-1)<<30 && (temp = (b << carryCount)) >= a){
-                carryCount++;
-            }
-            //左移位数-1
-            carryCount--;
-            //累加当前商值
-            quotient += 1 << (carryCount);
-            //累加 除数*当前商值
-            temp = b << carryCount;
-            //循环遍历，中间数每次加上 除数*(当前商值/2)，将新的中间数与被除数作比较
-            while(carryCount > 0){
-                //如果新的中间数仍大于被除数，则继续循环遍历下一轮
-                if (temp+(b << (carryCount-1)) > a){
-                    quotient += 1 << (carryCount-1);
-                    temp += b << (carryCount-1);
-                }else if(temp+(b << (carryCount-1)) == a){
-                    quotient += 1 << (carryCount-1);
+            /**
+             * 统计除数需要左移多少位，才会不小于被除数
+             */
+            while ((temp = (b << carryCount)) >= a){
+                /**
+                 * 如果 temp现在超过了 a 的一半，终止循环
+                 * 此处不能用 temp + temp < a，如果a为Integer.MIN_VALUE时，这样会溢出，导致死循环
+                 * 也可以用 a >> 1 > temp
+                 */
+                if (a - temp > temp) {
                     break;
                 }
-                carryCount--;
+                //左移位数统计
+                carryCount++;
+            }
+            //当前商值累加
+            quotient += 1 << (carryCount);
+            //中间数累加，此时中间数为一个极限值，即这个中间数再左移的话，就超过了被除数 a
+            temp = b << carryCount;
+            //循环左移位数
+            while(carryCount > 0){
+                //查看当前temp 与 被除数是否相等。如果 被除数刚好是除数的2^n倍，直接终止循环
+                if (temp == a){
+                    break;
+                }else {
+                    //中间数每次加上自己的一半，将新的中间数与被除数作比较。如果新的中间数仍大于被除数，则需要继续累加商和中间数，循环遍历下一轮
+                    if (a - temp  < (b << (carryCount-1))){
+                        quotient += 1 << (carryCount-1);
+                        temp += b << (carryCount-1);
+                    //中间数每次加上自己的一半，新的中间数等于被除数，则累加商，终止循环
+                    }else if(a - temp == (b << (carryCount-1))){
+                        quotient += 1 << (carryCount-1);
+                        break;
+                    }
+                    carryCount--;
+                }
             }
         }
         //商值取负数
@@ -138,13 +149,8 @@ class SolutionJianzhiII001 {
 //        System.out.println(x);
 //        System.out.println(y);
 //        System.out.println(~(1));
-//        int z = 10;
-//        int z1 = z++;
-//        z = 10;
-//        int z2 = ++z;
-//        System.out.println(z1+" "+z2+" "+z);
-        int a = Integer.MIN_VALUE;
-        int b = 3;
+        int a = 1100540749;
+        int b = -1090366779;
         System.out.println(a/b);
         System.out.println(new SolutionJianzhiII001().divide(a,b));
 
