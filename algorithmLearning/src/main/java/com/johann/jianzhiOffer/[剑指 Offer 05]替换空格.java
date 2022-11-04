@@ -37,9 +37,11 @@ class SolutionJianzhi05 {
     }
 
     public static void main(String[] args) {
-        String s = "We are happy.";
-        s = new SolutionJianzhi05().replaceSpace(s);
-        System.out.println(s);
+        String s = "We  are  happy.";
+        String s1 = s.replace(" ","%20");
+        String s2 = new SolutionJianzhi05().replaceSpace(s);
+        System.out.println(s1);
+        System.out.println(s2);
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
