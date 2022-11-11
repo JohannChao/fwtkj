@@ -40,14 +40,14 @@ package com.johann.jianzhiOffer;
 //leetcode submit region begin(Prohibit modification and deletion)
 class SolutionJianzhi004 {
     public boolean findNumberIn2DArray(int[][] matrix, int target) {
-        //数据类型[][]数组名=new 数据类型[外维数组容量][内维数组容量]; [行数][列数]
+        //数据类型[][]数组名=new 数据类型[外维数组容量][内维数组容量]; [m行][n列]
         //int[][] arr = new int[2][3];
-        int n,m;
-        if (matrix == null || (n = matrix.length)==0 || matrix[0]==null || (m = matrix[0].length)==0){
+        int m,n;
+        if (matrix == null || (m = matrix.length)==0 || matrix[0]==null || (n = matrix[0].length)==0){
             return false;
         }
-        //从二维数组的左下角开始遍历
-        for(int i=n-1,j=0;i>=0&&j<m;){
+        //从二维数组的左下角 matrix[m-1][0] 开始遍历
+        for(int i=m-1,j=0;i>=0&&j<n;){
             int temp = matrix[i][j];
             //如果左下角的数据大于目标值，则行索引向上走一个格
             if (matrix[i][j] > target){
@@ -56,7 +56,7 @@ class SolutionJianzhi004 {
             }else if(matrix[i][j] < target){
                 j++;
             }else {
-                System.out.println("命中，位于 "+i+" 行, "+j+" 列");
+                System.out.println("命中，位于 "+(i+1)+" 行, "+(j+1)+" 列");
                 return true;
             }
         }
@@ -92,13 +92,13 @@ class SolutionJianzhi004 {
          */
         int[][] matrix = new int[][]{{1,4,7,11,15},{2,5,8,12,19},{3,6,9,16,22},{10,13,14,17,24},{18,21,23,26,30}};
         System.out.println(matrix.length+" * "+matrix[0].length);
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(matrix[i][j] + "\t");
+        for (int[] ints : matrix) {
+            for (int anInt : ints) {
+                System.out.print(anInt + "\t");
             }
             System.out.println();
         }
-        System.out.println(new SolutionJianzhi004().findNumberIn2DArray(matrix,5));
+        System.out.println(new SolutionJianzhi004().findNumberIn2DArray(matrix,15));
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)

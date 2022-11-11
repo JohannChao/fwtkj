@@ -68,8 +68,9 @@ public class DoublelyLinkedList {
             return x.data;
         } else {
             Node x = tail;
-            for (int i = size - 1; i > index; i--)
+            for (int i = size - 1; i > index; i--) {
                 x = x.prev;
+            }
             return x.data;
         }
     }

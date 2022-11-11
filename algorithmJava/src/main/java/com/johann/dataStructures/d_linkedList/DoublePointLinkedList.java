@@ -56,14 +56,12 @@ public class DoublePointLinkedList {
         Node node = new Node(obj);
         if (head == null){
             head = node;
-            tail = node;
-            size++;
         }else{
             // 原先尾节点的next指向新增节点
             tail.next = node;
-            tail = node;
-            size++;
         }
+        tail = node;
+        size++;
         return obj;
     }
 
