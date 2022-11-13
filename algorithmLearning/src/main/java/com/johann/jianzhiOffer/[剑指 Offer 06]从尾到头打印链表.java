@@ -34,6 +34,11 @@ class ListNode {
 }
 
 class SolutionJianzhi006 {
+    /**
+     * 辅助栈实现
+     * @param head
+     * @return
+     */
     public int[] reversePrint(ListNode head) {
         if (head == null) {
             return new int[0];
