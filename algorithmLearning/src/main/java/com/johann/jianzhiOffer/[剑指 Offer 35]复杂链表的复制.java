@@ -57,6 +57,7 @@ package com.johann.jianzhiOffer;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 // Definition for a Node.
@@ -77,23 +78,76 @@ class SolutionJIanzhi035 {
     /**
      * 和方法1一个思路，但是少用一个数组，只引入一个哈希表
      * 时间O(n),空间O(n)
-     * @param head
-     * @return
      */
     public Node copyRandomList2(Node head) {
-        return null;
+        if (head == null){
+            return null;
+        }
+        // 辅助哈希表<旧链表节点，新链表节点>
+        HashMap<Node,Node> nodeMap = new HashMap<>();
+        Node current = head;
+        // 遍历旧链表，将旧链表的节点和新链表节点对应在map中
+        while (current != null) {
+            Node copyCurrent = new Node(current.val);
+            nodeMap.put(current,copyCurrent);
+            current = current.next;
+        }
+        current = head;
+        // 遍历map，根据旧链表中的元素的next和random，将新链表的节点关系补充完善
+        while (current != null){
+            Node copyCurrent = nodeMap.get(current);
+            copyCurrent.next = (current.next != null ? nodeMap.get(current.next) : null);
+            copyCurrent.random = (current.random != null ? nodeMap.get(current.random) : null);
+            current = current.next;
+        }
+        return nodeMap.get(head);
     }
     /***************************** 方法二 **********************************/
 
     /***************************** 方法三 **********************************/
     /**
-     * 不引入哈希表，在原来的链表基础上扩展
+     * 不引入哈希表，将原来的链表基础上扩展成两倍
+     * 原链表结构是：nodeA --> nodeB --> nodeC --> nodeD
+     * 扩展后的链表结构是：nodeA --> copyNodeA --> nodeB --> copyNodeB --> nodeC --> copyNodeC --> nodeD --> copyNodeD
      * 时间O(n),空间O(1)
-     * @param head
-     * @return
      */
     public Node copyRandomList3(Node head) {
-        return null;
+        if (head == null){
+            return null;
+        }
+        // 扩展旧链表，深复制生成的新节点元素紧紧跟在对应的旧链表节点元素后面
+        for (Node current = head;current != null;current = current.next.next) {
+            // 深复制生成的新链表节点元素
+            Node copyCurrent = new Node(current.val);
+            // 新链表节点元素的next指向旧链表节点元素的next
+            copyCurrent.next = current.next;
+            // 旧链表节点元素的next指向当前深复制生成的新链表节点元素
+            current.next = copyCurrent;
+        }
+
+        /**
+         * 将深复制生成的节点关系补充完善
+         * 此处之所以要分开遍历（先完善random，再完善next），是因为如果同时完善新链表节点元素的 random 和 next 的话，
+         * 先前旧节点的 next 已经被恢复成旧链表的样子，导致 random 完善步骤产生错误。
+         *
+         * 如果完善random 和 next遍历一次的话，可以使用递归（完善random关系 ——> 递归调用 ——> 完善next关系）
+         */
+        for (Node current = head;current != null;current = current.next.next) {
+            // 深复制生成的新链表节点元素
+            Node copyCurrent = current.next;
+            // 完善新节点元素的 random
+            copyCurrent.random = (current.random != null ? current.random.next : null);
+        }
+        Node newHead = head.next;
+        for (Node current = head;current != null;current = current.next) {
+            // 深复制生成的新链表节点元素
+            Node copyCurrent = current.next;
+            // 复原旧节点元素的 next
+            current.next = current.next.next;
+            // 完善新节点元素的 next
+            copyCurrent.next = (copyCurrent.next != null ? copyCurrent.next.next : null);
+        }
+        return newHead;
     }
     /***************************** 方法三 **********************************/
 
@@ -112,9 +166,6 @@ class SolutionJIanzhi035 {
      * 时间O(n),空间O(n)
      * 1),遍历旧链表，将旧链表中的元素，按照索引索引顺序，放入数组中（原题是深复制，因此数组中的元素，必须重新创建）
      * 2),遍历旧链表，将数组中的元素依次组装成新的链表
-     *
-     * @param head
-     * @return
      */
     public Node copyRandomList(Node head) {
         if (head == null){
@@ -192,7 +243,7 @@ class SolutionJIanzhi035 {
 
         node8.random = node5;
 
-        new SolutionJIanzhi035().copyRandomList(node1);
+        new SolutionJIanzhi035().copyRandomList3(node1);
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
