@@ -1,5 +1,12 @@
 package com.johann.dataStructures.e_tree;
 
+import com.johann.dataStructures.c_queue.JohannQueue;
+import com.johann.dataStructures.d_linkedList.DoublePointLinkedQueue;
+import com.johann.dataStructures.h_graph.JohannGraph;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+
 /**
  * @ClassName: JohannBinaryTree
  * @Description: TODO
@@ -104,6 +111,7 @@ public class JohannBinaryTree {
      * 1），中序遍历:左子树——》根节点——》右子树
      * 2），前序遍历:根节点——》左子树——》右子树
      * 3），后序遍历:左子树——》右子树——》根节点
+     * 4），层序遍历：【从上到下，从左到右依次遍历】
      * @param node
      */
     public void traversal(Node node){
@@ -111,7 +119,7 @@ public class JohannBinaryTree {
     }
 
     /**
-     * 前序遍历
+     * 前序遍历 【根节点 --> 左子树 --> 右子树】
      * @param node
      */
     public void preOrder(Node node){
@@ -125,8 +133,8 @@ public class JohannBinaryTree {
     }
 
     /**
-     * 中序遍历
-     * TODO 一个非完全二叉树，如何遍历使得打印顺序为 完全二叉树呢？ 缺值用 “空” 代替
+     * 中序遍历 【左子树 --> 根节点 --> 右子树】
+     * 一个非完全二叉树，如何遍历使得打印顺序为 完全二叉树呢？ 缺值用 “空” 代替
      * @param node
      */
     public void infixOrder(Node node){
@@ -140,7 +148,7 @@ public class JohannBinaryTree {
     }
 
     /**
-     * 后序遍历
+     * 后序遍历 【左子树 --> 右子树 --> 根节点】
      * @param node
      */
     public void postOrder(Node node){
@@ -152,6 +160,31 @@ public class JohannBinaryTree {
             System.out.print(node.data+" ");
         }
     }
+
+    /**
+     * 层序遍历 【从上到下，从左到右依次遍历】
+     * 广度优先搜索(BFS)
+     * {@link JohannGraph#breadthFirstSearch()}
+     * TODO
+     * @param node
+     */
+    public void sequenceOrder(Node node) {
+        Deque<Node> deque = new ArrayDeque<>();
+        System.out.print(node.data+" ");
+        deque.offer(node);
+        while (!deque.isEmpty()) {
+            if (deque.peek().leftChild!=null) {
+                System.out.print(deque.peek().leftChild.data+" ");
+                deque.offer(deque.peek().leftChild);
+            }
+            if (deque.peek().rightChild!=null) {
+                System.out.print(deque.peek().rightChild.data+" ");
+                deque.offer(deque.peek().rightChild);
+            }
+            deque.pop();
+        }
+    }
+
 
     /**
      * 查找最大值【查找最小值同理 node.leftChild】
@@ -375,6 +408,9 @@ public class JohannBinaryTree {
         System.out.println();
         System.out.println("后序遍历：");
         tree.postOrder(tree.root);
+        System.out.println();
+        System.out.println("层序遍历：");
+        tree.sequenceOrder(tree.root);
         System.out.println();
 
         //删除叶子节点，且待删除节点是右子节点

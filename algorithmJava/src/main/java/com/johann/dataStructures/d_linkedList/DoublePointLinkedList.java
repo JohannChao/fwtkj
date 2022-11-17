@@ -12,7 +12,7 @@ public class DoublePointLinkedList {
     private Node tail;
     private int size;
 
-    private class Node{
+    class Node{
         private Object data;
         private Node next;
 
@@ -95,6 +95,14 @@ public class DoublePointLinkedList {
      */
     public int getSize(){
         return size;
+    }
+
+    /**
+     * 获取表头元素
+     * @return
+     */
+    public Object getHead(){
+        return head.data;
     }
 
     /**

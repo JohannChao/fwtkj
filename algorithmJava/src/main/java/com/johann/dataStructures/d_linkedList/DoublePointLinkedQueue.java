@@ -22,6 +22,9 @@ public class DoublePointLinkedQueue {
         return doublePointLinkedList.deleteHead();
     }
 
+    public Object peak() {
+        return doublePointLinkedList.getHead();
+    }
     public int getSize(){
         return doublePointLinkedList.getSize();
     }
