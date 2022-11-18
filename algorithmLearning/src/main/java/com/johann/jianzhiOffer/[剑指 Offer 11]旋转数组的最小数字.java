@@ -52,16 +52,18 @@ class SolutionJianzhi011 {
         if (numbers.length == 1) {
             return numbers[0];
         }else {
-            if (numbers[0] <= numbers[numbers.length-1]) {
+            if (numbers[0] == numbers[numbers.length-1] && numbers[0] < numbers[1]) {
                 return numbers[0];
+            }else if (numbers[0] == numbers[numbers.length-1] && numbers[0] > numbers[1]) {
+                return numbers[1];
             }else {
                 int left = 0,right = numbers.length-1,bingo = 0;
                 // FIXME
                 while (left <= right){
                     int mid = (left+right)/2;
-                    if (numbers[0] > numbers[mid]) {
-                        bingo = mid;
+                    if (numbers[0] >= numbers[mid]) {
                         right = mid-1;
+                        bingo = mid;
                     }else {
                         left = mid+1;
                     }
@@ -90,6 +92,11 @@ class SolutionJianzhi011 {
             }
         }
         return numbers[i];
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {3,3,3,1,3};
+        new SolutionJianzhi011().minArray(nums);
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)

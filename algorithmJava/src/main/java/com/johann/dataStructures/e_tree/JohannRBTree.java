@@ -2,7 +2,6 @@ package com.johann.dataStructures.e_tree;
 
 /**
  * @ClassName: JohannRBTree
- * @Description: TODO
  * @Author: Johann
  * @Version: 1.0
  **/

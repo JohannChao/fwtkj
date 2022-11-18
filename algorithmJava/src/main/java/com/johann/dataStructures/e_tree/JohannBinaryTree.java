@@ -1,15 +1,11 @@
 package com.johann.dataStructures.e_tree;
 
-import com.johann.dataStructures.c_queue.JohannQueue;
-import com.johann.dataStructures.d_linkedList.DoublePointLinkedQueue;
 import com.johann.dataStructures.h_graph.JohannGraph;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-/**
+/** 二叉搜索树
  * @ClassName: JohannBinaryTree
- * @Description: TODO
  * @Author: Johann
  * @Version: 1.0
  **/
@@ -18,10 +14,12 @@ public class JohannBinaryTree {
     private Node root;
 
 
-    private class Node{
+    class Node{
         private int data;
         private Node leftChild;
         private Node rightChild;
+
+        private boolean visitFlag;
 
         public Node(){
 
@@ -29,6 +27,7 @@ public class JohannBinaryTree {
 
         public Node(int value){
             this.data = value;
+            this.visitFlag = false;
         }
     }
 
@@ -133,8 +132,34 @@ public class JohannBinaryTree {
     }
 
     /**
-     * 中序遍历 【左子树 --> 根节点 --> 右子树】
-     * 一个非完全二叉树，如何遍历使得打印顺序为 完全二叉树呢？ 缺值用 “空” 代替
+     * 前序遍历 非递归【根节点 --> 左子树 --> 右子树】
+     * 将每一个单独的节点看做是以该节点为根的子树
+     *
+     * 1）从栈顶元素节点开始，弹出栈顶元素（并打印）。然后，先把它的右子树的根节点入栈，再把它的左子树的根节点入栈。
+     * 2）重复步骤 1），直到栈为空。由于左子树根节点后入栈，所以此时先遍历的左子树，后遍历的右子树。
+     *
+     */
+    public void preOrderNoRecursion(Node root){
+        // 辅助栈，其实对应的就是上述递归过程中的隐式调用栈
+        Deque<Node> stack = new ArrayDeque<>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            // 栈顶元素出栈，弹出子树根节点元素
+            Node current = stack.pop();
+            System.out.print(current.data+" ");
+            // 栈是先进后出，所以先将右子树入栈，再将左子树入栈
+            if (current.rightChild != null) {
+                stack.push(current.rightChild);
+            }
+            if (current.leftChild != null) {
+                stack.push(current.leftChild);
+            }
+        }
+    }
+
+
+    /**
+     * 中序遍历【左子树 --> 根节点 --> 右子树】
      * @param node
      */
     public void infixOrder(Node node){
@@ -144,6 +169,38 @@ public class JohannBinaryTree {
             infixOrder(node.leftChild);
             System.out.print(node.data+" ");
             infixOrder(node.rightChild);
+        }
+    }
+
+    /**
+     * 中序遍历 非递归【左子树 --> 根节点 --> 右子树】
+     * 将每一个单独的节点看做是以该节点为根的子树。
+     *
+     * 1）从栈顶元素节点开始，一直顺着该节点的左节点去搜索，并将沿途节点入栈；
+     * 2）如果到达最左节点，此时弹出顶端节点（并打印），然后查看该节点是否有右子树。如果有，将右子树的根节点入栈；
+     * 3）重复步骤 1），直到栈为空。
+     *
+     * 深度优先搜索(DFS)
+     * {@link JohannGraph#depthFirstSearch()}
+     */
+    public void infixOrderNoRecursion(Node node){
+        Deque<Node> stack = new ArrayDeque<>();
+        root.visitFlag = true;
+        stack.push(root);
+        // 栈不为空
+        while (!stack.isEmpty()) {
+            // 如果子树根节点的左子树不为空，且左子树未被访问过，一路向左，找到该树的最左边节点，并将其压入栈内
+            if (stack.peek().leftChild != null && !stack.peek().leftChild.visitFlag) {
+                stack.push(stack.peek().leftChild);
+            }else {
+                // 如果子树根节点不存在左子树或者子树根节点已经被访问过，将根节点弹出，将其标记为“已访问”，并打印这个根节点。然后再继续遍历这个跟节点的右子树
+                Node current = stack.pop();
+                current.visitFlag = true;
+                System.out.print(current.data+" ");
+                if (current.rightChild != null) {
+                    stack.push(current.rightChild);
+                }
+            }
         }
     }
 
@@ -158,30 +215,62 @@ public class JohannBinaryTree {
             postOrder(node.leftChild);
             postOrder(node.rightChild);
             System.out.print(node.data+" ");
+            // visitFlag重置: 后序遍历[非递归] 需要用到 visitFlag
+            node.visitFlag = false;
+        }
+    }
+
+    /**
+     * 后序遍历 非递归【左子树 --> 右子树 --> 根节点】
+     *
+     * 1）从栈顶元素节点开始，一直顺着该节点的左节点去搜索，如果左节点不为空且左节点未被访问过，把左节点入栈；
+     * 2）如果到达最左节点，然后查看该节点是否有未访问的右子树。如果有，将右子树的根节点入栈。
+     * 3）若当前节点的【左节点为空或左节点已被访问过】且【右节点为空或右节点已被访问过】，弹出当前节点，将其标记为“已访问”，并打印。
+     *
+     * 深度优先搜索(DFS)
+     * {@link JohannGraph#depthFirstSearch()}
+     */
+    public void postOrderNoRecuresion(Node node){
+        Deque<Node> stack = new ArrayDeque<>();
+        stack.push(root);
+        // 栈不为空
+        while (!stack.isEmpty()) {
+            // 如果子树根节点的左子树不为空，且左子树未被访问过，一路向左，找到该树的最左边节点，并将其压入栈内
+            if (stack.peek().leftChild != null && !stack.peek().leftChild.visitFlag) {
+                stack.push(stack.peek().leftChild);
+            }else {
+                // 如果当前子树的根节点存在右子树，且右子树未被访问过，将右子树的根节点压入栈内
+                if (stack.peek().rightChild != null && !stack.peek().rightChild.visitFlag) {
+                    stack.push(stack.peek().rightChild);
+                }else {
+                    // 若当前节点的【左节点为空或左节点已被访问过】且【右节点为空或右节点已被访问过】，弹出当前节点，并打印。
+                    Node current = stack.pop();
+                    current.visitFlag = true;
+                    System.out.print(current.data+" ");
+                }
+            }
         }
     }
 
     /**
      * 层序遍历 【从上到下，从左到右依次遍历】
+     *
      * 广度优先搜索(BFS)
      * {@link JohannGraph#breadthFirstSearch()}
      * TODO
-     * @param node
      */
-    public void sequenceOrder(Node node) {
+    public void sequenceOrderNoRecursion(Node node) {
         Deque<Node> deque = new ArrayDeque<>();
-        System.out.print(node.data+" ");
         deque.offer(node);
         while (!deque.isEmpty()) {
-            if (deque.peek().leftChild!=null) {
-                System.out.print(deque.peek().leftChild.data+" ");
-                deque.offer(deque.peek().leftChild);
+            Node current = deque.pop();
+            System.out.print(current.data+" ");
+            if (current.leftChild!=null) {
+                deque.offer(current.leftChild);
             }
-            if (deque.peek().rightChild!=null) {
-                System.out.print(deque.peek().rightChild.data+" ");
-                deque.offer(deque.peek().rightChild);
+            if (current.rightChild!=null) {
+                deque.offer(current.rightChild);
             }
-            deque.pop();
         }
     }
 
@@ -403,14 +492,29 @@ public class JohannBinaryTree {
         System.out.println("前序遍历：");
         tree.preOrder(tree.root);
         System.out.println();
+
+        System.out.println("前序序遍历[非递归]：");
+        tree.preOrderNoRecursion(tree.root);
+        System.out.println();
+
         System.out.println("中序遍历：");
         tree.infixOrder(tree.root);
         System.out.println();
+
+        System.out.println("中序遍历[非递归]：");
+        tree.infixOrderNoRecursion(tree.root);
+        System.out.println();
+
         System.out.println("后序遍历：");
         tree.postOrder(tree.root);
         System.out.println();
+
+        System.out.println("后序遍历[非递归]：");
+        tree.postOrderNoRecuresion(tree.root);
+        System.out.println();
+
         System.out.println("层序遍历：");
-        tree.sequenceOrder(tree.root);
+        tree.sequenceOrderNoRecursion(tree.root);
         System.out.println();
 
         //删除叶子节点，且待删除节点是右子节点
@@ -460,9 +564,6 @@ public class JohannBinaryTree {
         System.out.println("中序遍历：");
         tree.infixOrder(tree.root);
         System.out.println();
-
-
-
 
     }
 

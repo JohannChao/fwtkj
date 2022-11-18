@@ -2,7 +2,6 @@ package com.johann.dataStructures.e_tree;
 
 /** 平衡二叉树
  * @ClassName: JohannAVLTree
- * @Description: TODO
  * @Author: Johann
  * @Version: 1.0
  **/
