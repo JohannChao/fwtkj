@@ -57,16 +57,16 @@ class SolutionJianzhi032I {
         while (!deque.isEmpty()) {
             TreeNode current = deque.peek();
             if (current.left != null) {
-                deque.offer(current.left);
+                deque.add(current.left);
                 nums[++index] = current.left.val;
             }
             if (current.right != null) {
-                deque.offer(current.right);
+                deque.add(current.right);
                 nums[++index] = current.right.val;
             }
-            deque.pop();
+            deque.poll();
         }
-        return Arrays.copyOf(nums,index);
+        return Arrays.copyOf(nums,index+1);
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
