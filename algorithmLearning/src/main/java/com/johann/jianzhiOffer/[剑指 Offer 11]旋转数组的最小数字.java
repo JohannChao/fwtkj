@@ -42,6 +42,35 @@ package com.johann.jianzhiOffer;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 class SolutionJianzhi011 {
+
+
+    /**【数组中元素不重复 https://leetcode.cn/problems/find-minimum-in-rotated-sorted-array/description/】
+     * 该题目的条件是，数组中可能存在重复的元素
+     * 如果将题目条件变更为“数组中中的元素不重复”，此时的题解如下
+     * @param nums
+     * @return
+     */
+    public int findMin(int[] nums){
+        if (nums.length == 1){
+            return nums[0];
+        }else {
+            int right = nums.length-1,left = 0;
+            while(left < right) {
+                int mid = left+(right-left)/2;
+                // 如果二分中间节点的元素，小于最右端的元素，则此时mid右侧的元素处于右半段的范围，不符合条件，舍去。
+                // 最右侧边界变更为 mid（mid可能是我们查找的最小值）
+                if (nums[mid] < nums[right]) {
+                    right = mid;
+                }else {
+                    // 如果二分中间节点的元素，大于最右端的元素，则此时mid左侧的元素处于左半段的范围不符合条件，舍去。
+                    // 最左侧边界变更为 mid+1
+                    left = mid+1;
+                }
+            }
+            return nums[left];
+        }
+    }
+
     /**
      * 二分查找法
      *
@@ -49,27 +78,26 @@ class SolutionJianzhi011 {
      * @return
      */
     public int minArray(int[] numbers) {
-        if (numbers.length == 1) {
+        if (numbers.length == 1){
             return numbers[0];
         }else {
-            if (numbers[0] == numbers[numbers.length-1] && numbers[0] < numbers[1]) {
-                return numbers[0];
-            }else if (numbers[0] == numbers[numbers.length-1] && numbers[0] > numbers[1]) {
-                return numbers[1];
-            }else {
-                int left = 0,right = numbers.length-1,bingo = 0;
-                // FIXME
-                while (left <= right){
-                    int mid = (left+right)/2;
-                    if (numbers[0] >= numbers[mid]) {
-                        right = mid-1;
-                        bingo = mid;
-                    }else {
-                        left = mid+1;
-                    }
+            int right = numbers.length-1,left = 0;
+            while(left < right) {
+                int mid = left+(right-left)/2;
+                // 如果二分中间节点mid的元素，小于最右端right的元素，此时最小值在mid的左侧，mid右侧的元素处于右半段的范围，不符合条件，舍去。
+                // 最右侧边界变更为 mid（mid可能是我们查找的最小值）
+                if (numbers[mid] < numbers[right]) {
+                    right = mid;
+                }else if (numbers[mid] > numbers[right]) {
+                    // 如果二分中间节点mid的元素，大于最右端right的元素，此时最小值在mid的右侧，mid左侧的元素处于左半段的范围不符合条件，舍去。
+                    // 最左侧边界变更为 mid+1
+                    left = mid+1;
+                }else {
+                    // 如果二分中间节点的元素，等于最右端的元素，此时无法判断最小值是在mid的左侧还是右侧，因此只能缩小一点点最右侧leght的范围
+                    right -= 1;
                 }
-                return numbers[bingo];
             }
+            return numbers[left];
         }
     }
 
