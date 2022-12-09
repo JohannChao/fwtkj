@@ -55,7 +55,7 @@ class SolutionJianzhi032I {
         nums[index] = root.val;
         // 队列不为空
         while (!deque.isEmpty()) {
-            TreeNode current = deque.peek();
+            TreeNode current = deque.poll();
             if (current.left != null) {
                 deque.add(current.left);
                 nums[++index] = current.left.val;
@@ -64,7 +64,6 @@ class SolutionJianzhi032I {
                 deque.add(current.right);
                 nums[++index] = current.right.val;
             }
-            deque.poll();
         }
         return Arrays.copyOf(nums,index+1);
     }

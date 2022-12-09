@@ -185,7 +185,7 @@ public class JohannBinaryTree {
      */
     public void infixOrderNoRecursion(Node node){
         Deque<Node> stack = new ArrayDeque<>();
-        root.visitFlag = true;
+        //root.visitFlag = true;
         stack.push(root);
         // 栈不为空
         while (!stack.isEmpty()) {
@@ -257,7 +257,6 @@ public class JohannBinaryTree {
      *
      * 广度优先搜索(BFS)
      * {@link JohannGraph#breadthFirstSearch()}
-     * TODO
      */
     public void sequenceOrderNoRecursion(Node node) {
         Deque<Node> deque = new ArrayDeque<>();
