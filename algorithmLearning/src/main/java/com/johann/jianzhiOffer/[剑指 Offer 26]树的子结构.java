@@ -41,6 +41,12 @@ import java.util.*;
  * }
  */
 class SolutionJianzhi026 {
+    /**
+     * 迭代方式查找子结构
+     * @param A
+     * @param B
+     * @return
+     */
     public boolean isSubStructure(TreeNode A, TreeNode B) {
         if (A == null || B == null) {
             return false;
@@ -51,7 +57,6 @@ class SolutionJianzhi026 {
 
     /**
      * 判断B树是否是A树的子结构
-     * FIXME
      * @param rootA
      * @param rootB
      * @return
@@ -59,6 +64,9 @@ class SolutionJianzhi026 {
     public boolean traversalCompare(TreeNode rootA,TreeNode rootB){
         Deque<TreeNode> deque = new ArrayDeque<>();
         deque.offer(rootA);
+        /**
+         * 外循环，遍历A树，查找A树中与B树根节点值相同的节点
+         */
         while (!deque.isEmpty()) {
             TreeNode current = deque.poll();
             if (current.left!=null){
@@ -71,6 +79,7 @@ class SolutionJianzhi026 {
             if (current.val == rootB.val) {
                 Deque<TreeNode> dequeB = new ArrayDeque<>();
                 Deque<TreeNode> dequeA = new ArrayDeque<>();
+                boolean isSubFlag = true;
                 dequeB.offer(rootB);
                 dequeA.offer(current);
                 while (!dequeB.isEmpty()) {
@@ -84,10 +93,10 @@ class SolutionJianzhi026 {
                             /**
                              * 由于A树可能存在值重复的节点，所以，此处不能直接返回 false，而是应该终止内循环
                              * A树: [4,2,3,4,5,6,7,8,9] B树: [4,8,9]
-                             * 应该在内循环的下方进行判断，在循环结束以后判断 dequeB 是否为空，若为空，那么此时 B树是A树的子结构。
-                             * 否则，继续遍历 A树
+                             * 应该在内循环的下方进行判断，如果从 current节点开始遍历的情形下，不满足"子结构"条件，则继续遍历 A树
                              */
                             //return false;
+                            isSubFlag = false;
                             break;
                         }
                     }
@@ -97,19 +106,52 @@ class SolutionJianzhi026 {
                             dequeB.offer(currentB.right);
                         }else {
                             //return false;
+                            isSubFlag = false;
                             break;
                         }
                     }
                 }
                 /**
-                 * 在循环结束以后判断 dequeB 是否为空，若为空，那么此时 B树是A树的子结构。否则，继续遍历 A树
+                 * 如果 isSubFlag 值为true，则此时B树是A树的子结构，直接返回true。
+                 * 否则，继续遍历A树，查找 A树中其他满足条件的节点
                  */
-                if (dequeB.isEmpty()) {
+                if (isSubFlag) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    /**
+     * 递归 + DFS 查找子结构
+     * @param A
+     * @param B
+     * @return
+     */
+    public boolean isSubStructure2(TreeNode A, TreeNode B) {
+        //边界条件判断，如果A和B有一个为空，返回false
+        if (A==null||B==null){
+            return false;
+        }
+        //先从根节点判断B是不是A的子结构，如果不是在分别从左右两个子树判断，
+        //只要有一个为true，就说明B是A的子结构
+        return sameRootDfs(A,B)||isSubStructure2(A.left,B)||isSubStructure2(A.right,B);
+
+
+    }
+
+    private boolean sameRootDfs(TreeNode A, TreeNode B){
+        //这里如果B为空，说明B已经访问完了，确定是A的子结构
+        if(B==null){
+            return true;
+        }
+        //如果B不为空A为空，或者这两个节点值不同，说明B树不是A的子结构，直接返回false
+        if (A==null||A.val!=B.val){
+            return false;
+        }
+        //当前节点比较完之后还要继续判断左右子节点
+        return sameRootDfs(A.left,B.left)&&sameRootDfs(A.right,B.right);
     }
 
     /**
@@ -136,14 +178,18 @@ class SolutionJianzhi026 {
 
     public static void main(String[] args) {
         TreeNode rootA = new TreeNode(1);
-        TreeNode nodeA_2 = new TreeNode(2);
-        TreeNode nodeA_3 = new TreeNode(3);
+        TreeNode nodeA_2 = new TreeNode(0);
+        TreeNode nodeA_3 = new TreeNode(1);
         rootA.left = nodeA_2;
         rootA.right = nodeA_3;
-        TreeNode nodeA_4 = new TreeNode(4);
+        TreeNode nodeA_4 = new TreeNode(-4);
+        TreeNode nodeA_5 = new TreeNode(-3);
         nodeA_2.left = nodeA_4;
+        nodeA_2.right = nodeA_5;
 
-        TreeNode rootB = new TreeNode(3);
+        TreeNode rootB = new TreeNode(1);
+        TreeNode nodeB_2 = new TreeNode(-4);
+        rootB.left = nodeB_2;
 
         SolutionJianzhi026 solutionJianzhi026 = new SolutionJianzhi026();
         System.out.println(solutionJianzhi026.isSubStructure(rootA,rootB));
