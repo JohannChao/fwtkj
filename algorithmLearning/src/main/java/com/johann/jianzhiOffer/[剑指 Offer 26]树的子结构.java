@@ -129,18 +129,22 @@ class SolutionJianzhi026 {
      * @param B
      * @return
      */
-    public boolean isSubStructure2(TreeNode A, TreeNode B) {
+    public boolean isSubStructureRecursion(TreeNode A, TreeNode B) {
         //边界条件判断，如果A和B有一个为空，返回false
         if (A==null||B==null){
             return false;
         }
         //先从根节点判断B是不是A的子结构，如果不是在分别从左右两个子树判断，
         //只要有一个为true，就说明B是A的子结构
-        return sameRootDfs(A,B)||isSubStructure2(A.left,B)||isSubStructure2(A.right,B);
-
-
+        return sameRootDfs(A,B)||isSubStructureRecursion(A.left,B)||isSubStructureRecursion(A.right,B);
     }
 
+    /**
+     * 递归DFS遍历从A树的某个节点开始，其是否包含与B树所有的节点相同的子节点
+     * @param A
+     * @param B
+     * @return
+     */
     private boolean sameRootDfs(TreeNode A, TreeNode B){
         //这里如果B为空，说明B已经访问完了，确定是A的子结构
         if(B==null){

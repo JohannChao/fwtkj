@@ -45,7 +45,10 @@ package com.johann.leetcode;
 
 //leetcode submit region begin(Prohibit modification and deletion)
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Definition for a binary tree node.
@@ -64,10 +67,49 @@ class TreeNode {
 }
 
 class Solution0652 {
+    Map<String, Integer> map = new HashMap<>();
+    List<String> list = new ArrayList<>();
+    List<TreeNode> ans = new ArrayList<>();
     public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
+        dfs(root);
+        return ans;
+    }
+    String dfs(TreeNode root) {
+        if (root == null) {
+            return "*_";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(root.val).append("_");
+        sb.append(dfs(root.left)).append(dfs(root.right));
+        String key = sb.toString();
+        map.put(key, map.getOrDefault(key, 0) + 1);
+        list.add(key);
+        if (map.get(key) == 2) {
+            ans.add(root);
+        }
+        return key;
+    }
 
+    public static void main(String[] args) {
+        // [1,2,3,4,5,2,4,null,null,4]
+        TreeNode root = new TreeNode(1);
+        TreeNode node1 = new TreeNode(2);
+        TreeNode node2 = new TreeNode(3);
+        root.left = node1;
+        root.right = node2;
+        TreeNode node3 = new TreeNode(4);
+        TreeNode nodeD = new TreeNode(5);
+        node1.left = node3;
+        node1.right = nodeD;
+        TreeNode node4 = new TreeNode(2);
+        TreeNode node5 = new TreeNode(4);
+        node2.left = node4;
+        node2.right = node5;
+        TreeNode node6 = new TreeNode(4);
+        node4.left = node6;
 
-        return null;
+        Solution0652 solution0652 = new Solution0652();
+        solution0652.findDuplicateSubtrees(root);
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)

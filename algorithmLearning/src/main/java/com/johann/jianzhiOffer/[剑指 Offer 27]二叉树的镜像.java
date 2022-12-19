@@ -83,6 +83,7 @@ class SolutionJianzhi027 {
     }
 
     /**
+     * BFS遍历所有节点（从上到下交换左右子树）
      * 直接在原树的基础上修改
      * @param root
      * @return
@@ -110,6 +111,23 @@ class SolutionJianzhi027 {
             }
             return root;
         }
+    }
+
+
+    /**
+     * 递归方式获取二叉树的镜像（从下到上交换左右子树）
+     * @param root
+     * @return
+     */
+    public TreeNode mirrorTreeRecursion(TreeNode root) {
+        if (root == null) {
+            return null;
+        }
+        TreeNode left = mirrorTree(root.left);
+        TreeNode right = mirrorTree(root.right);
+        root.left = right;
+        root.right = left;
+        return root;
     }
 }
 //leetcode submit region end(Prohibit modification and deletion)
