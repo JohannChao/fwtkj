@@ -47,7 +47,8 @@ select_type常见的取值如下：
 如果当前数据表是分区表，则表示查询结果匹配的分区。
 
 #### 5，type
-当前SQL语句所使用的关联类型或者访问类型，其取值从最优到最差依次为```system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_subquery > index_subquery > range > index > ALL```。
+当前SQL语句所使用的关联类型或者访问类型，其取值从最优到最差依次为：
+```system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_subquery > index_subquery > range > index > ALL```。
 
 ```sql
 /**测试数据 */
