@@ -38,3 +38,4 @@ mvnw
 mvnw.cmd
 
 a_ignoreClasses/
+log4j_logs/
