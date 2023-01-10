@@ -1,4 +1,4 @@
-package com.johann.javaFunctionalProgramming.lambdaTest;
+package com.johann.javaFunctionalProgramming.lambdaDemo;
 
 @FunctionalInterface
 interface Writable {

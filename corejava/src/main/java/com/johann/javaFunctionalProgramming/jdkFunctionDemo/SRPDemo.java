@@ -1,4 +1,4 @@
-package com.johann.javaFunctionalProgramming.utilFunction;
+package com.johann.javaFunctionalProgramming.jdkFunctionDemo;
 
 import java.util.stream.IntStream;
 

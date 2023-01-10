@@ -1,16 +1,17 @@
-package com.johann.javaFunctionalProgramming;
+package com.johann.javaFunctionalProgramming.streamDemo;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /** 流相关操作
- * @ClassName: StreamOperation
+ * @ClassName: SimpleStream
  * @Description:
  * @Author: Johann
  * @Version: 1.0
  **/
-public class StreamOperation {
+public class SimpleStream {
 
     /**
      * collect操作
@@ -170,6 +171,39 @@ public class StreamOperation {
         System.out.println(sum);
     }
 
+    public static  void testss(){
+        List<Map<String,String>> li = new ArrayList<Map<String,String>>();
+        Map<String,String> m1 = new HashMap<>(8);
+        m1.put("stubs", "未婚");
+        m1.put("name", "老赵");
+        Map<String,String> m2 = new HashMap<>(8);
+        m2.put("stubs", "未婚");
+        m2.put("name", "张杰");
+        Map<String,String> m3 = new HashMap<>(8);
+        m3.put("stubs", "未婚");
+        m3.put("name", "豆子");
+        li.add(m1);
+        li.add(m2);
+        li.add(m3);
+
+        List<Map<String,String>> lx = new ArrayList<>();
+        li.forEach(m->{
+            IntStream.range(0, 2).forEach(i->{
+                System.out.println(i);
+                //xm = m;
+                Map<String, String> xm = new HashMap<>(m);
+                System.out.println("sout "+i);
+                if(i>0) {
+                    System.out.println("sout== "+i);
+                    xm.put("stubs", "已婚");
+                }
+                lx.add(xm);
+            });
+        });
+        lx.forEach(m->{
+            System.out.println(m.get("name")+"=="+m.get("stubs"));
+        });
+    }
 
     public static void main(String[] args) {
         //collectTest();
@@ -177,6 +211,9 @@ public class StreamOperation {
         //flatMapTest();
         //filterTest();
         //maxMinTest();
-        reduceTest();
+        //reduceTest();
+        //testss();
+        Map<String,Integer> map = new HashMap<>();
+        map.putAll(new HashMap<>(0));
     }
 }

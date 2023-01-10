@@ -1,4 +1,4 @@
-package com.johann.javaFunctionalProgramming;
+package com.johann.javaFunctionalProgramming.streamDemo;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -9,7 +9,7 @@ import java.util.stream.Stream;
  * @Author: Johann
  * @Version: 1.0
  **/
-public class StreamIterationTest {
+public class StreamIterationDemo {
 
     /**
      * 外部迭代
@@ -55,7 +55,7 @@ public class StreamIterationTest {
 
 
     public static void main(String[] args) {
-        StreamIterationTest test = new StreamIterationTest();
+        StreamIterationDemo test = new StreamIterationDemo();
         List<Integer> list = new ArrayList<Integer>();
         Collections.addAll(list, 1,2,3,4,5,6,7);
         //externalIteration(list);

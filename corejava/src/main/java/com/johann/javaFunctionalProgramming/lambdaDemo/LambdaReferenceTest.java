@@ -1,4 +1,4 @@
-package com.johann.javaFunctionalProgramming.lambdaTest;
+package com.johann.javaFunctionalProgramming.lambdaDemo;
 
 /** Lambda表达式的引用
  * @ClassName: LambdaReferenceTest

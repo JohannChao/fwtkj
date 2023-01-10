@@ -1,13 +1,12 @@
-package com.johann.javaFunctionalProgramming.lambdaTest;
+package com.johann.javaFunctionalProgramming.lambdaDemo;
 
 /**
- * @ClassName: Lambda_AnonymousInner_test
+ * @ClassName: LambdaAnonymousInnerTest
  * @Description:
  * @Author: Johann
- * @Date: 2022/12/27
  * @Version: 1.0
  **/
-public class Lambda_AnonymousInner_test {
+public class LambdaAnonymousInnerTest {
 
     private String instanceVar = "instanceVar";
     private static String classVar = "classVar";
@@ -51,6 +50,6 @@ public class Lambda_AnonymousInner_test {
     }
 
     public static void main(String[] args) {
-        new Lambda_AnonymousInner_test().test();
+        new LambdaAnonymousInnerTest().test();
     }
 }

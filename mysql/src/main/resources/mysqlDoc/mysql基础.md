@@ -2238,7 +2238,7 @@ mysql> SELECT CASE 1 WHEN 0 THEN 0 WHEN 1 THEN 1 ELSE -1 END;
 ```
 > 1，count(1)、count(*) 与 count(列名)的区别？
 > 1.1), COUNT(*)是SQL92定义的标准统计行数的语法，因为他是标准语法，所以MySQL数据库对他进行过很多优化。
-> 1.2), COUNT(1)和 COUNT(*)，MySQL的优化是完全一样的，根本不存在谁比谁快。阿里巴巴Java开发手册中强制要求不让使用 COUNT(列名)或 COUNT(常量)来替代 COUNT(*)。
+> 1.2), COUNT(1)和 COUNT(*)，MySQL的优化是完全一样的，根本不存在谁比谁快。阿里巴巴Java开发手册中强制要求不让使用 COUNT(列名)或 COUNT(常量)来替代 COUNT(*)。
 > 1.3), COUNT(字段)，他的查询简单粗暴，就是进行全表扫描，然后判断指定字段的值是不是为NULL，不为NULL则累加。相比COUNT(*)，COUNT(字段)多了一个步骤就是判断所查询的字段是否为NULL，所以他的性能要比COUNT(*)慢。
 >
 > 2，MySQL对COUNT(*)的优化？

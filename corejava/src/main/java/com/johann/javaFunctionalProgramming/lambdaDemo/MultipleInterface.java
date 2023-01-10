@@ -1,7 +1,4 @@
-package com.johann.javaFunctionalProgramming;
-
-import java.util.function.IntPredicate;
-import java.util.stream.IntStream;
+package com.johann.javaFunctionalProgramming.lambdaDemo;
 
 /** 接口的多重继承，出现接口默认方法冲突时，如何解决
  * @ClassName: MultipleInterface
