@@ -1,6 +1,6 @@
 package com.johann.javaFunctionalProgramming.lambdaDemo;
 
-/** Lambda表达式的引用
+/** Lambda表达式的方法引用
  * @ClassName: LambdaReferenceTest
  * @Description:
  * @Author: Johann

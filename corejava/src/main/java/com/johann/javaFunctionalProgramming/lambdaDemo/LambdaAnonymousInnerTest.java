@@ -1,6 +1,6 @@
 package com.johann.javaFunctionalProgramming.lambdaDemo;
 
-/**
+/**Lambda表达式和匿名内部类
  * @ClassName: LambdaAnonymousInnerTest
  * @Description:
  * @Author: Johann
