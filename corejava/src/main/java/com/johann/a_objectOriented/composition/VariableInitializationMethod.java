@@ -10,8 +10,7 @@ public class VariableInitializationMethod {
 
     // 1. 变量被定义时，就已经初始化。
     private InstanceA instanceA = new InstanceA();
-    private String s1 = "definition Initializing s1",
-    s2,s3,s4;
+    private String s1 = "definition Initializing s1", s2,s3,s4;
 
     public VariableInitializationMethod(){
         System.out.println("VariableInitializationMethod()");
@@ -20,9 +19,13 @@ public class VariableInitializationMethod {
         System.out.println("s1 = "+s1+"\n"+"s1变量被定义时，就已经初始化。这意味着它总是在调用构造函数之前初始化。");
     }
 
+    static {
+        System.out.println("静态代码块可以初始化");
+    }
     {
         // 4. 使用实例初始化。
         s3 = "Instance Initializing s3";
+        System.out.println("使用实例初始化。 s3:"+s3);
     }
 
     @Override
