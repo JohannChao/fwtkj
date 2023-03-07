@@ -3,7 +3,7 @@ package com.johann.designPrinciple;
 import java.util.HashMap;
 import java.util.Map;
 
-/** 里氏替换原则demo
+/** 里氏替换原则(Liskov Substitution Principle, LSP)
  * 1. 子类必须完全实现父类的方法。
  * 2. 子类可以有自己的属性和方法。也正因如此，在子类出现的地方，父类未必就可以代替。
  * 3. 覆盖或实现父类的方法时，子类方法的输入参数可以被放大。

@@ -1,4 +1,4 @@
-package com.johann.designPattern.dahao.strategy;
+package com.johann.designPattern.dahao.decorator.CalculationUpgrade;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,7 +9,7 @@ import java.math.RoundingMode;
  * @Author: Johann
  * @Version: 1.0
  **/
-public class CalculationNormal extends AbstractCalculationStrategy {
+public class CalculationNormal implements ICalculation {
     /**
      * @param unitPrice
      * @param quantity

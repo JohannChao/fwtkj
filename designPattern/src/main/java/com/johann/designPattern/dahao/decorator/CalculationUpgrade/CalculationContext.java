@@ -1,4 +1,4 @@
-package com.johann.designPattern.dahao.strategy;
+package com.johann.designPattern.dahao.decorator.CalculationUpgrade;
 
 import java.math.BigDecimal;
 
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
  **/
 public class CalculationContext {
 
-    private final AbstractCalculationStrategy strategy;
+    private final ICalculation strategy;
 
     /**
      * 构造器中传入具体的策略
@@ -36,6 +36,20 @@ public class CalculationContext {
                 break;
             case "m100f10":
                 this.strategy = new CalculationRebate(100d,10d);
+                break;
+            case "8z_m100f10":
+                // 先打8折，再满100返10
+                AbstractCalculationStrategy discount_8 = new CalculationDiscount(0.8d);
+                AbstractCalculationStrategy rebate_100_10 = new CalculationRebate(100d,10d);
+                rebate_100_10.decorate(discount_8);
+                this.strategy = rebate_100_10;
+                break;
+            case "m100f10_8z":
+                // 先满100返10，再打8折
+                AbstractCalculationStrategy rebate = new CalculationRebate(100d,10d);
+                AbstractCalculationStrategy discount = new CalculationDiscount(0.8d);
+                discount.decorate(rebate);
+                this.strategy = discount;
                 break;
             default:
                 this.strategy = null;

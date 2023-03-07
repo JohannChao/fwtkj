@@ -32,10 +32,15 @@ public class ZyhStrategyDemo {
     }
 
     public static void main(String[] args) {
+        // 1，【基本策略模式】客户端承担——选择具体策略——职责
         ZyhStrategyDemo demo = new ZyhStrategyDemo();
         demo.selectStrategy("m100f10");
         BigDecimal result = demo.context.getResult(15d,14d);
         System.out.println(result);
+
+        // 2，【策略模式+简单工厂】Context承担——选择具体策略——职责
+        CalculationContext contextCopy = new CalculationContext("m100f10");
+        System.out.println(contextCopy.getResult(15d,14d));
     }
 
 }
