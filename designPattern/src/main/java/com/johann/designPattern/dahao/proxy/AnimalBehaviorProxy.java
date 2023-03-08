@@ -1,4 +1,4 @@
-package com.johann.javaReflect.staticProxy;
+package com.johann.designPattern.dahao.proxy;
 
 import java.util.Date;
 

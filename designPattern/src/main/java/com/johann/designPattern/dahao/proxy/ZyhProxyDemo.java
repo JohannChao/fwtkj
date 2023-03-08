@@ -1,11 +1,11 @@
-package com.johann.javaReflect.staticProxy;
+package com.johann.designPattern.dahao.proxy;
 
 /**
- * @ClassName: StaticProxyTest
+ * @ClassName: ZyhProxyDemo
  * @Author: Johann
  * @Version: 1.0
  **/
-public class StaticProxyTest {
+public class ZyhProxyDemo {
 
     public static void main(String[] args) {
         AnimalBehavior animalBehavior = new DogBehavior();

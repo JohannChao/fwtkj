@@ -2,7 +2,6 @@ package com.johann.javaReflect;
 
 /**
  * @ClassName: ReflectUserSuper
- * @Description: TODO
  * @Author: Johann
  * @Version: 1.0
  **/
