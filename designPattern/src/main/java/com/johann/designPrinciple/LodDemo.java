@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 迪米特法则（Law of Demeter, LOD）又叫作最少知识原则（The Least Knowledge Principle）。
- * 1. 只和直接的朋友交流；
- * 2. 减少对朋友的了解。
+ * 1. 只和直接的朋友交流（直接的朋友：出现在成员变量、方法的输入输出参数中的类就是直接的朋友。）；
+ * 2. 减少对朋友的了解（无需关注具体实现，只需要暴露一个大接口即可）。
  * @ClassName: LodDemo
  * @Description:
  * @Author: Johann
