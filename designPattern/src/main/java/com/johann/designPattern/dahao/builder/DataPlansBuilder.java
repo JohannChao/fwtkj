@@ -1,4 +1,4 @@
-package com.johann.designPattern.dahao.builderDemo;
+package com.johann.designPattern.dahao.builder;
 
 /**
  * 数据套餐抽象建造者类

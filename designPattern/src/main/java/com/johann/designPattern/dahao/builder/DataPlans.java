@@ -1,8 +1,7 @@
-package com.johann.designPattern.dahao.builderDemo;
+package com.johann.designPattern.dahao.builder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * 手机套餐
@@ -35,7 +34,7 @@ public class DataPlans {
         this.itemList = itemList;
     }
 
-    List<Item> itemList = new ArrayList<>();
+    private List<Item> itemList = new ArrayList<>();
 
     public void add(Item item){
         itemList.add(item);
