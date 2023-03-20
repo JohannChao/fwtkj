@@ -1,14 +1,14 @@
-package com.johann.designPattern.dahao.decorator.CalculationUpgrade;
+package com.johann.designPattern.dahao.factoryMethod.CalculationUpgrade_2;
 
 import java.math.BigDecimal;
 
 /** 策略模式——策略模式公共算法基类【装饰抽象类】
- * @ClassName: AbstractCalculation
+ * @ClassName: AbstractCalculationStrategyDecorator
  * @Description:
  * @Author: Johann
  * @Version: 1.0
  **/
-public abstract class AbstractCalculationStrategy implements ICalculation{
+public abstract class AbstractCalculationStrategyDecorator implements ICalculation {
 
     private ICalculation calculation;
 
@@ -22,9 +22,10 @@ public abstract class AbstractCalculationStrategy implements ICalculation{
 
 
     public BigDecimal calculate(Double unitPrice,Double quantity){
+        BigDecimal result = BigDecimal.ZERO;
         if (calculation != null){
-            return this.calculation.calculate(unitPrice,quantity);
+            result = this.calculation.calculate(unitPrice,quantity);
         }
-        return BigDecimal.valueOf(unitPrice);
+        return result;
     };
 }

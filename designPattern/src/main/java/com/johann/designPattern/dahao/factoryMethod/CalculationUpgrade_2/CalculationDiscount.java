@@ -1,15 +1,15 @@
-package com.johann.designPattern.dahao.decorator.CalculationUpgrade;
+package com.johann.designPattern.dahao.factoryMethod.CalculationUpgrade_2;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-/** 打折收费策略
+/** 打折收费策略（装饰模式附加功能）
  * @ClassName: CalculationDiscount
  * @Description:
  * @Author: Johann
  * @Version: 1.0
  **/
-public class CalculationDiscount extends AbstractCalculationStrategy {
+public class CalculationDiscount extends AbstractCalculationStrategyDecorator {
     /**
      * 折扣
      */

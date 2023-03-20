@@ -1,9 +1,9 @@
-package com.johann.designPattern.dahao.decorator.CalculationUpgrade;
+package com.johann.designPattern.dahao.decorator.CalculationUpgrade_1;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-/** 正常收费策略
+/** 正常收费策略（装饰模式的基础功能）
  * @ClassName: CalculationNormal
  * @Description:
  * @Author: Johann

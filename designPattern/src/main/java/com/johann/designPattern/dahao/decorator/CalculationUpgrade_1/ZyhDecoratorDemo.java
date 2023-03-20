@@ -1,4 +1,4 @@
-package com.johann.designPattern.dahao.decorator.CalculationUpgrade;
+package com.johann.designPattern.dahao.decorator.CalculationUpgrade_1;
 
 /**【策略模式中的收费功能】使用装饰模式
  * ### 收费功能同时使用多种策略
@@ -29,6 +29,15 @@ public class ZyhDecoratorDemo {
         System.out.println(contextCopy.getResult(100d,12d));
 
         contextCopy = new CalculationContext("m100f10_8z");
+        System.out.println(contextCopy.getResult(100d,12d));
+
+        contextCopy = new CalculationContext("zc");
+        System.out.println(contextCopy.getResult(100d,12d));
+
+        contextCopy = new CalculationContext("7z");
+        System.out.println(contextCopy.getResult(100d,12d));
+
+        contextCopy = new CalculationContext("m100f10");
         System.out.println(contextCopy.getResult(100d,12d));
     }
 }
