@@ -26,5 +26,6 @@ public class ZyhObserverDemo {
 
         subject.deleteObserver(tc2);
         subject.notifyObserver(null);
+
     }
 }

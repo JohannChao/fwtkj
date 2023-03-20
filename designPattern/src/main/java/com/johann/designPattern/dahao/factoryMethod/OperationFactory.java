@@ -24,11 +24,11 @@ public class OperationFactory {
             case "-":
             case "*":
             case "/":
-                factory = new FactoryBasicOperation();
+                factory = new BasicOperationFactory();
                 break;
             case "pow":
             case "log":
-                factory = new FactoryHigherOperation();
+                factory = new HigherOperationFactory();
                 break;
             default:
                 break;

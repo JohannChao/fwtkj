@@ -1,13 +1,12 @@
 package com.johann.designPattern.dahao.factoryMethod;
 
-/** 基本运算算法工厂
- * @ClassName: FactoryBasicOperation
+/** 高阶运算算法工厂
+ * @ClassName: HigherOperationFactory
  * @Description:
  * @Author: Johann
  * @Version: 1.0
  **/
-public class FactoryBasicOperation implements IFactory {
-
+public class HigherOperationFactory implements IFactory{
     /**
      * @param operator
      * @return
@@ -16,17 +15,11 @@ public class FactoryBasicOperation implements IFactory {
     public IOperation getOperation(String operator) {
         IOperation operation = null;
         switch (operator) {
-            case "+":
-                operation = new Add();
+            case "pow":
+                operation = new Pow();
                 break;
-            case "-":
-                operation = new Sub();
-                break;
-            case "*":
-                operation = new Mul();
-                break;
-            case "/":
-                operation = new Div();
+            case "log":
+                operation = new Log();
                 break;
             default:
                 break;
