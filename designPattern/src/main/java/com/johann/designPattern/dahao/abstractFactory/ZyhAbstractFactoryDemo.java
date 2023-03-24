@@ -44,7 +44,7 @@ public class ZyhAbstractFactoryDemo {
      */
     public static IDatabaseFactory getDatabaseFactory(String database){
         IDatabaseFactory factory = null;
-        StringBuilder className = new StringBuilder("com.johann.designPattern.dahao.abstractFactoryMethod.");
+        StringBuilder className = new StringBuilder("com.johann.designPattern.dahao.abstractFactory.");
         className.append(database).append("Factory");
         try {
             factory = (IDatabaseFactory) Class.forName(className.toString()).newInstance();
