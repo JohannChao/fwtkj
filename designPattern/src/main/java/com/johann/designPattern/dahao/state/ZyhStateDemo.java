@@ -1,4 +1,6 @@
-package com.johann.designPattern.dahao.state.candyMachineWithState;
+package com.johann.designPattern.dahao.state;
+
+import com.johann.designPattern.dahao.state.candyMachineWithState.CandyMachine;
 
 /**
  * 不使用状态模式：

@@ -1,5 +1,7 @@
 package com.johann.designPattern.dahao.prototype;
 
+import java.io.*;
+
 /**
  * @ClassName: ZyhPrototypeDemo
  * @Description:
@@ -33,6 +35,33 @@ public class ZyhPrototypeDemo {
         resumeUpgrade2.show();
         resumeUpgrade3.show();
     }
+
+    /**
+     * 使用序列化和反序列化完成深复制，此时待复制的对象及其引用类型的属性需要实现 Serializable接口
+     * @param o
+     * @return
+     * @param <T>
+     */
+    public <T extends Serializable> T deepCopy(T o){
+        T copy = null;
+        try {
+            //序列化对象
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(o);
+
+            //反序列化对象
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+            ObjectInputStream ois = new ObjectInputStream(bis);
+            copy = (T) ois.readObject();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return copy;
+    }
+
 
     /**
      * 复制引用，新的对象引用与原来的对象引用指向同一个真实实例
