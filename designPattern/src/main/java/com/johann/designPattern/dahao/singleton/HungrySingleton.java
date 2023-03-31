@@ -1,22 +1,20 @@
 package com.johann.designPattern.dahao.singleton;
 
-/**
- * @ClassName HungrySingleton
- * @Description 饿汉式单例模式
- * @Author Johann
+/** 饿汉式单例
+ * @ClassName: HungrySingleton
+ * @Description:
+ * @Author: Johann
+ * @Version: 1.0
  **/
 public class HungrySingleton {
+    private static final HungrySingleton singleton = new HungrySingleton();
 
-    /**
-     * 类在首次加载的时候，就创建好了一个实例对象，且之后不再改变，因此线程是安全的，可用于多线程。
-     * 缺点：如果构造的单例很大，构造完又迟迟不使用，会导致资源浪费。
-     **/
-    private static final HungrySingleton INSTANCE = new HungrySingleton();
+    private HungrySingleton() {
 
-    private HungrySingleton(){};
-
-    public static HungrySingleton getInstance(){
-        System.out.println("我是饿汉式单例！");
-        return INSTANCE;
     }
+
+    public static HungrySingleton getInstance() {
+        return singleton;
+    }
+
 }
