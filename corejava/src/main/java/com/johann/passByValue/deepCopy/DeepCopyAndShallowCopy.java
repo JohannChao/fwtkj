@@ -40,6 +40,7 @@ public class DeepCopyAndShallowCopy {
 
         Subjects sb_tgt = new Subjects();
         // apache 下的 BeanUtils.copyProperties(target,source)
+        // Apache BeanUtils性能较差，可以使用其他方案比如Spring BeanUtils, Cglib BeanCopier。
         BeanUtils.copyProperties(sb_tgt,sb_orig);
         sb_orig.setSub("003");
         System.out.println(sb_orig);

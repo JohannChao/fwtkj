@@ -1,11 +1,11 @@
 package com.johann.designPattern.dahao.mediator;
 
-/** 中介者抽象类
+/** 中介者抽象接口
  * @description:
- * @duthor: Johann
+ * @author: Johann
  */
 public interface ChatMediator {
-    void addUser(User user);
-    void removeUser(User user);
-    void sendMessage(Message msg, User user);
+    void addUser(AbstractUser user);
+    void removeUser(AbstractUser user);
+    void sendMessage(Message msg, AbstractUser user);
 }

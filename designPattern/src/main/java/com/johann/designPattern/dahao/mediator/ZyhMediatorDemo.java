@@ -8,11 +8,11 @@ package com.johann.designPattern.dahao.mediator;
 public class ZyhMediatorDemo {
     public static void main(String[] args) {
         ChatMediator chatMediator = new ChatRoom();
-        User user1 = new UserInChat(chatMediator, "Johann","male");
-        User user2 = new UserInChat(chatMediator, "Jessie","female");
-        User user3 = new UserInChat(chatMediator, "Peter","male");
-        User user4 = new UserInChat(chatMediator, "William","male");
-        User user5 = new UserInChat(chatMediator, "Jennifer","female");
+        AbstractUser user1 = new UserInChat(chatMediator, "Johann","male");
+        AbstractUser user2 = new UserInChat(chatMediator, "Jessie","female");
+        AbstractUser user3 = new UserInChat(chatMediator, "Peter","male");
+        AbstractUser user4 = new UserInChat(chatMediator, "William","male");
+        AbstractUser user5 = new UserInChat(chatMediator, "Jennifer","female");
         chatMediator.addUser(user1);
         chatMediator.addUser(user2);
         chatMediator.addUser(user3);

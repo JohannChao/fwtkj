@@ -3,9 +3,9 @@ package com.johann.designPattern.dahao.mediator;
 import lombok.Data;
 
 /** 聊天室消息
- * @Description: Message
- * @Auther: Johann
- * @Version: 1.0
+ * @description: Message
+ * @auther: Johann
+ * @version: 1.0
  */
 @Data
 public class Message {

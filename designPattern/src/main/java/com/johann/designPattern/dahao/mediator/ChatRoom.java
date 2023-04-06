@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** 中介者实现类——聊天室
- * @Description: ChatRoom
- * @Auther: Johann
- * @Version: 1.0
+ * @description: ChatRoom
+ * @auther: Johann
+ * @version: 1.0
  */
 public class ChatRoom implements ChatMediator {
-    private List<User> chatUsers;
+    private List<AbstractUser> chatUsers;
 
     public ChatRoom() {
         this.chatUsers = new ArrayList<>();
@@ -22,7 +22,7 @@ public class ChatRoom implements ChatMediator {
      * @return: void
      */
     @Override
-    public void addUser(User user) {
+    public void addUser(AbstractUser user) {
         this.chatUsers.add(user);
         System.out.println("["+user.name + "]加入聊天室");
     }
@@ -34,7 +34,7 @@ public class ChatRoom implements ChatMediator {
      * @return: void
      */
     @Override
-    public void removeUser(User user) {
+    public void removeUser(AbstractUser user) {
         this.chatUsers.remove(user);
         System.out.println("["+user.name + "]离开聊天室");
     }
@@ -47,7 +47,7 @@ public class ChatRoom implements ChatMediator {
      * @return: void
      */
     @Override
-    public void sendMessage(Message msg, User user) {
+    public void sendMessage(Message msg, AbstractUser user) {
         if (msg.getToSex()==null||msg.getToSex().isEmpty()){
             chatUsers.forEach(u -> {
                 if (!u.equals(user)) {

@@ -1,11 +1,11 @@
 package com.johann.designPattern.dahao.mediator;
 
 /** 交互对象实现类——用户
- * @Description: UserInChat
- * @Auther: Johann
- * @Version: 1.0
+ * @description: UserInChat
+ * @auther: Johann
+ * @version: 1.0
  */
-public class UserInChat extends User {
+public class UserInChat extends AbstractUser {
 
     public UserInChat(ChatMediator mediator, String name, String sex) {
         super(mediator, name ,sex);
