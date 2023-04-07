@@ -18,11 +18,11 @@ public class LspDemo {
         LspFather father = new LspFather("Lee");
         LspSon son = new LspSon("Bruce","Lee");
         HashMap hashMap = new HashMap();
-        // 父类存在的地方，子类可以替换
+        // 【重载时，子类方法的输入参数被放大】父类存在的地方，子类可以替换
         father.paramMethod1(hashMap);
         son.paramMethod1(hashMap);
 
-        // 父类存在的地方，子类可以替换
+        // 【重载时，子类方法的输入参数被缩小】父类存在的地方，子类不可以替换
         father.paramMethod2(hashMap);
         son.paramMethod2(hashMap);
     }

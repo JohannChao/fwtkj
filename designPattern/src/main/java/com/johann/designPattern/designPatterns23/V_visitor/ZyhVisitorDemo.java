@@ -24,7 +24,7 @@ package com.johann.designPattern.designPatterns23.V_visitor;
  * 依赖倒转原则：Visitor 依赖 ConcreteElement，而不是 Element
  * @author Johann
  * @version 1.0
- * @see
+ * @see com.johann.dynamicBoundAndStaticBound
  **/
 public class ZyhVisitorDemo {
     public static void main(String[] args) {

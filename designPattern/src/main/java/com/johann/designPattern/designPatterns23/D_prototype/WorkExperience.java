@@ -38,7 +38,7 @@ public class WorkExperience implements Cloneable{
     public WorkExperience clone() {
         try {
             WorkExperience clone = (WorkExperience) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            // copy mutable state here, so the clone can't change the internals of the original
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
