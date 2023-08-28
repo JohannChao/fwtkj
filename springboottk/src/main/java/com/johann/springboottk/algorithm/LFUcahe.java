@@ -1,4 +1,4 @@
-package com.johann.springbootredis.algorithm;
+package com.johann.springboottk.algorithm;
 
 import java.util.HashMap;
 import java.util.LinkedList;

@@ -1,4 +1,4 @@
-package com.johann.other;
+package com.johann.encryption;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
