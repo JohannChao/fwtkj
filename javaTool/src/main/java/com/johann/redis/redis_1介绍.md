@@ -3,11 +3,16 @@ Windows 下安装
 下载地址：https://github.com/tporadowski/redis/releases
 
 Windows 下启动redis，打开一个cmd窗口，切换到解压目录下执行
-redis-server.exe redis.windows.conf
+`redis-server.exe redis.windows.conf`
 可以把 redis 的路径加到系统的环境变量里,这样就省得再输路径了,后面的那个 redis.windows.conf 可以省略,如果省略,会启用默认的。
 
 连接redis服务器，新打开一个cmd窗口，执行以下命令
-redis-cli.exe -h 127.0.0.1 -p 6379
+`redis-cli.exe -h 127.0.0.1 -p 6379`
+
+* Redis注册为服务：`redis-server.exe --service-install redis.windows.conf --loglevel verbose --service-name newServiceName`
+* 开启服务：`redis-server --service-start`
+* 关闭服务：`redis-server --service-stop`
+* 卸载服务：`redis-server --service-uninstall`
 
 # 第一部分：Redis的数据结构
 ### 1,字符串
