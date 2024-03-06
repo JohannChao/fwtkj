@@ -50,7 +50,7 @@ public class SerializePartlyPersonDto implements Serializable {
      * static 关键字修饰的字段，添加到数组中的话，会报错 unmatched serializable field(s) declared
      */
 //    private static final ObjectStreamField[] serialPersistentFields
-//            = {new ObjectStreamField("id",Integer.class),new ObjectStreamField("name",String.class)};
+//            = {new ObjectStreamField("name",String.class)};
 
     /**
      * @see java.io.ObjectStreamClass#ObjectStreamClass(Class)
@@ -61,7 +61,8 @@ public class SerializePartlyPersonDto implements Serializable {
      * @throws IOException
      */
     private void writeObject(ObjectOutputStream out) throws IOException {
-        out.writeObject(id);
+        //out.writeObject(id);
+        out.defaultWriteObject();
         out.writeObject(name);
     }
 
@@ -75,7 +76,8 @@ public class SerializePartlyPersonDto implements Serializable {
      * @throws IOException
      */
     private void readObject(ObjectInputStream in) throws ClassNotFoundException,IOException{
-        id = (Integer) in.readObject();
+        //id = (Integer) in.readObject();
+        in.defaultReadObject();
         name = (String) in.readObject();
     }
 

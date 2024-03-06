@@ -32,10 +32,10 @@ import java.security.SecureRandom;
 public class SymmetricEncryption {
 
     // 密钥 密钥的长度需要根据加密算法来确定，AEC加密算法的密钥长度固定为 16，DEC加密算法的密钥长度固定为 8
-    private static String KEY = "JOHANNWITHJESSIE";
+    private static String KEY = "2f3e17f62359a05b";
 
     // 使用CBC模式时需要一个初始化的向量(initialization vector，IV)，向量的长度需要和分组长度相同，AEC加密算法的分组长度固定为 16，DEC加密算法的分组长度固定为 8
-    private static String IV = "0123456789abcdef";
+    private static String IV = "16-Bytes--String";
 
     // CBC模式需要初始化向量
     private static final String CBC_NEED_IV = "CBC";
@@ -44,8 +44,8 @@ public class SymmetricEncryption {
     private static final String NO_PADDING = "NoPadding";
 
     public static void main(String[] args) throws Exception {
-        String input = "我爱北京天安门";
-        CipherTransformation cipherTransformation = CipherTransformation.AES_CBC_NoPadding;
+        String input = "cdtest";
+        CipherTransformation cipherTransformation = CipherTransformation.AES_CBC_PKCS5Padding;
         String transformation = cipherTransformation.getTypec();
         int byteSize = cipherTransformation.getKeySize()/8;
         String algorithm = null;

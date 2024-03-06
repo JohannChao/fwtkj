@@ -22,8 +22,8 @@ public class SerializeTest {
      */
     public static void serializeObj(Serializable dto) throws Exception{
 
-        //new File(directory).mkdirs();
-        //new File(directory,fileName).createNewFile();
+        new File(directory).mkdirs();
+        new File(directory,fileName).createNewFile();
         log.info("----------序列化开始----------");
         log.info(dto.toString());
         //创建对象输出流
@@ -93,8 +93,8 @@ public class SerializeTest {
     public static void main(String[] args) throws Exception{
         Serializable dto;
         //dto = new SerializePersonDto(11,"Johann",10);
-        //dto = new SerializePartlyPersonDto(11,"Johann",10,"HB");
-        dto = new ExternalizePersonDto(11,"Johann",10,"HB");
+        dto = new SerializePartlyPersonDto(11,"Johann",10,"HB");
+        //dto = new ExternalizePersonDto(11,"Johann",10,"HB");
         serializeObj(dto);
         deSerializeObj();
 
