@@ -6,16 +6,16 @@
 
 
     <modules>
-        <module>duoxiancheng</module>
-        <module>designPattern</module>
-        <module>corejava</module>
-        <module>mysql</module>
         <module>algorithmJava</module>
+        <module>algorithmLearning</module>
+        <module>computerSystem</module>
+        <module>corejava</module>
+        <module>database</module>
+        <module>designPattern</module>
+        <module>duoxiancheng</module>
         <module>javaTool</module>
         <module>network</module>
         <module>springboottk</module>
-        <module>computerSystem</module>
-        <module>algorithmLearning</module>
     </modules>
 
     <parent>

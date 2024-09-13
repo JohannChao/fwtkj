@@ -116,7 +116,7 @@ public static void main(String[] args) {
     int delta = -1;
     
     // Variable 'delta' is already defined in the scope
-    BinaryOperator<Integer> add2 = (delta,y) -> delta+y+delta;
+    BinaryOperator<Integer> add2 = (delta,y) -> delta+y;
 }
 ```
 

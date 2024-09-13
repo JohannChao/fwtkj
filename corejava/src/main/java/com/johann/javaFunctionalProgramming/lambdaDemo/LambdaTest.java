@@ -13,8 +13,8 @@ import java.util.function.BinaryOperator;
  **/
 public class LambdaTest {
 
-    public static int staticNum;
-    private int num;
+    public static int staticNum = 1;
+    private int num = 1;
 
     public static void main(String[] args) {
         /**
@@ -68,7 +68,7 @@ public class LambdaTest {
 
         // 3, 在 Lambda 表达式当中不允许声明一个与局部变量同名的参数或者局部变量
         // Variable 'delta' is already defined in the scope
-        // BinaryOperator<Integer> add2 = (delta,y) -> delta+y+delta;
+        // BinaryOperator<Integer> add2 = (delta,y) -> delta+y;
     }
 
     /**

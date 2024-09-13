@@ -43,7 +43,7 @@ public class LambdaReferenceTest {
 
 @FunctionalInterface
 interface Finder {
-    int find(String s1, String s2);
+    void find(String s1, String s2);
 }
 
 //创建一个带有静态方法的类

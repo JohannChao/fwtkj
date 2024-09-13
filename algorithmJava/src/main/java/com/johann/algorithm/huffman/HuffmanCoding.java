@@ -2,10 +2,15 @@ package com.johann.algorithm.huffman;
 
 /**
  * 哈夫曼编码
+ * 哈夫曼编码是一种用于数据压缩的算法。它的主要目的是通过使用较短的编码来表示频繁出现的字符,而用较长的编码来表示不常出现的字符,从而减少整体数据的大小。
  *
- * @author Johann
- * @version 1.0
- * @see
+ * 工作原理:
+ *   - 统计频率: 首先,统计每个字符出现的频率。
+ *   - 构建树: 从频率最低的字符开始,逐步构建一个二叉树。
+ *   - 分配编码: 根据树的结构,为每个字符分配一个唯一的二进制编码。
+ *
+ * 哈夫曼编码的优点是它能根据数据的实际分布来优化编码,从而实现高效的压缩。
+ * 它的缺点是需要同时传输或存储编码树,以便解码。
  **/
 import java.util.PriorityQueue;
 import java.util.HashMap;
@@ -38,8 +43,8 @@ public class HuffmanCoding {
 
     /**
      * 构建Huffman树
-     * @param text
-     * @return
+     * @param text 输入文本
+     * @return Huffman树的根节点
      */
     static Node buildHuffmanTree(String text) {
         // 统计每个字符出现频率
@@ -47,6 +52,10 @@ public class HuffmanCoding {
         for (char c : text.toCharArray()) {
             freqMap.put(c, freqMap.getOrDefault(c, 0) + 1);
         }
+        System.out.println("=========================");
+        System.out.println("各个字符 出现的次数：");
+        freqMap.forEach((k, v) -> System.out.println(k + " : " + v));
+        System.out.println("=========================");
 
         // 将频率信息存储在优先级队列中
         PriorityQueue<Node> pq = new PriorityQueue<>();
@@ -71,8 +80,8 @@ public class HuffmanCoding {
 
     /**
      * 生成Huffman编码
-     * @param root
-     * @return
+     * @param root Huffman树的根节点
+     * @return 字符到Huffman编码的映射
      */
     static Map<Character, String> generateCodes(Node root) {
         Map<Character, String> huffmanCode = new HashMap<>();
@@ -83,8 +92,8 @@ public class HuffmanCoding {
 
     /**
      * 递归生成编码
-     * @param node
-     * @param code
+     * @param node 当前节点
+     * @param code 当前路径编码
      * @param huffmanCode 哈夫曼编码信息
      */
     static void generateCodes(Node node, String code, Map<Character, String> huffmanCode) {
@@ -104,9 +113,9 @@ public class HuffmanCoding {
 
     /**
      * Huffman编码-解码
-     * @param huffmanCode haffman编码信息
+     * @param huffmanCode Huffman编码信息
      * @param encodedString 压缩后的信息
-     * @return
+     * @return 解码后的字符串
      */
     public static String decode(Map<Character, String> huffmanCode, String encodedString) {
         StringBuilder decodedString = new StringBuilder();
@@ -136,7 +145,7 @@ public class HuffmanCoding {
 
 
     public static void main(String[] args) {
-        String text = "AAAAABBBBBCCCCDDDEEEFFGHK";
+        String text = "AAABBBBBCCCCDDDEEEFFGHK";
 
         // 构建Huffman树
         Node root = buildHuffmanTree(text);
